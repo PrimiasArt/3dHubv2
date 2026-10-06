@@ -1,0 +1,239 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  Sparkles,
+  RefreshCw,
+  TrendingUp,
+  Cpu,
+  Layers,
+  CheckCircle2,
+  DollarSign,
+  AlertCircle,
+  Award,
+  Zap,
+  Tag,
+  Palette,
+} from 'lucide-react';
+import { IGeminiTrendAnalysisResult } from '@/backend/services/analytics/GeminiAnalyticsService';
+
+interface GeminiTrendAnalysisViewProps {
+  selectedCategory?: string;
+}
+
+export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysisViewProps) {
+  const [analysis, setAnalysis] = useState<IGeminiTrendAnalysisResult | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchGeminiAnalysis = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const url = selectedCategory && selectedCategory !== 'all'
+        ? `/api/trends/analyze?category=${encodeURIComponent(selectedCategory)}`
+        : '/api/trends/analyze';
+
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok && data.analysis) {
+        setAnalysis(data.analysis);
+      } else {
+        setError(data.error || 'Không thể tải phân tích từ Gemini');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Lỗi kết nối Gemini API');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGeminiAnalysis();
+  }, [selectedCategory]);
+
+  return (
+    <div className="rounded-[36px] vision-glass-panel border border-white/20 p-6 sm:p-8 space-y-6 shadow-[0_24px_60px_rgba(0,0,0,0.4)] relative overflow-hidden text-white">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-sm">
+            <Sparkles className="w-5 h-5 text-emerald-300 animate-pulse" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-bold text-white tracking-tight">
+                Phân Tích Thông Minh Google Gemini
+              </h3>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white border border-white/20">
+                {analysis?.geminiModelUsed || 'Gemini 2.5 Flash'}
+              </span>
+            </div>
+            <p className="text-xs text-white/70 mt-0.5">
+              Đánh giá thị hiếu Maker, dự báo nhu cầu vật liệu và cơ hội thương mại cho xưởng in
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchGeminiAnalysis}
+          disabled={isLoading}
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/20 text-white text-xs font-semibold transition-all backdrop-blur-md self-start sm:self-auto disabled:opacity-50"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+          <span>{isLoading ? 'Đang phân tích...' : 'Phân tích lại'}</span>
+        </button>
+      </div>
+
+      {/* Loading Skeleton */}
+      {isLoading && (
+        <div className="py-12 flex flex-col items-center justify-center space-y-3">
+          <div className="w-10 h-10 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-white/70 font-semibold">
+            Google Gemini đang phân tích toàn bộ dữ liệu cào MakerWorld...
+          </p>
+        </div>
+      )}
+
+      {/* Error state */}
+      {!isLoading && error && (
+        <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Analysis Content */}
+      {!isLoading && analysis && (
+        <div className="space-y-6">
+          {/* Executive Summary Box */}
+          <div className="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-2">
+            <div className="flex items-center gap-2 text-emerald-300 text-xs font-semibold uppercase tracking-wider">
+              <Zap className="w-4 h-4 text-amber-300" />
+              <span>Tóm Tắt Báo Cáo Chiến Lược</span>
+            </div>
+            <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-normal">
+              {analysis.summary}
+            </p>
+          </div>
+
+          {/* Market Sentiment & Trending Keywords */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <TrendingUp className="w-4 h-4 text-emerald-300" />
+                  <span>Thị Hiếu &amp; Chủ Đề Nóng</span>
+                </span>
+                <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                  Độ nóng: {analysis.marketSentiment.sentimentScore}/100
+                </span>
+              </div>
+              <h4 className="text-sm font-bold text-white">
+                {analysis.marketSentiment.title}
+              </h4>
+              <p className="text-xs text-white/70 leading-relaxed">
+                {analysis.marketSentiment.description}
+              </p>
+
+              {/* Keywords Pills */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {analysis.marketSentiment.trendingKeywords.map((kw, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium bg-white/15 text-white border border-white/15"
+                  >
+                    <Tag className="w-3 h-3 text-cyan-300" />
+                    <span>#{kw}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Material & Colors Prediction */}
+            <div className="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-3">
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Palette className="w-4 h-4 text-amber-300" />
+                <span>Dự Báo Nhu Cầu Vật Liệu &amp; Màu Sắc</span>
+              </span>
+
+              <div className="space-y-2.5">
+                {analysis.materialPredictions.map((mat, i) => (
+                  <div key={i} className="p-3 rounded-xl bg-black/25 border border-white/10 text-xs space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-white">{mat.material}</span>
+                      <span className="font-bold text-emerald-300">{mat.sharePercent}%</span>
+                    </div>
+                    <div className="text-[11px] text-white/70 flex items-center gap-1">
+                      <span className="text-white/50">Màu gợi ý:</span>
+                      <span className="text-amber-300 font-semibold">{mat.recommendedColors.join(', ')}</span>
+                    </div>
+                    <p className="text-[10px] text-white/50 pt-0.5">{mat.advice}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Top Commercial Opportunities */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 px-1">
+              <Award className="w-4 h-4 text-amber-300" />
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-white/70">
+                Top Cơ Hội Thương Mại Cho Xưởng In (Mẫu Khuyên Dùng Sản Xuất)
+              </h4>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {analysis.commercialOpportunities.map((opp) => (
+                <div
+                  key={opp.rank}
+                  className="p-5 rounded-2xl bg-white/10 border border-white/15 hover:bg-white/15 transition-colors space-y-2.5"
+                >
+                  <div className="flex items-start justify-between">
+                    <span className="w-6 h-6 rounded-full bg-white/20 text-white font-bold text-xs flex items-center justify-center border border-white/20">
+                      #{opp.rank}
+                    </span>
+                    <span className="text-[10px] font-semibold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                      {opp.potentialRevenueVnd}
+                    </span>
+                  </div>
+
+                  <h5 className="text-xs font-bold text-white line-clamp-2">
+                    {opp.modelTitle}
+                  </h5>
+
+                  <p className="text-[11px] text-white/70 line-clamp-3 leading-relaxed">
+                    {opp.whyProfitable}
+                  </p>
+
+                  <div className="text-[10px] text-white/50 pt-2 border-t border-white/10">
+                    <span className="text-white/80 font-medium">Đối tượng: </span>
+                    <span>{opp.targetAudience}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Technical Advice for Slicing */}
+          <div className="p-5 rounded-2xl bg-white/10 border border-white/15 space-y-2.5">
+            <span className="text-xs font-bold text-white flex items-center gap-1.5">
+              <Cpu className="w-4 h-4 text-emerald-300" />
+              <span>Khuyến Nghị Kỹ Thuật Cắt Lớp &amp; Tối Ưu Máy In (Gemini Advisory)</span>
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {analysis.technicalAdvice.map((tech, i) => (
+                <div key={i} className="p-3 rounded-xl bg-black/25 border border-white/10 text-xs">
+                  <span className="font-semibold text-emerald-300 block mb-1">{tech.category}</span>
+                  <p className="text-white/70 text-[11px] leading-relaxed">{tech.recommendation}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
