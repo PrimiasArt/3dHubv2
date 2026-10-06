@@ -73,16 +73,16 @@ export function FilamentAccessoriesView({
 
   return (
     <div className="space-y-6">
-      {/* Sub Category Controls - Apple Segmented Control */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-black/[0.06] shadow-xs">
+      {/* Sub Category Controls - VisionOS Segmented Control */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 vision-glass p-4 rounded-[28px] border border-white/15 shadow-sm text-white">
         {/* View Toggle */}
-        <div className="flex items-center gap-1 p-1 bg-[#F5F5F7] rounded-full border border-black/[0.04]">
+        <div className="flex items-center gap-1 p-1 bg-black/25 rounded-full border border-white/10 backdrop-blur-xl">
           <button
             onClick={() => setSubTab('all')}
             className={`px-3.5 py-1.5 rounded-full text-xs transition-all ${
               subTab === 'all'
-                ? 'bg-white text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)] font-semibold'
-                : 'text-[#6E6E73] hover:text-[#1D1D1F] font-medium'
+                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
+                : 'text-white/70 hover:text-white font-medium'
             }`}
           >
             Tất cả ({filaments.length + accessories.length})
@@ -91,8 +91,8 @@ export function FilamentAccessoriesView({
             onClick={() => setSubTab('filament')}
             className={`px-3.5 py-1.5 rounded-full text-xs transition-all ${
               subTab === 'filament'
-                ? 'bg-white text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)] font-semibold'
-                : 'text-[#6E6E73] hover:text-[#1D1D1F] font-medium'
+                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
+                : 'text-white/70 hover:text-white font-medium'
             }`}
           >
             Cuộn Nhựa In ({filaments.length})
@@ -101,8 +101,8 @@ export function FilamentAccessoriesView({
             onClick={() => setSubTab('accessory')}
             className={`px-3.5 py-1.5 rounded-full text-xs transition-all ${
               subTab === 'accessory'
-                ? 'bg-white text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)] font-semibold'
-                : 'text-[#6E6E73] hover:text-[#1D1D1F] font-medium'
+                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
+                : 'text-white/70 hover:text-white font-medium'
             }`}
           >
             Phụ Kiện Máy In ({accessories.length})
@@ -111,7 +111,7 @@ export function FilamentAccessoriesView({
 
         {/* Brand Selector */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-[#86868B] font-medium">Hãng:</span>
+          <span className="text-white/60 font-medium">Hãng:</span>
           <div className="flex flex-wrap gap-1">
             {brands.map((b) => (
               <button
@@ -119,8 +119,8 @@ export function FilamentAccessoriesView({
                 onClick={() => setSelectedBrand(b)}
                 className={`px-3 py-1 rounded-full text-xs transition-all ${
                   selectedBrand === b
-                    ? 'bg-[#1D1D1F] text-white font-medium shadow-xs'
-                    : 'bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F] hover:bg-[#E8E8ED]'
+                    ? 'bg-white/30 text-white font-semibold border border-white/25 shadow-xs'
+                    : 'bg-white/10 text-white/70 hover:text-white hover:bg-white/15 border border-white/5'
                 }`}
               >
                 {b === 'all' ? 'Tất cả' : b}
@@ -139,8 +139,8 @@ export function FilamentAccessoriesView({
               onClick={() => setSelectedMaterial(m.id)}
               className={`px-3.5 py-1.5 rounded-full text-xs transition-all ${
                 selectedMaterial === m.id
-                  ? 'bg-[#0071E3] text-white font-medium shadow-xs'
-                  : 'bg-white hover:bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F] border border-black/[0.06]'
+                  ? 'bg-white/30 text-white font-semibold border border-white/25 shadow-xs'
+                  : 'bg-black/25 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 backdrop-blur-md'
               }`}
             >
               {m.label}
@@ -157,8 +157,8 @@ export function FilamentAccessoriesView({
               onClick={() => setSelectedAccessorySub(a.id)}
               className={`px-3.5 py-1.5 rounded-full text-xs transition-all ${
                 selectedAccessorySub === a.id
-                  ? 'bg-[#1D1D1F] text-white font-medium shadow-xs'
-                  : 'bg-white hover:bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F] border border-black/[0.06]'
+                  ? 'bg-white/30 text-white font-semibold border border-white/25 shadow-xs'
+                  : 'bg-black/25 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 backdrop-blur-md'
               }`}
             >
               {a.label}
@@ -171,24 +171,24 @@ export function FilamentAccessoriesView({
       {showFilaments && (
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-lg font-semibold tracking-tight text-[#1D1D1F] flex items-center gap-2">
-              <Package className="w-5 h-5 text-[#0071E3]" />
+            <h2 className="text-lg font-semibold tracking-tight text-white flex items-center gap-2">
+              <Package className="w-5 h-5 text-emerald-300" />
               <span>Cuộn Nhựa In 3D FDM &amp; Resin SLA</span>
             </h2>
-            <span className="text-xs text-[#86868B]">{filaments.length} loại có sẵn</span>
+            <span className="text-xs text-white/60">{filaments.length} loại có sẵn</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filaments.map((fil) => (
               <div
                 key={fil.id}
-                className="group relative flex flex-col justify-between rounded-[24px] border border-black/[0.06] bg-white hover:border-black/[0.12] hover:shadow-[0_16px_36px_rgba(0,0,0,0.06)] hover:-translate-y-1 p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
+                className="group relative flex flex-col justify-between rounded-[28px] vision-glass border border-white/15 hover:border-white/30 hover:shadow-[0_16px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 p-6 transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.25)] text-white"
               >
                 {/* Header */}
                 <div className="space-y-3.5">
                   <div className="flex items-start justify-between gap-2">
                     {/* Visual Preview / Thumbnail */}
-                    <div className="w-16 h-16 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex items-center justify-center p-2.5 group-hover:scale-105 transition-transform flex-shrink-0 overflow-hidden relative">
+                    <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center p-2.5 group-hover:scale-105 transition-transform flex-shrink-0 overflow-hidden relative">
                       <Image
                         src={fil.thumbnailUrl}
                         alt={fil.name}
@@ -203,15 +203,15 @@ export function FilamentAccessoriesView({
                       {fil.badge && (
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
                           fil.badge === 'Bán chạy'
-                            ? 'bg-[#FF9500]/10 text-[#FF9500] border-[#FF9500]/20'
+                            ? 'bg-amber-400/20 text-amber-300 border-amber-400/30'
                             : fil.badge === 'Khuyên dùng'
-                            ? 'bg-[#34C759]/10 text-[#34C759] border-[#34C759]/20'
-                            : 'bg-[#5856D6]/10 text-[#5856D6] border-[#5856D6]/20'
+                            ? 'bg-emerald-400/20 text-emerald-300 border-emerald-400/30'
+                            : 'bg-purple-400/20 text-purple-300 border-purple-400/30'
                         }`}>
                           {fil.badge}
                         </span>
                       )}
-                      <span className="text-[11px] font-semibold text-[#1D1D1F] bg-[#F5F5F7] px-2.5 py-0.5 rounded-full border border-black/[0.04]">
+                      <span className="text-[11px] font-semibold text-white/90 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
                         {fil.brand}
                       </span>
                     </div>
@@ -220,7 +220,7 @@ export function FilamentAccessoriesView({
                   <div>
                     <h3
                       onClick={() => onViewDetail(fil)}
-                      className="text-sm font-semibold text-[#1D1D1F] hover:text-[#0071E3] cursor-pointer transition-colors line-clamp-2"
+                      className="text-sm font-semibold text-white hover:text-emerald-300 cursor-pointer transition-colors line-clamp-2"
                     >
                       {fil.name}
                     </h3>
@@ -228,36 +228,36 @@ export function FilamentAccessoriesView({
                     {/* Color Swatch & Spec */}
                     <div className="flex items-center gap-2 mt-2">
                       <span
-                        className="w-3.5 h-3.5 rounded-full border border-black/[0.1] shadow-xs"
+                        className="w-3.5 h-3.5 rounded-full border border-white/30 shadow-xs"
                         style={{ backgroundColor: fil.colorHex }}
                         title={fil.colorName}
                       />
-                      <span className="text-xs text-[#6E6E73] font-medium">{fil.colorName}</span>
-                      <span className="text-[11px] text-[#86868B]">• {fil.weightKg} kg</span>
+                      <span className="text-xs text-white/80 font-medium">{fil.colorName}</span>
+                      <span className="text-[11px] text-white/50">• {fil.weightKg} kg</span>
                     </div>
                   </div>
 
                   {/* Highlights */}
-                  <div className="space-y-1.5 pt-3 border-t border-black/[0.06] text-[11px] text-[#86868B]">
+                  <div className="space-y-1.5 pt-3 border-t border-white/10 text-[11px] text-white/70">
                     <div className="flex items-center gap-1.5">
-                      <Thermometer className="w-3.5 h-3.5 text-[#FF9500] flex-shrink-0" />
+                      <Thermometer className="w-3.5 h-3.5 text-amber-300 flex-shrink-0" />
                       <span>Đầu phun: {fil.nozzleTempRange}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Gauge className="w-3.5 h-3.5 text-[#34C759] flex-shrink-0" />
+                      <Gauge className="w-3.5 h-3.5 text-emerald-300 flex-shrink-0" />
                       <span>Tốc độ: {fil.printSpeedRange}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Footer Price & Actions */}
-                <div className="mt-5 pt-3.5 border-t border-black/[0.06] flex items-center justify-between gap-2">
+                <div className="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between gap-2">
                   <div>
-                    <div className="text-base font-semibold tracking-tight text-[#1D1D1F]">
+                    <div className="text-base font-semibold tracking-tight text-white">
                       {fil.priceVnd.toLocaleString('vi-VN')} đ
                     </div>
                     {fil.originalPriceVnd && (
-                      <div className="text-[11px] text-[#86868B] line-through">
+                      <div className="text-[11px] text-white/50 line-through">
                         {fil.originalPriceVnd.toLocaleString('vi-VN')} đ
                       </div>
                     )}
@@ -266,7 +266,7 @@ export function FilamentAccessoriesView({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onViewDetail(fil)}
-                      className="p-2.5 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] transition-all"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white transition-all"
                       title="Xem thông số kỹ thuật"
                     >
                       <Eye className="w-4 h-4" />
@@ -283,7 +283,7 @@ export function FilamentAccessoriesView({
                           subText: `${fil.brand} • ${fil.colorName}`,
                         })
                       }
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full vision-pill-btn text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
                       <span>Thêm giỏ</span>
@@ -298,24 +298,24 @@ export function FilamentAccessoriesView({
 
       {/* 2. ACCESSORIES GRID */}
       {showAccessories && (
-        <div className="space-y-4 pt-4 border-t border-black/[0.06]">
+        <div className="space-y-4 pt-4 border-t border-white/10">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-lg font-semibold tracking-tight text-[#1D1D1F] flex items-center gap-2">
-              <Sliders className="w-5 h-5 text-[#1D1D1F]" />
+            <h2 className="text-lg font-semibold tracking-tight text-white flex items-center gap-2">
+              <Sliders className="w-5 h-5 text-cyan-300" />
               <span>Phụ Kiện &amp; Linh Kiện Nâng Cấp Máy In 3D</span>
             </h2>
-            <span className="text-xs text-[#86868B]">{accessories.length} phụ kiện có sẵn</span>
+            <span className="text-xs text-white/60">{accessories.length} phụ kiện có sẵn</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {accessories.map((acc) => (
               <div
                 key={acc.id}
-                className="group relative flex flex-col justify-between rounded-[24px] border border-black/[0.06] bg-white hover:border-black/[0.12] hover:shadow-[0_16px_36px_rgba(0,0,0,0.06)] hover:-translate-y-1 p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
+                className="group relative flex flex-col justify-between rounded-[28px] vision-glass border border-white/15 hover:border-white/30 hover:shadow-[0_16px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 p-6 transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.25)] text-white"
               >
                 <div className="space-y-3.5">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="w-16 h-16 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex items-center justify-center p-2.5 group-hover:scale-105 transition-transform flex-shrink-0 overflow-hidden relative">
+                    <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center p-2.5 group-hover:scale-105 transition-transform flex-shrink-0 overflow-hidden relative">
                       <Image
                         src={acc.thumbnailUrl}
                         alt={acc.name}
@@ -328,11 +328,11 @@ export function FilamentAccessoriesView({
 
                     <div className="flex flex-col items-end gap-1.5">
                       {acc.badge && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#5856D6]/10 text-[#5856D6] border border-[#5856D6]/20">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-purple-400/20 text-purple-300 border border-purple-400/30">
                           {acc.badge}
                         </span>
                       )}
-                      <span className="text-[11px] font-semibold text-[#1D1D1F] bg-[#F5F5F7] px-2.5 py-0.5 rounded-full border border-black/[0.04]">
+                      <span className="text-[11px] font-semibold text-white/90 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
                         {acc.brand}
                       </span>
                     </div>
@@ -341,7 +341,7 @@ export function FilamentAccessoriesView({
                   <div>
                     <h3
                       onClick={() => onViewDetail(acc)}
-                      className="text-sm font-semibold text-[#1D1D1F] hover:text-[#0071E3] cursor-pointer transition-colors line-clamp-2"
+                      className="text-sm font-semibold text-white hover:text-cyan-300 cursor-pointer transition-colors line-clamp-2"
                     >
                       {acc.name}
                     </h3>
@@ -351,7 +351,7 @@ export function FilamentAccessoriesView({
                       {acc.compatibility.slice(0, 2).map((comp, idx) => (
                         <span
                           key={idx}
-                          className="text-[10px] font-medium bg-[#F5F5F7] text-[#6E6E73] px-2 py-0.5 rounded-full border border-black/[0.04]"
+                          className="text-[10px] font-medium bg-white/10 text-white/80 px-2 py-0.5 rounded-full border border-white/15"
                         >
                           {comp}
                         </span>
@@ -359,17 +359,17 @@ export function FilamentAccessoriesView({
                     </div>
                   </div>
 
-                  <p className="text-xs text-[#86868B] line-clamp-2 leading-relaxed">{acc.description}</p>
+                  <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">{acc.description}</p>
                 </div>
 
                 {/* Price & Cart */}
-                <div className="mt-5 pt-3.5 border-t border-black/[0.06] flex items-center justify-between gap-2">
+                <div className="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between gap-2">
                   <div>
-                    <div className="text-base font-semibold tracking-tight text-[#1D1D1F]">
+                    <div className="text-base font-semibold tracking-tight text-white">
                       {acc.priceVnd.toLocaleString('vi-VN')} đ
                     </div>
                     {acc.originalPriceVnd && (
-                      <div className="text-[11px] text-[#86868B] line-through">
+                      <div className="text-[11px] text-white/50 line-through">
                         {acc.originalPriceVnd.toLocaleString('vi-VN')} đ
                       </div>
                     )}
@@ -378,7 +378,7 @@ export function FilamentAccessoriesView({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onViewDetail(acc)}
-                      className="p-2.5 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] transition-all"
+                      className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white transition-all"
                       title="Xem thông số kỹ thuật"
                     >
                       <Eye className="w-4 h-4" />
@@ -395,7 +395,7 @@ export function FilamentAccessoriesView({
                           subText: acc.brand,
                         })
                       }
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1D1D1F] hover:bg-[#2D2D2F] text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full vision-pill-btn text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
                       <span>Thêm giỏ</span>
