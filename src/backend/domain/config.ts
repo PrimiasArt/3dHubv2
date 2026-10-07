@@ -1,3 +1,23 @@
+export type AppEnvironment = 'staging' | 'official';
+
+export interface ICommercialConfig {
+  brandName: string;            // '3D HUB VIETNAM'
+  companyName: string;          // 'Công ty Cổ phần Công nghệ In 3D Hub'
+  taxCode: string;              // '0318998822'
+  hotline: string;              // '1900 6833 - 0988.333.444'
+  supportEmail: string;         // 'contact@3dhub.vn'
+  address: string;              // 'Khu Công Nghệ Cao, TP. Thủ Đức, TP. Hồ Chí Minh'
+  bankAccount: {
+    bankName: string;           // 'MBBank (Ngân hàng Quân Đội)'
+    accountNumber: string;      // '0901234567'
+    accountHolder: string;      // 'CONG TY CP CONG NGHE 3D HUB'
+    bin: string;                // '970422'
+  };
+  commercialMarginPercent: number; // Tỷ lệ biên lợi nhuận thương mại (ví dụ: 25%)
+  warrantyPolicy: string;       // 'Cam kết chuẩn xác kích thước ±0.1mm, bảo hành 1 đổi 1 trong 7 ngày'
+  vatEnabled: boolean;          // Xuất hóa đơn GTGT điện tử (VAT 8%)
+}
+
 export interface IMaterialCostConfig {
   plaPerKgVnd: number;       // Giá vốn PLA (đ/kg)
   petgPerKgVnd: number;      // Giá vốn PETG (đ/kg)
@@ -31,6 +51,8 @@ export interface IApiKeysConfig {
 }
 
 export interface ISystemConfig {
+  environment: AppEnvironment;  // 'staging' | 'official'
+  commercial: ICommercialConfig;
   materials: IMaterialCostConfig;
   operations: IOperationCostConfig;
   aiPricing: IAICostConfig;
@@ -39,7 +61,27 @@ export interface ISystemConfig {
   updatedBy: string;
 }
 
+export const DEFAULT_COMMERCIAL_CONFIG: ICommercialConfig = {
+  brandName: '3D HUB VIETNAM',
+  companyName: 'Công ty Cổ phần Công nghệ In 3D Hub',
+  taxCode: '0318998822',
+  hotline: '1900 6833 - 0988.333.444',
+  supportEmail: 'contact@3dhub.vn',
+  address: 'Khu Công Nghệ Cao, TP. Thủ Đức, TP. Hồ Chí Minh',
+  bankAccount: {
+    bankName: 'MBBank (Ngân hàng Quân Đội)',
+    accountNumber: '0901234567',
+    accountHolder: 'CONG TY CP CONG NGHE 3D HUB',
+    bin: '970422',
+  },
+  commercialMarginPercent: 25, // 25% biên lợi nhuận thương mại
+  warrantyPolicy: 'Cam kết chuẩn xác kích thước ±0.1mm, bảo hành 1 đổi 1 trong 7 ngày',
+  vatEnabled: true,
+};
+
 export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
+  environment: 'official', // Mặc định ở bản thương mại chính thức (Admin có thể switch sang staging bất kỳ lúc nào)
+  commercial: DEFAULT_COMMERCIAL_CONFIG,
   materials: {
     plaPerKgVnd: 180000,      // 180.000 đ/kg ~ 180 đ/g
     petgPerKgVnd: 220000,     // 220.000 đ/kg ~ 220 đ/g
@@ -51,7 +93,7 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     machineHourlyRateVnd: 8000,
     electricityHourlyVnd: 2500,
     laborPostProcessVnd: 15000,
-    profitMarginPercent: 0, // Mặc định 0% để tính đúng giá gốc
+    profitMarginPercent: 25, // Biên lợi nhuận thương mại mặc định 25%
   },
   aiPricing: {
     tripoUsd: 0.01,
@@ -68,6 +110,6 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     geminiApiKey: process.env.GEMINI_API_KEY || '',
     makerWorldCookie: '',
   },
-  updatedAt: '2026-10-05T09:00:00.000Z',
-  updatedBy: 'Hệ thống mặc định',
+  updatedAt: '2026-10-07T04:00:00.000Z',
+  updatedBy: 'Hệ thống thương mại',
 };

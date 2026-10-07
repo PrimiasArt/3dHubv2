@@ -3,6 +3,7 @@
 import React from 'react';
 import { Sparkles, Zap, Rocket, Crown, Check, ShieldCheck } from 'lucide-react';
 import { AITierId, AI_PRINT_TIERS } from '@/backend/domain/ai-tiers';
+import { useSystemEnvironment } from '@/hooks/useSystemEnvironment';
 
 interface AIPrintTierSelectorProps {
   selectedTier: AITierId;
@@ -15,6 +16,7 @@ export function AIPrintTierSelector({
   onSelectTier,
   userBalanceVnd = 100000,
 }: AIPrintTierSelectorProps) {
+  const { isOfficial, isStaging } = useSystemEnvironment();
   const tiers = Object.values(AI_PRINT_TIERS);
 
   const getTierIcon = (id: AITierId) => {
@@ -97,13 +99,16 @@ export function AIPrintTierSelector({
                     <span className="text-base font-extrabold font-mono text-slate-100">
                       {t.priceVnd.toLocaleString('vi-VN')} đ
                     </span>
-                    <span className="text-[10px] text-slate-500">
-                      (${(t.costUsd * 2).toFixed(2)})
-                    </span>
                   </div>
-                  <span className="text-[10px] text-slate-500 block">
-                    (Cost gốc: ${t.costUsd})
-                  </span>
+                  {isOfficial ? (
+                    <span className="text-[10px] text-emerald-400 font-semibold block">
+                      ✓ Chuẩn in FDM / SLA 100%
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-amber-400/80 font-mono block">
+                      [Staging Cost: ${t.costUsd}]
+                    </span>
+                  )}
                 </div>
 
                 <div

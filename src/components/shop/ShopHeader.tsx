@@ -12,8 +12,11 @@ import {
   Flame,
   CheckCircle2,
   Wallet,
+  FlaskConical,
+  ShieldCheck,
 } from 'lucide-react';
 import { ShopCategoryTab } from '@/backend/domain/shop';
+import { useSystemEnvironment } from '@/hooks/useSystemEnvironment';
 
 interface ShopHeaderProps {
   activeTab: ShopCategoryTab;
@@ -38,6 +41,8 @@ export function ShopHeader({
   servicesCount,
   modelsCount,
 }: ShopHeaderProps) {
+  const { isOfficial, isStaging, commercial } = useSystemEnvironment();
+
   const tabs = [
     {
       id: 'filaments_accessories' as ShopCategoryTab,
@@ -68,31 +73,48 @@ export function ShopHeader({
       <div className="relative rounded-[32px] overflow-hidden border border-white/20 vision-glass-panel p-7 sm:p-10 shadow-[0_24px_60px_rgba(0,0,0,0.45)] text-white">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-emerald-300 text-xs font-semibold backdrop-blur-md">
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>3D Hub Store • Vật Tư &amp; Dịch Vụ Chuẩn Công Nghiệp</span>
+            <div
+              className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-xs font-semibold backdrop-blur-md transition-all ${
+                isOfficial
+                  ? 'bg-emerald-500/20 border-emerald-400/30 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                  : 'bg-amber-500/20 border-amber-400/30 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+              }`}
+            >
+              {isOfficial ? (
+                <>
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>3D Hub Official Store • Vật Tư &amp; Dịch Vụ Thương Mại Chính Thức</span>
+                </>
+              ) : (
+                <>
+                  <FlaskConical className="w-3.5 h-3.5 text-amber-300" />
+                  <span>3D Hub Sandbox • Môi Trường Thử Nghiệm Nội Bộ (Giá Vốn 0%)</span>
+                </>
+              )}
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white">
-              Cửa Hàng 3D Hub.
+              {isOfficial ? 'Cửa Hàng 3D Hub Official.' : 'Cửa Hàng 3D Hub (Staging).'}
             </h1>
 
             <p className="text-xs sm:text-base text-white/70 leading-relaxed">
-              Cung cấp cuộn nhựa in FDM chính hãng, phụ kiện nâng cấp máy in Bambu Lab, dịch vụ in gia công nhanh 24h và kho mô hình 3D chất lượng cao.
+              {isOfficial
+                ? `Cung cấp cuộn nhựa in FDM chính hãng, linh kiện Bambu Lab, dịch vụ in 3D gia công công nghiệp và xuất hóa đơn VAT điện tử bởi ${commercial?.companyName || '3D Hub'}.`
+                : 'Môi trường Sandbox thử nghiệm: cuộn nhựa in FDM, phụ kiện máy in, đặt in thử nghiệm với giá vốn gốc 0% phụ thu.'}
             </p>
 
             <div className="flex flex-wrap items-center gap-5 pt-1 text-xs text-white/80">
               <div className="flex items-center gap-1.5 font-medium text-white">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>100% Chính hãng</span>
+                <span>{isOfficial ? '100% Chính hãng (Bảo hành 1 đổi 1)' : 'Thử nghiệm giá vốn 0%'}</span>
               </div>
               <div className="flex items-center gap-1.5 font-medium text-white">
                 <CheckCircle2 className="w-4 h-4 text-cyan-300" />
-                <span>Báo giá tự động</span>
+                <span>{isOfficial ? 'Báo giá tự động & Xuất hóa đơn VAT' : 'Báo giá mô phỏng Sandbox'}</span>
               </div>
               <div className="flex items-center gap-1.5 font-medium text-white">
                 <CheckCircle2 className="w-4 h-4 text-purple-300" />
-                <span>Thanh toán VietQR &amp; Ví</span>
+                <span>{isOfficial ? `VietQR ${commercial?.bankAccount?.bankName || 'MBBank'} & Ví` : 'Ví thử nghiệm Sandbox'}</span>
               </div>
             </div>
           </div>

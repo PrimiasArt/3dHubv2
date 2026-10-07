@@ -30,6 +30,8 @@ import {
   ArrowUpRight,
   QrCode,
   Building2,
+  FlaskConical,
+  ShieldCheck,
 } from 'lucide-react';
 import { useUserSession } from '@/hooks/useUserSession';
 import { useOrders } from '@/hooks/useOrders';
@@ -91,6 +93,40 @@ export default function AdminPage() {
         showToast('Đã lưu cấu hình hệ thống thành công!');
       } else {
         showToast(`Lỗi: ${data.error || 'Không thể lưu cấu hình'}`);
+      }
+    } catch (err: any) {
+      showToast(`Lỗi: ${err.message}`);
+    } finally {
+      setIsSavingConfig(false);
+    }
+  };
+
+  const handleSwitchEnvironment = async (env: 'staging' | 'official') => {
+    setIsSavingConfig(true);
+    try {
+      const res = await fetch('/api/system/environment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ environment: env }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSystemConfig((prev) => ({
+          ...prev,
+          environment: env,
+          operations: {
+            ...prev.operations,
+            profitMarginPercent: env === 'official' ? (prev.commercial?.commercialMarginPercent || 25) : 0,
+          },
+        }));
+        showToast(data.message || `Đã chuyển sang: ${env.toUpperCase()}`);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('3dhub-environment-change', { detail: { environment: env } })
+          );
+        }
+      } else {
+        showToast(`Lỗi: ${data.error || 'Không thể chuyển đổi môi trường'}`);
       }
     } catch (err: any) {
       showToast(`Lỗi: ${err.message}`);
@@ -314,6 +350,136 @@ export default function AdminPage() {
             <Sparkles className="w-3.5 h-3.5 text-white" />
             <span>AI Studio 3D</span>
           </Link>
+        </div>
+      </div>
+
+      {/* Platform Release Edition & Environment Switcher (Staging vs Official) */}
+      <div className="vision-glass rounded-[32px] p-6 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.4)] border border-white/20 backdrop-blur-2xl text-white space-y-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-md transition-all ${
+                systemConfig.environment === 'official'
+                  ? 'bg-emerald-500/25 border-emerald-400/40 text-emerald-300 shadow-emerald-500/20'
+                  : 'bg-amber-500/25 border-amber-400/40 text-amber-300 shadow-amber-500/20'
+              }`}
+            >
+              {systemConfig.environment === 'official' ? (
+                <ShieldCheck className="w-6 h-6 text-emerald-300" />
+              ) : (
+                <FlaskConical className="w-6 h-6 text-amber-300" />
+              )}
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
+                  Chế Độ Vận Hành Hệ Thống (Release Edition)
+                </h2>
+                <span
+                  className={`px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${
+                    systemConfig.environment === 'official'
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                      : 'bg-amber-500/20 text-amber-300 border-amber-400/40 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                  }`}
+                >
+                  {systemConfig.environment === 'official'
+                    ? 'BẢN THƯƠNG MẠI CHÍNH THỨC'
+                    : 'BẢN THỬ NGHIỆM STAGING'}
+                </span>
+              </div>
+              <p className="text-xs text-white/70 mt-1">
+                Dành riêng cho Admin: Tùy biến chuyển đổi linh hoạt giữa phiên bản thử nghiệm sandbox và phiên bản thương mại chính thức đưa vào sử dụng thực tế.
+              </p>
+            </div>
+          </div>
+
+          {/* Quick 1-click Toggle Action */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() =>
+                handleSwitchEnvironment(
+                  systemConfig.environment === 'official' ? 'staging' : 'official'
+                )
+              }
+              disabled={isSavingConfig}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50 ${
+                systemConfig.environment === 'official'
+                  ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30'
+                  : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/30'
+              }`}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSavingConfig ? 'animate-spin' : ''}`} />
+              <span>
+                {systemConfig.environment === 'official'
+                  ? 'Chuyển Sang Bản Staging (Thử Nghiệm)'
+                  : 'Kích Hoạt Bản Official (Thương Mại)'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* 2 Edition Comparison Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Card 1: Staging */}
+          <div
+            onClick={() => handleSwitchEnvironment('staging')}
+            className={`cursor-pointer p-5 rounded-[24px] border transition-all ${
+              systemConfig.environment === 'staging'
+                ? 'bg-amber-500/15 border-amber-400/50 shadow-[0_0_24px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/40'
+                : 'bg-black/25 border-white/10 hover:border-white/20 opacity-75 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <FlaskConical className="w-4 h-4 text-amber-300" />
+                <span className="font-bold text-sm text-white">1. Bản Staging (Thử Nghiệm)</span>
+              </div>
+              {systemConfig.environment === 'staging' ? (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-black">
+                  ĐANG HOẠT ĐỘNG
+                </span>
+              ) : (
+                <span className="text-[10px] text-white/50">Click để kích hoạt</span>
+              )}
+            </div>
+            <ul className="text-xs text-white/70 space-y-1.5 list-disc list-inside">
+              <li>Biên lợi nhuận 0% (bảng giá tính đúng giá vốn gốc FDM/SLA).</li>
+              <li>Chế độ thử nghiệm Sandbox: ví test, sinh đơn hàng mô phỏng.</li>
+              <li>Hiển thị thanh chuyển đổi vai trò nhanh (RBAC switcher).</li>
+              <li>Cho phép fallback AI simulation khi chưa cấu hình API keys thật.</li>
+            </ul>
+          </div>
+
+          {/* Card 2: Official */}
+          <div
+            onClick={() => handleSwitchEnvironment('official')}
+            className={`cursor-pointer p-5 rounded-[24px] border transition-all ${
+              systemConfig.environment === 'official'
+                ? 'bg-emerald-500/15 border-emerald-400/50 shadow-[0_0_24px_rgba(16,185,129,0.2)] ring-1 ring-emerald-400/40'
+                : 'bg-black/25 border-white/10 hover:border-white/20 opacity-75 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-300" />
+                <span className="font-bold text-sm text-white">2. Bản Official (Thương Mại Chính Thức)</span>
+              </div>
+              {systemConfig.environment === 'official' ? (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400 text-black">
+                  ĐANG HOẠT ĐỘNG
+                </span>
+              ) : (
+                <span className="text-[10px] text-white/50">Click để kích hoạt</span>
+              )}
+            </div>
+            <ul className="text-xs text-white/70 space-y-1.5 list-disc list-inside">
+              <li>Bảng giá thương mại niêm yết (+25% phụ thu / biên lợi nhuận chuẩn).</li>
+              <li>Cổng thanh toán VietQR thật kết nối tài khoản doanh nghiệp 3D Hub.</li>
+              <li>Cam kết bảo hành 1 đổi 1 trong 7 ngày, xuất hóa đơn VAT điện tử.</li>
+              <li>Ẩn các công cụ test / RBAC switcher với khách hàng thông thường.</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -1561,6 +1727,180 @@ export default function AdminPage() {
                   {isSavingConfig ? 'Đang Lưu...' : 'Lưu Giá Gốc AI'}
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Section 5: Commercial Enterprise Configuration */}
+          <div className="vision-glass rounded-[32px] p-5 sm:p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center border border-white/20">
+                <Building2 className="w-5 h-5 text-emerald-300" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-white">
+                  5. Cấu Hình Doanh Nghiệp &amp; Phiên Bản Thương Mại (Official Edition)
+                </h3>
+                <p className="text-xs text-white/60 mt-0.5">
+                  Thông tin pháp nhân, tài khoản ngân hàng nhận thanh toán VietQR và chính sách bảo hành thương mại
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Tên Doanh Nghiệp / Thương Hiệu</label>
+                <input
+                  type="text"
+                  value={systemConfig.commercial?.companyName || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: { ...systemConfig.commercial, companyName: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
+                  placeholder="Công ty Cổ phần Công nghệ In 3D Hub"
+                />
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Mã Số Thuế (MST)</label>
+                <input
+                  type="text"
+                  value={systemConfig.commercial?.taxCode || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: { ...systemConfig.commercial, taxCode: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40 font-mono"
+                  placeholder="0318998822"
+                />
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Hotline Hỗ Trợ 24/7</label>
+                <input
+                  type="text"
+                  value={systemConfig.commercial?.hotline || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: { ...systemConfig.commercial, hotline: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
+                  placeholder="1900 6833 - 0988.333.444"
+                />
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Email Chăm Sóc Khách Hàng</label>
+                <input
+                  type="email"
+                  value={systemConfig.commercial?.supportEmail || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: { ...systemConfig.commercial, supportEmail: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
+                  placeholder="contact@3dhub.vn"
+                />
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Tài Khoản Ngân Hàng VietQR (Chính Thức)</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={systemConfig.commercial?.bankAccount?.bankName || ''}
+                    onChange={(e) =>
+                      setSystemConfig({
+                        ...systemConfig,
+                        commercial: {
+                          ...systemConfig.commercial,
+                          bankAccount: {
+                            ...systemConfig.commercial?.bankAccount,
+                            bankName: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    className="px-3 py-2 rounded-xl bg-black/30 border border-white/15 text-xs text-white"
+                    placeholder="Tên ngân hàng (MBBank)"
+                  />
+                  <input
+                    type="text"
+                    value={systemConfig.commercial?.bankAccount?.accountNumber || ''}
+                    onChange={(e) =>
+                      setSystemConfig({
+                        ...systemConfig,
+                        commercial: {
+                          ...systemConfig.commercial,
+                          bankAccount: {
+                            ...systemConfig.commercial?.bankAccount,
+                            accountNumber: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    className="px-3 py-2 rounded-xl bg-black/30 border border-white/15 text-xs text-emerald-300 font-mono"
+                    placeholder="Số tài khoản"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+                <label className="text-xs font-bold text-white block">Tên Chủ Tài Khoản Doanh Nghiệp</label>
+                <input
+                  type="text"
+                  value={systemConfig.commercial?.bankAccount?.accountHolder || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: {
+                        ...systemConfig.commercial,
+                        bankAccount: {
+                          ...systemConfig.commercial?.bankAccount,
+                          accountHolder: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40 uppercase font-mono"
+                  placeholder="CONG TY CP CONG NGHE 3D HUB"
+                />
+              </div>
+
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2 md:col-span-2">
+                <label className="text-xs font-bold text-white block">Chính Sách Bảo Hành &amp; Cam Kết Chất Lượng</label>
+                <input
+                  type="text"
+                  value={systemConfig.commercial?.warrantyPolicy || ''}
+                  onChange={(e) =>
+                    setSystemConfig({
+                      ...systemConfig,
+                      commercial: { ...systemConfig.commercial, warrantyPolicy: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
+                  placeholder="Cam kết chuẩn xác kích thước ±0.1mm, bảo hành 1 đổi 1 trong 7 ngày"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => handleSaveConfig('commercial', { commercial: systemConfig.commercial })}
+                disabled={isSavingConfig}
+                className="vision-pill-btn px-6 py-2.5 rounded-full text-white text-xs font-bold transition-all shadow-md disabled:opacity-50"
+              >
+                {isSavingConfig ? 'Đang Lưu...' : 'Lưu Thông Tin Doanh Nghiệp Thương Mại'}
+              </button>
             </div>
           </div>
         </div>

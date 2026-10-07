@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Calculator, DollarSign, Zap, TrendingUp, Copy, Check } from 'lucide-react';
+import { Calculator, DollarSign, Zap, TrendingUp, Copy, Check, ShieldCheck, FlaskConical } from 'lucide-react';
 import { PrintCostCalculator } from '@/backend/services/slicing/PrintCostCalculator';
 import { ISupportConfig } from '@/backend/domain/slicing';
+import { useSystemEnvironment } from '@/hooks/useSystemEnvironment';
 
 interface PrintCostCalculatorProps {
   filamentType: string;
@@ -20,6 +21,7 @@ export function PrintCostCalculatorComponent({
   supportConfig,
   printerWattage = 350,
 }: PrintCostCalculatorProps) {
+  const { isOfficial, isStaging, commercial } = useSystemEnvironment();
   const [marginMultiplier, setMarginMultiplier] = useState<number>(2.5);
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -36,15 +38,27 @@ export function PrintCostCalculatorComponent({
   }, [filamentType, filamentWeightGrams, printTimeMinutes, printerWattage, supportConfig, marginMultiplier]);
 
   const handleCopyQuote = () => {
-    const text = `📋 BÁO GIÁ DỊCH VỤ IN 3D - 3D HUB
-━━━━━━━━━━━━━━━━━━━━━
+    const text = isOfficial
+      ? `📋 BÁO GIÁ DỊCH VỤ IN 3D CHÍNH THỨC - ${commercial?.brandName || '3D HUB VIETNAM'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Đơn vị: ${commercial?.companyName || 'Công ty CP Công nghệ In 3D Hub'}
+• Hotline: ${commercial?.hotline || '1900 6833'}
+• Loại nhựa: ${filamentType.toUpperCase()} (Chính hãng 100%)
+• Khối lượng: ${filamentWeightGrams}g (Support: +${cost.supportWeightGrams}g)
+• Thời gian in: ${Math.floor(printTimeMinutes / 60)}h ${printTimeMinutes % 60}p
+• Bảo hành: ${commercial?.warrantyPolicy || 'Bảo hành 1 đổi 1 trong 7 ngày'}
+• Chi phí gia công trọn gói: ${cost.suggestedSellingPriceVnd.toLocaleString('vi-VN')} VNĐ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉 TỔNG GIÁ DỊCH VỤ: ${cost.suggestedSellingPriceVnd.toLocaleString('vi-VN')} VNĐ (Đã gồm VAT & đóng gói chuẩn)`
+      : `📋 BÁO GIÁ DỊCH VỤ IN 3D (BẢN THỬ NGHIỆM STAGING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Loại nhựa: ${filamentType.toUpperCase()}
 • Khối lượng: ${filamentWeightGrams}g (Support: +${cost.supportWeightGrams}g)
 • Thời gian in: ${Math.floor(printTimeMinutes / 60)}h ${printTimeMinutes % 60}p
 • Chi phí nhựa: ${cost.totalFilamentCostVnd.toLocaleString('vi-VN')} đ
 • Chi phí điện & khấu hao: ${(cost.powerCostVnd + cost.depreciationCostVnd).toLocaleString('vi-VN')} đ
-━━━━━━━━━━━━━━━━━━━━━
-👉 TỔNG GIÁ DỊCH VỤ: ${cost.suggestedSellingPriceVnd.toLocaleString('vi-VN')} VNĐ`;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉 GIÁ GỐC THỬ NGHIỆM: ${cost.suggestedSellingPriceVnd.toLocaleString('vi-VN')} VNĐ`;
 
     navigator.clipboard.writeText(text);
     setIsCopied(true);
@@ -62,12 +76,20 @@ export function PrintCostCalculatorComponent({
           <div>
             <h4 className="text-sm font-bold text-white flex items-center gap-2">
               <span>Bóc Tách Chi Phí &amp; Báo Giá Dịch Vụ In 3D</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/15 text-white/90 border border-white/15">
-                FDM Market Rates VN
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                  isOfficial
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                    : 'bg-amber-500/20 text-amber-300 border-amber-400/30'
+                }`}
+              >
+                {isOfficial ? 'Official Commercial Rate' : 'Staging Sandbox'}
               </span>
             </h4>
             <p className="text-[11px] text-white/60">
-              Tự động tính chi phí nhựa, điện tiêu thụ, khấu hao máy &amp; đề xuất giá bán gia công
+              {isOfficial
+                ? 'Tự động tính chi phí nhựa, điện tiêu thụ, khấu hao máy & đề xuất giá bán niêm yết thương mại'
+                : 'Mô phỏng bóc tách chi phí nội bộ cho môi trường Staging'}
             </p>
           </div>
         </div>

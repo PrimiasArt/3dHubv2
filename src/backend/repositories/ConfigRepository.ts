@@ -5,6 +5,8 @@ import {
   IOperationCostConfig,
   IAICostConfig,
   IApiKeysConfig,
+  AppEnvironment,
+  ICommercialConfig,
 } from '../domain/config';
 
 class ConfigRepository {
@@ -12,6 +14,46 @@ class ConfigRepository {
 
   getConfig(): ISystemConfig {
     return { ...this.config };
+  }
+
+  getEnvironment(): AppEnvironment {
+    return this.config.environment || 'official';
+  }
+
+  isOfficial(): boolean {
+    return this.getEnvironment() === 'official';
+  }
+
+  isStaging(): boolean {
+    return this.getEnvironment() === 'staging';
+  }
+
+  setEnvironment(env: AppEnvironment, updatedBy: string = 'Admin'): ISystemConfig {
+    this.config.environment = env;
+    this.config.updatedAt = new Date().toISOString();
+    this.config.updatedBy = updatedBy;
+
+    // Khi chuyển sang official: tự động áp dụng biên lợi nhuận thương mại
+    if (env === 'official') {
+      if (this.config.commercial?.commercialMarginPercent) {
+        this.config.operations.profitMarginPercent = this.config.commercial.commercialMarginPercent;
+      }
+    } else {
+      // Khi ở staging: mặc định giá gốc 0% phụ thu để test
+      this.config.operations.profitMarginPercent = 0;
+    }
+
+    return this.getConfig();
+  }
+
+  updateCommercial(commercial: Partial<ICommercialConfig>, updatedBy: string = 'Admin'): ISystemConfig {
+    this.config.commercial = { ...this.config.commercial, ...commercial };
+    if (commercial.commercialMarginPercent !== undefined && this.isOfficial()) {
+      this.config.operations.profitMarginPercent = commercial.commercialMarginPercent;
+    }
+    this.config.updatedAt = new Date().toISOString();
+    this.config.updatedBy = updatedBy;
+    return this.getConfig();
   }
 
   updateMaterials(materials: Partial<IMaterialCostConfig>, updatedBy: string = 'Admin'): ISystemConfig {

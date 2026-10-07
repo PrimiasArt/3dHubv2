@@ -40,9 +40,19 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { section, materials, operations, aiPricing, apiKeys } = body;
+    const { section, environment, commercial, materials, operations, aiPricing, apiKeys } = body;
 
     let updatedConfig = configRepository.getConfig();
+
+    if (section === 'environment' || environment) {
+      if (environment === 'staging' || environment === 'official') {
+        updatedConfig = configRepository.setEnvironment(environment, activeUser.name);
+      }
+    }
+
+    if (section === 'commercial' || commercial) {
+      updatedConfig = configRepository.updateCommercial(commercial, activeUser.name);
+    }
 
     if (section === 'materials' || materials) {
       updatedConfig = configRepository.updateMaterials(materials, activeUser.name);

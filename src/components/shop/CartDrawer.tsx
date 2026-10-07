@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { ICartItem } from '@/backend/domain/shop';
 import { useUserWallet } from '@/hooks/useUserWallet';
+import { useSystemEnvironment } from '@/hooks/useSystemEnvironment';
 import {
   generateVietQRUrl,
   generateMoMoQRUrl,
@@ -56,6 +57,7 @@ export function CartDrawer({
   isProcessing,
 }: CartDrawerProps) {
   const { balanceVnd, setIsTopUpModalOpen } = useUserWallet();
+  const { isOfficial, isStaging, commercial } = useSystemEnvironment();
   const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'vietqr' | 'momo' | 'cod'>('wallet');
 
   // Customer Form
@@ -75,8 +77,10 @@ export function CartDrawer({
 
   const isWalletInsufficient = paymentMethod === 'wallet' && balanceVnd < totalVnd;
 
-  // Transfer code memo for QR
-  const orderTransferCode = `3DHUB SHOP ${Math.floor(100000 + Math.random() * 900000)}`;
+  // Transfer code memo for QR (Official uses formal invoice code, Staging uses Sandbox memo)
+  const orderTransferCode = isOfficial
+    ? `3DHUB HD${Math.floor(100000 + Math.random() * 900000)}`
+    : `STAGING TEST ${Math.floor(100000 + Math.random() * 900000)}`;
   const vietQrUrl = generateVietQRUrl(totalVnd, orderTransferCode);
   const momoQrUrl = generateMoMoQRUrl(totalVnd, orderTransferCode);
 
@@ -156,7 +160,9 @@ export function CartDrawer({
                   Mã đơn hàng: #{completedOrder.orderId}
                 </p>
                 <p className="text-xs text-white/70 mt-2 max-w-xs leading-relaxed">
-                  Đơn hàng đã được ghi nhận và gửi tới xưởng in Bambu Lab. Bạn có thể theo dõi tiến độ cắt lớp và in thực tế trên trang Quản Trị.
+                  {isOfficial
+                    ? `Đơn hàng thương mại đã được tiếp nhận bởi ${commercial?.companyName || '3D Hub'}. Hệ thống tự động xuất phiếu bảo hành 1 đổi 1 và giao hàng trong 24h.`
+                    : 'Đơn hàng thử nghiệm Sandbox đã được ghi nhận trong môi trường Staging. Bạn không bị trừ tiền thực tế.'}
                 </p>
               </div>
 
