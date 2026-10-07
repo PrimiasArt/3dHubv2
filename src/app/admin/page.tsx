@@ -32,6 +32,7 @@ import {
   Building2,
   FlaskConical,
   ShieldCheck,
+  ShoppingBag,
 } from 'lucide-react';
 import { useUserSession } from '@/hooks/useUserSession';
 import { useOrders } from '@/hooks/useOrders';
@@ -39,6 +40,7 @@ import { UserRole, IUser } from '@/backend/domain/user';
 import { OrderFulfillmentStatus } from '@/backend/domain/order';
 import { AI_PRINT_TIERS } from '@/backend/domain/ai-tiers';
 import { ISystemConfig, DEFAULT_SYSTEM_CONFIG } from '@/backend/domain/config';
+import { AdminProductsManager } from '@/components/admin/AdminProductsManager';
 
 export default function AdminPage() {
   const {
@@ -63,9 +65,16 @@ export default function AdminPage() {
     refreshOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings'>('workshop');
+  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products'>('workshop');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
+
+  // If user is Mod (or has product manage permission without order manage), default to products tab
+  React.useEffect(() => {
+    if (currentUser?.role === 'mod' && !permissions.canManageOrders) {
+      setActiveTab('products');
+    }
+  }, [currentUser?.role, permissions.canManageOrders]);
 
   // Fetch admin system configuration
   React.useEffect(() => {
@@ -592,6 +601,20 @@ export default function AdminPage() {
           <TrendingUp className="w-4 h-4" />
           <span>Báo Cáo Doanh Thu &amp; Cổng Thanh Toán</span>
         </button>
+
+        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+              activeTab === 'products'
+                ? 'bg-white/28 text-white shadow-xs'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <ShoppingBag className="w-4 h-4" />
+            <span>Kho Hàng &amp; Sản Phẩm</span>
+          </button>
+        )}
 
         {currentUser?.role === 'admin' && (
           <button
@@ -1904,6 +1927,11 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* TAB 5: PRODUCTS & INVENTORY MANAGEMENT (ADMIN & MOD) */}
+      {activeTab === 'products' && (
+        <AdminProductsManager />
       )}
     </div>
   );

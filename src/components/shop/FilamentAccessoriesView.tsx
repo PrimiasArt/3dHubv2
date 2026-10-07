@@ -200,7 +200,15 @@ export function FilamentAccessoriesView({
                     </div>
 
                     <div className="flex flex-col items-end gap-1.5">
-                      {fil.badge && (
+                      {!fil.inStock || fil.stockCount === 0 ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/25 text-rose-300 border border-rose-500/35">
+                          Hết hàng
+                        </span>
+                      ) : fil.stockCount <= 5 ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/25 text-amber-300 border border-amber-500/35">
+                          Còn {fil.stockCount} cuộn
+                        </span>
+                      ) : fil.badge ? (
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
                           fil.badge === 'Bán chạy'
                             ? 'bg-amber-400/20 text-amber-300 border-amber-400/30'
@@ -210,7 +218,7 @@ export function FilamentAccessoriesView({
                         }`}>
                           {fil.badge}
                         </span>
-                      )}
+                      ) : null}
                       <span className="text-[11px] font-semibold text-white/90 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
                         {fil.brand}
                       </span>
@@ -273,6 +281,7 @@ export function FilamentAccessoriesView({
                     </button>
 
                     <button
+                      disabled={!fil.inStock || fil.stockCount === 0}
                       onClick={() =>
                         onAddToCart({
                           id: fil.id,
@@ -283,10 +292,14 @@ export function FilamentAccessoriesView({
                           subText: `${fil.brand} • ${fil.colorName}`,
                         })
                       }
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full vision-pill-btn text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-xs shadow-xs active:scale-98 transition-all ${
+                        !fil.inStock || fil.stockCount === 0
+                          ? 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed'
+                          : 'vision-pill-btn text-white'
+                      }`}
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
-                      <span>Thêm giỏ</span>
+                      <span>{!fil.inStock || fil.stockCount === 0 ? 'Hết hàng' : 'Thêm giỏ'}</span>
                     </button>
                   </div>
                 </div>
@@ -327,11 +340,19 @@ export function FilamentAccessoriesView({
                     </div>
 
                     <div className="flex flex-col items-end gap-1.5">
-                      {acc.badge && (
+                      {!acc.inStock || acc.stockCount === 0 ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/25 text-rose-300 border border-rose-500/35">
+                          Hết hàng
+                        </span>
+                      ) : acc.stockCount <= 5 ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/25 text-amber-300 border border-amber-500/35">
+                          Còn {acc.stockCount} món
+                        </span>
+                      ) : acc.badge ? (
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-purple-400/20 text-purple-300 border border-purple-400/30">
                           {acc.badge}
                         </span>
-                      )}
+                      ) : null}
                       <span className="text-[11px] font-semibold text-white/90 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
                         {acc.brand}
                       </span>
@@ -385,6 +406,7 @@ export function FilamentAccessoriesView({
                     </button>
 
                     <button
+                      disabled={!acc.inStock || acc.stockCount === 0}
                       onClick={() =>
                         onAddToCart({
                           id: acc.id,
@@ -395,10 +417,14 @@ export function FilamentAccessoriesView({
                           subText: acc.brand,
                         })
                       }
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full vision-pill-btn text-white font-medium text-xs shadow-xs active:scale-98 transition-all"
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-xs shadow-xs active:scale-98 transition-all ${
+                        !acc.inStock || acc.stockCount === 0
+                          ? 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed'
+                          : 'vision-pill-btn text-white'
+                      }`}
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
-                      <span>Thêm giỏ</span>
+                      <span>{!acc.inStock || acc.stockCount === 0 ? 'Hết hàng' : 'Thêm giỏ'}</span>
                     </button>
                   </div>
                 </div>

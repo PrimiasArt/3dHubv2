@@ -83,65 +83,116 @@ export default function HomePage() {
           </div>
 
           {/* Main Card Body (Thumbnail + Typography + VisionOS Actions) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left 16:9 Thumbnail Image */}
-            <div className="lg:col-span-4 relative aspect-video w-full rounded-2xl overflow-hidden bg-black/40 border border-white/15 shadow-inner group">
-              <Image
-                src="/thumbnails/dragon.svg"
-                alt="3D AI Model"
-                fill
-                unoptimized
-                className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute top-2.5 left-2.5">
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/25 backdrop-blur-md text-white border border-white/20">
-                  AI Generated
-                </span>
+          {(() => {
+            const heroTabsData = {
+              info: {
+                thumbnail: '/thumbnails/dragon.svg',
+                alt: 'Hệ Sinh Thái 3D Hub',
+                badge: 'Hệ Sinh Thái Toàn Diện',
+                title: 'Nền Tảng Không Gian 3D Hub',
+                description:
+                  'Tích hợp toàn diện từ trí tuệ nhân tạo sinh mô hình 3D, xưởng in dịch vụ tốc độ cao 24h đến cửa hàng vật tư cuộn nhựa & phụ kiện chính hãng. Trải nghiệm không gian Apple VisionOS mượt mà.',
+                pill1: 'AI + In 3D Cấp Tốc',
+                pill2: 'Xưởng Bambu & Voron',
+                tags: ['Vật tư chính hãng', 'In chuẩn công nghiệp', 'Watertight Mesh'],
+                primaryBtn: { text: 'Khám Phá Toàn Diện', href: '/studio' },
+                secondaryBtn: { text: 'Ghé Thăm Cửa Hàng', href: '/shop' },
+              },
+              features: {
+                thumbnail: '/thumbnails/benchy.svg',
+                alt: 'Mô Hình AI 3D',
+                badge: 'Tripo • Trellis • Meshy',
+                title: 'Dựng Hình 3D Bằng Trí Tuệ Nhân Tạo',
+                description:
+                  'Biến ảnh chụp sản phẩm hoặc phác thảo 2D thành mô hình 3D chuẩn xác chỉ trong tích tắc. Lưới kín nước Watertight xuất file .STL và .GLB sẵn sàng in tức thì.',
+                pill1: 'Trí tuệ nhân tạo',
+                pill2: 'Thời gian sinh: ~30s',
+                tags: ['STL', 'GLB', 'Watertight', 'Tự động khép lưới'],
+                primaryBtn: { text: 'Thử AI Dựng 3D', href: '/studio' },
+                secondaryBtn: { text: 'Xem Thư Viện Mẫu', href: '/community' },
+              },
+              farm: {
+                thumbnail: '/thumbnails/voron-toolhead.svg',
+                alt: 'Xưởng In 3D 24H',
+                badge: 'Farm Bambu X1C & Voron',
+                title: 'Xưởng In Dịch Vụ Cấp Tốc 24H',
+                description:
+                  'Hệ thống máy in Bambu Lab X1-Carbon và Voron 2.4 hoạt động liên tục. Báo giá tự động theo khối lượng gram và hỗ trợ đa dạng vật liệu PLA, PETG, ABS, TPU, Carbon Fiber.',
+                pill1: 'Giao hàng hỏa tốc 24h',
+                pill2: 'Độ mịn 0.08mm',
+                tags: ['Báo giá tức thì', 'FDM & SLA', 'Đa màu AMS', 'Bảo đảm 1 đổi 1'],
+                primaryBtn: { text: 'Đặt In Cấp Tốc 24H', href: '/shop?tab=services' },
+                secondaryBtn: { text: 'Bảng Giá & Dịch Vụ', href: '/shop' },
+              },
+            };
+
+            const current = heroTabsData[activeHeroTab];
+
+            return (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                {/* Left 16:9 Thumbnail Image */}
+                <div className="lg:col-span-4 relative aspect-video w-full rounded-2xl overflow-hidden bg-black/40 border border-white/15 shadow-inner group">
+                  <Image
+                    key={current.thumbnail}
+                    src={current.thumbnail}
+                    alt={current.alt}
+                    fill
+                    unoptimized
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-500 animate-fadeIn"
+                  />
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/25 backdrop-blur-md text-white border border-white/20">
+                      {current.badge}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Middle Content */}
+                <div className="lg:col-span-5 space-y-2.5">
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white transition-all">
+                    {current.title}
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-white/80 leading-relaxed transition-all">
+                    {current.description}
+                  </p>
+
+                  {/* Tags & Badges */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-white/70">
+                    <span>{current.pill1}</span>
+                    <span>•</span>
+                    <span>{current.pill2}</span>
+                    {current.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white/20 border border-white/20 text-white"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right Action Buttons (VisionOS Glass Pills exactly as in reference) */}
+                <div className="lg:col-span-3 flex flex-col gap-3">
+                  <Link
+                    href={current.primaryBtn.href}
+                    className="w-full py-3.5 px-5 rounded-2xl bg-white/25 hover:bg-white/35 backdrop-blur-md border border-white/20 text-white font-semibold text-sm flex items-center justify-center gap-2.5 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.2)] active:scale-98 group"
+                  >
+                    <Play className="w-4 h-4 fill-white text-white group-hover:scale-110 transition-transform" />
+                    <span>{current.primaryBtn.text}</span>
+                  </Link>
+
+                  <Link
+                    href={current.secondaryBtn.href}
+                    className="w-full py-3.5 px-5 rounded-2xl bg-black/25 hover:bg-black/35 backdrop-blur-md border border-white/10 text-white font-medium text-sm flex items-center justify-center transition-all active:scale-98 text-center"
+                  >
+                    <span>{current.secondaryBtn.text}</span>
+                  </Link>
+                </div>
               </div>
-            </div>
-
-            {/* Middle Content */}
-            <div className="lg:col-span-5 space-y-2.5">
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Dựng Hình 3D Không Gian
-              </h2>
-
-              <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
-                Biến bản vẽ 2D hoặc ảnh chụp sản phẩm thành mô hình 3D chuẩn xác chỉ trong tích tắc. Lưới kín nước Watertight xuất file .STL và .GLB chuẩn bị in tức thì trên xưởng Bambu Lab.
-              </p>
-
-              {/* Tags & Badges */}
-              <div className="flex items-center gap-2 pt-1 text-xs text-white/70">
-                <span>Trí tuệ nhân tạo</span>
-                <span>•</span>
-                <span>Thời gian sinh: ~30s</span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white/20 border border-white/20 text-white">
-                  STL
-                </span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white/20 border border-white/20 text-white">
-                  3D
-                </span>
-              </div>
-            </div>
-
-            {/* Right Action Buttons (VisionOS Glass Pills exactly as in reference) */}
-            <div className="lg:col-span-3 flex flex-col gap-3">
-              <Link
-                href="/studio"
-                className="w-full py-3.5 px-5 rounded-2xl bg-white/25 hover:bg-white/35 backdrop-blur-md border border-white/20 text-white font-semibold text-sm flex items-center justify-center gap-2.5 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.2)] active:scale-98 group"
-              >
-                <Play className="w-4 h-4 fill-white text-white group-hover:scale-110 transition-transform" />
-                <span>Thử AI Dựng 3D</span>
-              </Link>
-
-              <Link
-                href="/shop"
-                className="w-full py-3.5 px-5 rounded-2xl bg-black/25 hover:bg-black/35 backdrop-blur-md border border-white/10 text-white font-medium text-sm flex items-center justify-center transition-all active:scale-98 text-center"
-              >
-                <span>Khám Phá Cửa Hàng</span>
-              </Link>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
