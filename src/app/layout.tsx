@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Navbar } from '@/components/common/Navbar';
+import { StagingSandboxDock } from '@/components/common/StagingSandboxDock';
 
 export const metadata: Metadata = {
   title: '3D HUB - Spatial 3D Studio & Maker Intelligence',
@@ -41,6 +42,7 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
+          <StagingSandboxDock />
         </div>
       </body>
     </html>

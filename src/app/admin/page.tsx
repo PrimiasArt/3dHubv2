@@ -34,6 +34,7 @@ import {
   ShieldCheck,
   ShoppingBag,
   Sliders,
+  Compass,
 } from 'lucide-react';
 import { useUserSession } from '@/hooks/useUserSession';
 import { useOrders } from '@/hooks/useOrders';
@@ -43,6 +44,8 @@ import { AI_PRINT_TIERS } from '@/backend/domain/ai-tiers';
 import { ISystemConfig, DEFAULT_SYSTEM_CONFIG } from '@/backend/domain/config';
 import { AdminProductsManager } from '@/components/admin/AdminProductsManager';
 import { AdminModulesManager } from '@/components/admin/AdminModulesManager';
+import { AdminTrendsManager } from '@/components/admin/AdminTrendsManager';
+import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
 
 export default function AdminPage() {
   const {
@@ -67,7 +70,7 @@ export default function AdminPage() {
     refreshOrders,
   } = useOrders();
 
-  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules'>('workshop');
+  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler'>('workshop');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
@@ -621,6 +624,34 @@ export default function AdminPage() {
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Kho Hàng &amp; Sản Phẩm</span>
+          </button>
+        )}
+
+        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+          <button
+            onClick={() => setActiveTab('trends')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+              activeTab === 'trends'
+                ? 'bg-white/28 text-white shadow-xs'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <TrendingUp className="w-4 h-4 text-[#7EC895]" />
+            <span>Phân Tích Trend (Gemini AI)</span>
+          </button>
+        )}
+
+        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+          <button
+            onClick={() => setActiveTab('crawler')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+              activeTab === 'crawler'
+                ? 'bg-white/28 text-white shadow-xs'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <Compass className="w-4 h-4 text-[#7EC895]" />
+            <span>Thu Thập Dữ Liệu (Crawler)</span>
           </button>
         )}
 
@@ -1961,6 +1992,16 @@ export default function AdminPage() {
       {/* TAB 6: DYNAMIC ROLE-BASED MODULE PERMISSIONS MATRIX (ADMIN ONLY) */}
       {activeTab === 'modules' && currentUser?.role === 'admin' && (
         <AdminModulesManager />
+      )}
+
+      {/* TAB 7: TREND INTELLIGENCE & GEMINI AI ANALYSIS */}
+      {activeTab === 'trends' && (
+        <AdminTrendsManager />
+      )}
+
+      {/* TAB 8: MULTI-PLATFORM 3D DATA CRAWLER */}
+      {activeTab === 'crawler' && (
+        <AdminCrawlerManager />
       )}
     </div>
   );

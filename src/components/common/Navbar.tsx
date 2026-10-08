@@ -63,24 +63,22 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Dynamic Navigation Items based on Module Permissions Matrix
-  const navItems = [];
+  // Dynamic Navigation Items based on Module Permissions Matrix - Streamlined 3-Pillar Architecture
+  const navItems = [
+    { label: 'Trang Chủ', href: '/', icon: Box },
+  ];
   if (isModuleVisible('studio')) {
-    navItems.push({ label: 'Studio 3D', href: '/studio', icon: Sparkles });
+    navItems.push({ label: 'AI Studio (Tạo 3D)', href: '/studio', icon: Sparkles });
   }
   if (isModuleVisible('shop')) {
-    navItems.push({ label: 'Cửa Hàng', href: '/shop', icon: ShoppingBag });
+    navItems.push({ label: 'Cửa Hàng & Dịch Vụ In', href: '/shop', icon: ShoppingBag });
   }
-  if (isModuleVisible('trends')) {
-    navItems.push({ label: 'Xu Hướng', href: '/trends', icon: TrendingUp });
-    navItems.push({ label: 'Crawler', href: '/crawler', icon: Compass });
-  }
-  if (isModuleVisible('seller_hub') || currentUser?.role === 'seller' || permissions.canAccessSeller) {
-    navItems.push({ label: 'Gian Hàng', href: '/seller', icon: Store });
+  if ((isModuleVisible('seller_hub') || currentUser?.role === 'seller' || permissions.canAccessSeller) && currentUser?.role !== 'user') {
+    navItems.push({ label: 'Kênh Người Bán', href: '/seller', icon: Store });
   }
   if (permissions.canAccessAdmin && isModuleVisible('admin_hub')) {
     navItems.push({
-      label: 'Quản Trị',
+      label: 'Quản Trị Hệ Thống',
       href: '/admin',
       icon: Building2,
     });
@@ -432,14 +430,19 @@ export function Navbar() {
                     </div>
                   )}
 
-                  {/* Switch Demo User Section (Hiển thị khi ở Staging hoặc là Admin) */}
-                  {(isStaging || isAdmin) && (
-                    <>
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50 px-1 mb-1.5">
-                          Chuyển Tài Khoản (RBAC Sandbox)
-                        </p>
-                        <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+                  {/* Switch Demo User Section - Collapsible for Admin in Staging */}
+                  {isAdmin && isStaging && (
+                    <details className="p-2.5 rounded-2xl bg-white/5 border border-white/10 group">
+                      <summary className="text-[11px] font-semibold text-[#A5BAAC] cursor-pointer flex items-center justify-between list-none select-none">
+                        <span className="flex items-center gap-1.5">
+                          <FlaskConical className="w-3.5 h-3.5 text-[#7EC895]" />
+                          <span>Mở Rộng Sandbox RBAC Test</span>
+                        </span>
+                        <ChevronDown className="w-3.5 h-3.5 transition-transform group-open:rotate-180 text-white/50" />
+                      </summary>
+
+                      <div className="pt-2.5 space-y-2">
+                        <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
                           {allUsers.map((u) => {
                             const isCurrent = u.id === currentUser?.id;
                             const badge = getRoleBadge(u.role);
@@ -450,62 +453,27 @@ export function Navbar() {
                                   switchUser(u.id);
                                   setIsUserMenuOpen(false);
                                 }}
-                                className={`w-full flex items-center justify-between p-2 rounded-xl text-left text-xs transition-colors ${
+                                className={`w-full flex items-center justify-between p-1.5 rounded-xl text-left text-xs transition-colors ${
                                   isCurrent
                                     ? 'bg-white/20 border border-white/20 text-white font-semibold'
                                     : 'hover:bg-white/10 text-white/80'
                                 }`}
                               >
                                 <div className="flex items-center gap-2 min-w-0">
-                                  <div className="relative w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/20">
+                                  <div className="relative w-5 h-5 rounded-full overflow-hidden shrink-0 border border-white/20">
                                     <Image src={u.avatar} alt={u.name} fill unoptimized className="object-cover" />
                                   </div>
-                                  <div className="truncate">
-                                    <span className="font-medium block truncate">{u.name}</span>
-                                  </div>
+                                  <span className="font-medium text-[11px] truncate">{u.name}</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 shrink-0">
-                                  <span
-                                    className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full border ${badge.bg}`}
-                                  >
-                                    {badge.text}
-                                  </span>
-                                  {isCurrent && <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />}
-                                </div>
+                                <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded-full border ${badge.bg}`}>
+                                  {badge.text}
+                                </span>
                               </button>
                             );
                           })}
                         </div>
                       </div>
-
-                      {/* Switch Direct Role */}
-                      <div className="pt-2 border-t border-white/10">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-white/50 px-1 mb-1.5">
-                          Đổi Quyền Nhanh (Thử Nghiệm)
-                        </p>
-                        <div className="grid grid-cols-4 gap-1">
-                          {(['admin', 'mod', 'seller', 'user'] as UserRole[]).map((r) => {
-                            const isActive = currentUser?.role === r;
-                            return (
-                              <button
-                                key={r}
-                                onClick={() => {
-                                  switchRole(r);
-                                  setIsUserMenuOpen(false);
-                                }}
-                                className={`py-1 text-[10px] font-semibold rounded-lg uppercase border transition-all ${
-                                  isActive
-                                    ? 'bg-white/30 border-white/40 text-white shadow-xs'
-                                    : 'bg-white/10 border-white/10 text-white/70 hover:text-white hover:bg-white/15'
-                                }`}
-                              >
-                                {r}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </>
+                    </details>
                   )}
                 </div>
               )}
