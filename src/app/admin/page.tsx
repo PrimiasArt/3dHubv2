@@ -46,6 +46,7 @@ import { AdminProductsManager } from '@/components/admin/AdminProductsManager';
 import { AdminModulesManager } from '@/components/admin/AdminModulesManager';
 import { AdminTrendsManager } from '@/components/admin/AdminTrendsManager';
 import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
+import { AdminUserManager } from '@/components/admin/AdminUserManager';
 
 export default function AdminPage() {
   const {
@@ -157,12 +158,6 @@ export default function AdminPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('all');
   const [orderSearchQuery, setOrderSearchQuery] = useState<string>('');
 
-  // User Management state
-  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [newUserName, setNewUserName] = useState('');
-  const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserRole, setNewUserRole] = useState<UserRole>('user');
-
   // Filtered orders
   const filteredOrders = orders.filter((o) => {
     const matchesStatus = orderStatusFilter === 'all' || o.fulfillmentStatus === orderStatusFilter;
@@ -173,57 +168,6 @@ export default function AdminPage() {
       o.items.some((item) => item.title.toLowerCase().includes(orderSearchQuery.toLowerCase()));
     return matchesStatus && matchesSearch;
   });
-
-  const handleCreateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUserName || !newUserEmail) return;
-
-    try {
-      const res = await fetch('/api/auth/me', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'create_user',
-          name: newUserName,
-          email: newUserEmail,
-          role: newUserRole,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok && data.user) {
-        showToast(`Đã thêm thành viên: ${data.user.name}`);
-        setNewUserName('');
-        setNewUserEmail('');
-        setIsAddUserModalOpen(false);
-        refreshSession();
-      } else {
-        showToast(`Lỗi: ${data.error || 'Không thể tạo user'}`);
-      }
-    } catch (err: any) {
-      showToast(`Lỗi: ${err.message}`);
-    }
-  };
-
-  const handleAdjustBalance = async (userId: string, amount: number) => {
-    try {
-      const res = await fetch('/api/auth/me', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'adjust_balance',
-          userId,
-          amount,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        showToast(`Đã cập nhật số dư cho thành viên (+${amount.toLocaleString('vi-VN')} đ)`);
-        refreshSession();
-      }
-    } catch (err: any) {
-      showToast(`Lỗi: ${err.message}`);
-    }
-  };
 
   const getFulfillmentBadge = (status: OrderFulfillmentStatus) => {
     switch (status) {
@@ -582,7 +526,7 @@ export default function AdminPage() {
           </span>
         </button>
 
-        {permissions.canManageUsers && (
+        {(permissions.canManageUsers || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
           <button
             onClick={() => setActiveTab('users')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
@@ -591,10 +535,10 @@ export default function AdminPage() {
                 : 'text-white/60 hover:text-white'
             }`}
           >
-            <Users className="w-4 h-4" />
-            <span>Thành Viên &amp; Phân Quyền (RBAC)</span>
+            <Users className="w-4 h-4 text-[#5EEAD4]" />
+            <span>Quản Lý Người Dùng</span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-              activeTab === 'users' ? 'bg-white/25 text-white' : 'bg-black/20 text-white/60'
+              activeTab === 'users' ? 'bg-[#2DD4BF] text-[#051817]' : 'bg-black/20 text-white/60'
             }`}>
               {allUsers.length}
             </span>
@@ -986,213 +930,12 @@ export default function AdminPage() {
 
       {/* TAB 2: RBAC USER & WALLET MANAGEMENT */}
       {activeTab === 'users' && (
-        <div className="space-y-6">
-          <div className="vision-glass rounded-[32px] p-5 sm:p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-black text-white flex items-center gap-2">
-                  <Users className="w-4 h-4 text-white/90" />
-                  <span>Danh Sách Người Dùng &amp; Phân Quyền Vai Trò</span>
-                </h3>
-                <p className="text-xs text-white/60 mt-0.5">
-                  Phân định 5 vai trò: Admin (Toàn quyền), Mod (Kiểm duyệt), Seller (Người bán đối tác), Staff (Kỹ thuật xưởng), User (Khách hàng)
-                </p>
-              </div>
-
-              <button
-                onClick={() => setIsAddUserModalOpen(true)}
-                className="vision-pill-btn flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold shadow-md self-start sm:self-auto"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                <span>Thêm Thành Viên Mới</span>
-              </button>
-            </div>
-
-            {/* Users Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/60 uppercase text-[10px] tracking-wider font-semibold">
-                    <th className="pb-3 px-3">Thành Viên</th>
-                    <th className="pb-3 px-3">Email &amp; SĐT</th>
-                    <th className="pb-3 px-3">Vai Trò Hệ Thống</th>
-                    <th className="pb-3 px-3">Số Dư Ví 3D Hub</th>
-                    <th className="pb-3 px-3">Thao Tác Ví</th>
-                    <th className="pb-3 px-3 text-right">Hành Động</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/8">
-                  {allUsers.map((u) => {
-                    const isSelf = u.id === currentUser?.id;
-                    return (
-                      <tr key={u.id} className="hover:bg-white/5 transition-colors">
-                        <td className="py-3 px-3">
-                          <div className="flex items-center gap-3">
-                            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-black/40 border border-white/20 shrink-0">
-                              <Image src={u.avatar} alt={u.name} fill unoptimized className="object-cover" />
-                            </div>
-                            <div>
-                              <div className="font-bold text-white flex items-center gap-1.5">
-                                <span>{u.name}</span>
-                                {isSelf && (
-                                  <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-black border border-white/25">
-                                    Bạn
-                                  </span>
-                                )}
-                              </div>
-                              <span className="text-[10px] text-white/50 font-mono">{u.id}</span>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <div className="text-white">{u.email}</div>
-                          <div className="text-[11px] text-white/60">{u.phone || 'Chưa cập nhật'}</div>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <select
-                            value={u.role}
-                            onChange={async (e) => {
-                              const newRole = e.target.value as UserRole;
-                              await fetch('/api/auth/me', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  action: 'switch_role',
-                                  userId: u.id,
-                                  role: newRole,
-                                }),
-                              });
-                              refreshSession();
-                              showToast(`Đã đổi vai trò của ${u.name} thành ${newRole.toUpperCase()}`);
-                            }}
-                            className="px-3 py-1.5 rounded-full bg-black/30 border border-white/15 text-xs font-bold text-white focus:outline-none focus:border-white/40 cursor-pointer"
-                          >
-                            <option value="admin" className="bg-[#18231B] text-white">ADMIN (Toàn quyền)</option>
-                            <option value="mod" className="bg-[#18231B] text-white">MOD (Kiểm duyệt)</option>
-                            <option value="seller" className="bg-[#18231B] text-white">SELLER (Người bán đối tác)</option>
-                            <option value="staff" className="bg-[#18231B] text-white">STAFF (Xưởng in)</option>
-                            <option value="user" className="bg-[#18231B] text-white">USER (Khách hàng)</option>
-                          </select>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <div className="font-black text-amber-300 text-sm">
-                            {u.walletBalanceVnd.toLocaleString('vi-VN')} đ
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => handleAdjustBalance(u.id, 50000)}
-                              className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[10px] font-bold transition-all shadow-sm"
-                              title="Nạp nhanh 50.000đ"
-                            >
-                              +50k
-                            </button>
-                            <button
-                              onClick={() => handleAdjustBalance(u.id, 200000)}
-                              className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[10px] font-bold transition-all shadow-sm"
-                              title="Nạp nhanh 200.000đ"
-                            >
-                              +200k
-                            </button>
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-3 text-right">
-                          <button
-                            onClick={() => switchUser(u.id)}
-                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                              isSelf
-                                ? 'bg-white/10 text-white/40 border border-white/10 cursor-default'
-                                : 'vision-pill-btn text-white'
-                            }`}
-                          >
-                            {isSelf ? 'Đang kích hoạt' : 'Chuyển session'}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Add User Modal */}
-          {isAddUserModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-              <div className="max-w-md w-full vision-glass-panel rounded-[32px] p-6 space-y-4 shadow-2xl">
-                <h3 className="text-base font-black text-white">Thêm Tài Khoản Mới</h3>
-                <form onSubmit={handleCreateUser} className="space-y-3">
-                  <div>
-                    <label className="text-xs font-semibold text-white/70 block mb-1">
-                      Họ và tên
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Nguyễn Văn A"
-                      value={newUserName}
-                      onChange={(e) => setNewUserName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-full bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-white/70 block mb-1">
-                      Email đăng nhập
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="user@example.com"
-                      value={newUserEmail}
-                      onChange={(e) => setNewUserEmail(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-full bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-white/70 block mb-1">
-                      Vai trò mặc định
-                    </label>
-                    <select
-                      value={newUserRole}
-                      onChange={(e) => setNewUserRole(e.target.value as UserRole)}
-                      className="w-full px-4 py-2.5 rounded-full bg-black/30 border border-white/15 text-xs text-white focus:outline-none focus:border-white/40 cursor-pointer"
-                    >
-                      <option value="user" className="bg-[#18231B] text-white">USER (Khách hàng)</option>
-                      <option value="seller" className="bg-[#18231B] text-white">SELLER (Người bán đối tác)</option>
-                      <option value="staff" className="bg-[#18231B] text-white">STAFF (Kỹ thuật xưởng)</option>
-                      <option value="mod" className="bg-[#18231B] text-white">MOD (Kiểm duyệt viên)</option>
-                      <option value="admin" className="bg-[#18231B] text-white">ADMIN (Quản trị toàn quyền)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAddUserModalOpen(false)}
-                      className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold"
-                    >
-                      Hủy
-                    </button>
-                    <button
-                      type="submit"
-                      className="vision-pill-btn px-5 py-2.5 rounded-full text-white text-xs font-bold shadow-md"
-                    >
-                      Tạo tài khoản
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
+        <AdminUserManager
+          users={allUsers}
+          currentUserId={currentUser?.id}
+          onRefresh={refreshSession}
+          showToast={showToast}
+        />
       )}
 
       {/* TAB 3: AI PRICING COST x2 & PAYMENT AUDIT */}

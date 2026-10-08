@@ -69,6 +69,32 @@ class UserRepository {
     return true;
   }
 
+  toggleUserStatus(id: string): IUser | undefined {
+    const user = this.getUserById(id);
+    if (!user) return undefined;
+    user.status = user.status === 'active' ? 'suspended' : 'active';
+    return user;
+  }
+
+  updateUser(id: string, updates: Partial<IUser>): IUser | undefined {
+    const user = this.getUserById(id);
+    if (!user) return undefined;
+    Object.assign(user, updates);
+    return user;
+  }
+
+  deleteUser(id: string): boolean {
+    if (id === this.activeUserId || id === 'usr-admin-1') {
+      return false; // Không xóa tài khoản đang đăng nhập hoặc Admin gốc
+    }
+    const idx = this.users.findIndex((u) => u.id === id);
+    if (idx !== -1) {
+      this.users.splice(idx, 1);
+      return true;
+    }
+    return false;
+  }
+
   getUserByEmail(email: string): IUser | undefined {
     return this.users.find((u) => u.email.trim().toLowerCase() === email.trim().toLowerCase());
   }

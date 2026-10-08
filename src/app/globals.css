@@ -1,43 +1,43 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   DEFAULT & STAGING THEME: XANH CREAMY & PASTEL ĐẬM
-   Rich Creamy Matcha, Sage Milk, Pistachio & Warm Creamy Vanilla Pastels
+   DEFAULT & STAGING THEME: XANH NGỌC BÍCH CREAMY & CYAN PASTEL
+   Rich Velvety Jade Green, Frosted Mint Cream, Pastel Cyan & Soft Jade Glass
    ========================================================================== */
 :root,
 [data-env="staging"] {
-  --background: #142017;
-  --foreground: #F8FAF7;
-  --page-radial: radial-gradient(ellipse 110% 90% at 50% -12%, #2A4432 0%, #1A2D21 40%, #132218 75%, #0E1811 100%);
-  --glow-1: rgba(125, 185, 142, 0.24);
-  --glow-2: rgba(92, 148, 108, 0.2);
-  --glow-warm: rgba(242, 230, 195, 0.14);
+  --background: #071716;
+  --foreground: #F0FDFA;
+  --page-radial: radial-gradient(ellipse 110% 90% at 50% -12%, #113B37 0%, #0A2724 40%, #071C1A 75%, #04100F 100%);
+  --glow-1: rgba(45, 212, 191, 0.28);
+  --glow-2: rgba(20, 110, 100, 0.24);
+  --glow-warm: rgba(230, 250, 246, 0.16);
 
-  --vision-glass: rgba(43, 66, 50, 0.65);
-  --vision-glass-hover: rgba(54, 82, 62, 0.78);
-  --vision-glass-panel: rgba(35, 54, 40, 0.74);
-  --vision-glass-card: rgba(46, 70, 52, 0.58);
-  --vision-glass-subtle: rgba(215, 240, 222, 0.14);
+  --vision-glass: rgba(13, 38, 35, 0.72);
+  --vision-glass-hover: rgba(18, 52, 48, 0.85);
+  --vision-glass-panel: rgba(10, 32, 29, 0.82);
+  --vision-glass-card: rgba(15, 44, 40, 0.65);
+  --vision-glass-subtle: rgba(94, 234, 212, 0.12);
 
-  --vision-border: rgba(215, 238, 222, 0.22);
-  --vision-border-light: rgba(235, 248, 240, 0.36);
-  --vision-pill-btn: rgba(215, 242, 226, 0.18);
-  --vision-pill-btn-hover: rgba(215, 242, 226, 0.3);
-  --vision-pill-active: rgba(225, 248, 232, 0.35);
+  --vision-border: rgba(94, 234, 212, 0.26);
+  --vision-border-light: rgba(153, 246, 228, 0.42);
+  --vision-pill-btn: rgba(94, 234, 212, 0.18);
+  --vision-pill-btn-hover: rgba(94, 234, 212, 0.32);
+  --vision-pill-active: rgba(94, 234, 212, 0.45);
 
-  --vision-accent: #7EC895; /* Pastel Matcha Cream */
-  --vision-accent-soft: rgba(126, 200, 149, 0.22);
-  --vision-pastel-yellow: #EBDDB6; /* Pastel Vàng Kem Nhã Nhặn */
-  --vision-pastel-mint: #A6DCB8; /* Pastel Bạc Hà */
-  --vision-pastel-sage: #C1DEC8; /* Pastel Xanh Xô Thơm */
-  --vision-pastel-rose: #EBC2C2; /* Pastel Cánh Sen Nhạt */
+  --vision-accent: #2DD4BF; /* Vibrant Jade Cyan */
+  --vision-accent-soft: rgba(45, 212, 191, 0.22);
+  --vision-pastel-yellow: #E6FAF6; /* Creamy Jade Vanilla Frost */
+  --vision-pastel-mint: #5EEAD4; /* Pastel Cyan Light */
+  --vision-pastel-sage: #99F6E4; /* Bright Pastel Cyan */
+  --vision-pastel-rose: #FDA4AF; /* Soft Pastel Rose */
 
-  --vision-text-primary: #F8FAF7;
-  --vision-text-secondary: #D7E5DB;
-  --vision-text-muted: #A3BAAB;
+  --vision-text-primary: #F0FDFA;
+  --vision-text-secondary: #CCFBF1;
+  --vision-text-muted: #7ECEC5;
 
-  --vision-shadow: 0 20px 50px rgba(10, 20, 13, 0.45);
-  --vision-panel-shadow: 0 24px 60px rgba(8, 16, 11, 0.52);
+  --vision-shadow: 0 20px 50px rgba(3, 15, 14, 0.5);
+  --vision-panel-shadow: 0 24px 60px rgba(2, 12, 11, 0.58);
 }
 
 /* ==========================================================================

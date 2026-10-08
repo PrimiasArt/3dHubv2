@@ -101,12 +101,65 @@ export async function POST(req: NextRequest) {
         method: 'wallet',
         type: delta >= 0 ? 'deposit' : 'withdraw',
         status: 'completed',
-        description: `Điều chỉnh số dư ví quản trị: ${delta >= 0 ? '+' : '-'}${Math.abs(delta).toLocaleString('vi-VN')} đ`,
+        description: body.description || `Điều chỉnh số dư ví quản trị: ${delta >= 0 ? '+' : '-'}${Math.abs(delta).toLocaleString('vi-VN')} đ`,
       });
       return NextResponse.json({
         success: true,
         balanceVnd: newBal,
         message: `Đã điều chỉnh ${delta >= 0 ? '+' : ''}${delta.toLocaleString('vi-VN')} đ`,
+      });
+    }
+
+    // 6. Khóa / Mở khóa tài khoản (Toggle Status)
+    if (action === 'toggle_status') {
+      if (!userId) {
+        return NextResponse.json({ error: 'userId là bắt buộc' }, { status: 400 });
+      }
+      const updated = userRepository.toggleUserStatus(userId);
+      if (!updated) {
+        return NextResponse.json({ error: 'Không tìm thấy người dùng' }, { status: 404 });
+      }
+      return NextResponse.json({
+        success: true,
+        user: updated,
+        message: `Tài khoản ${updated.name} hiện đang: ${updated.status === 'active' ? 'Đang hoạt động' : 'Đã tạm khóa'}`,
+      });
+    }
+
+    // 7. Cập nhật thông tin người dùng
+    if (action === 'update_user') {
+      if (!userId) {
+        return NextResponse.json({ error: 'userId là bắt buộc' }, { status: 400 });
+      }
+      const updated = userRepository.updateUser(userId, {
+        name: body.name,
+        email: body.email,
+        phone: body.phone,
+        role: body.role,
+        status: body.status,
+      });
+      if (!updated) {
+        return NextResponse.json({ error: 'Không tìm thấy người dùng' }, { status: 404 });
+      }
+      return NextResponse.json({
+        success: true,
+        user: updated,
+        message: `Đã cập nhật thông tin cho ${updated.name}`,
+      });
+    }
+
+    // 8. Xóa tài khoản
+    if (action === 'delete_user') {
+      if (!userId) {
+        return NextResponse.json({ error: 'userId là bắt buộc' }, { status: 400 });
+      }
+      const deleted = userRepository.deleteUser(userId);
+      if (!deleted) {
+        return NextResponse.json({ error: 'Không thể xóa tài khoản này' }, { status: 400 });
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'Đã xóa tài khoản thành công',
       });
     }
 
