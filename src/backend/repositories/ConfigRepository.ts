@@ -20,7 +20,7 @@ class ConfigRepository {
   }
 
   getEnvironment(): AppEnvironment {
-    return this.config.environment || 'staging';
+    return this.config.environment || 'official';
   }
 
   isOfficial(): boolean {

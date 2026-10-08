@@ -1,7 +1,15 @@
 import type { Metadata } from 'next';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/common/Navbar';
 import { StagingSandboxDock } from '@/components/common/StagingSandboxDock';
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['vietnamese', 'latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: '3D HUB - Spatial 3D Studio & Maker Intelligence',
@@ -14,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" data-env="staging" className="h-full bg-[var(--background)] text-[var(--vision-text-primary)] antialiased transition-colors duration-500">
-      <body className="min-h-full flex flex-col bg-[var(--background)] [background-image:var(--page-radial)] text-[var(--vision-text-primary)] relative selection:bg-white/20 selection:text-white transition-colors duration-500">
+    <html lang="vi" data-env="official" className={`${plusJakartaSans.variable} h-full bg-[var(--background)] text-[var(--vision-text-primary)] antialiased transition-colors duration-500`}>
+      <body className={`${plusJakartaSans.className} min-h-full flex flex-col bg-[var(--background)] [background-image:var(--page-radial)] text-[var(--vision-text-primary)] relative selection:bg-white/20 selection:text-white transition-colors duration-500`}>
         {/* Subtle Ambient Spatial Glow Behind Everything */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <div className="absolute top-[-10%] left-[20%] w-[680px] h-[540px] rounded-full bg-[var(--glow-1)] blur-[130px] transition-colors duration-500" />

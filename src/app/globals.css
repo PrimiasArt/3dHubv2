@@ -41,54 +41,55 @@
 }
 
 /* ==========================================================================
-   OFFICIAL THEME: TITANIUM OBSIDIAN & SLEEK HIGH-TECH EMERALD
+   OFFICIAL THEME: XANH NGỌC BÍCH THƯƠNG MẠI & CYAN PASTEL
+   Sleek Commercial Production, Rich Creamy Jade, Pastel Cyan & High-Tech Accents
    ========================================================================== */
 [data-env="official"] {
-  --background: #0D120E;
-  --foreground: #FFFFFF;
-  --page-radial: radial-gradient(ellipse 100% 80% at 50% -15%, rgba(35, 60, 42, 0.4), rgba(16, 22, 18, 0.9) 60%, rgba(11, 15, 12, 1) 100%);
-  --glow-1: rgba(45, 80, 55, 0.16);
-  --glow-2: rgba(30, 60, 40, 0.12);
-  --glow-warm: transparent;
+  --background: #061615;
+  --foreground: #F0FDFA;
+  --page-radial: radial-gradient(ellipse 110% 90% at 50% -12%, #113B37 0%, #0A2724 40%, #061917 75%, #030E0D 100%);
+  --glow-1: rgba(45, 212, 191, 0.26);
+  --glow-2: rgba(16, 185, 129, 0.22);
+  --glow-warm: rgba(230, 250, 246, 0.14);
 
-  --vision-glass: rgba(26, 36, 28, 0.58);
-  --vision-glass-hover: rgba(36, 50, 39, 0.72);
-  --vision-glass-panel: rgba(20, 30, 22, 0.7);
-  --vision-glass-card: rgba(28, 40, 30, 0.52);
-  --vision-glass-subtle: rgba(255, 255, 255, 0.08);
+  --vision-glass: rgba(12, 38, 35, 0.74);
+  --vision-glass-hover: rgba(18, 52, 48, 0.85);
+  --vision-glass-panel: rgba(10, 32, 29, 0.84);
+  --vision-glass-card: rgba(15, 44, 40, 0.68);
+  --vision-glass-subtle: rgba(94, 234, 212, 0.12);
 
-  --vision-border: rgba(255, 255, 255, 0.14);
-  --vision-border-light: rgba(255, 255, 255, 0.25);
-  --vision-pill-btn: rgba(255, 255, 255, 0.14);
-  --vision-pill-btn-hover: rgba(255, 255, 255, 0.24);
-  --vision-pill-active: rgba(255, 255, 255, 0.28);
+  --vision-border: rgba(94, 234, 212, 0.25);
+  --vision-border-light: rgba(153, 246, 228, 0.4);
+  --vision-pill-btn: rgba(94, 234, 212, 0.18);
+  --vision-pill-btn-hover: rgba(94, 234, 212, 0.32);
+  --vision-pill-active: rgba(94, 234, 212, 0.45);
 
-  --vision-accent: #34D399;
-  --vision-accent-soft: rgba(52, 211, 153, 0.15);
-  --vision-pastel-yellow: #FCD34D;
-  --vision-pastel-mint: #6EE7B7;
-  --vision-pastel-sage: #A7F3D0;
+  --vision-accent: #2DD4BF; /* Vibrant Jade Cyan */
+  --vision-accent-soft: rgba(45, 212, 191, 0.22);
+  --vision-pastel-yellow: #E6FAF6; /* Creamy Jade Vanilla Frost */
+  --vision-pastel-mint: #5EEAD4; /* Pastel Cyan Light */
+  --vision-pastel-sage: #99F6E4; /* Bright Pastel Cyan */
   --vision-pastel-rose: #FDA4AF;
 
-  --vision-text-primary: #FFFFFF;
-  --vision-text-secondary: rgba(255, 255, 255, 0.75);
-  --vision-text-muted: rgba(255, 255, 255, 0.5);
+  --vision-text-primary: #F0FDFA;
+  --vision-text-secondary: #CCFBF1;
+  --vision-text-muted: #7ECEC5;
 
-  --vision-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  --vision-panel-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  --vision-shadow: 0 20px 50px rgba(3, 15, 14, 0.5);
+  --vision-panel-shadow: 0 24px 60px rgba(2, 12, 11, 0.58);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
 body {
   background-color: var(--background);
   color: var(--vision-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-family: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   letter-spacing: -0.012em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -156,7 +156,7 @@ export const DEFAULT_MODULE_PERMISSIONS: IModuleRoleMatrix = {
 };
 
 export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
-  environment: 'staging', // Bắt đầu ở bản thử nghiệm Staging theo yêu cầu của người dùng để duyệt trước
+  environment: 'official', // Bản thương mại chính thức đưa vào sử dụng
   commercial: DEFAULT_COMMERCIAL_CONFIG,
   materials: {
     plaPerKgVnd: 180000,      // 180.000 đ/kg ~ 180 đ/g
@@ -169,7 +169,7 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     machineHourlyRateVnd: 8000,
     electricityHourlyVnd: 2500,
     laborPostProcessVnd: 15000,
-    profitMarginPercent: 0, // Staging: 0% phụ thu giá gốc
+    profitMarginPercent: 25, // Bản thương mại: áp dụng biên lợi nhuận niêm yết 25%
   },
   aiPricing: {
     tripoUsd: 0.01,
