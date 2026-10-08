@@ -28,13 +28,16 @@ export function usePlatformCrawler() {
     }
   }, [selectedPlatform]);
 
+  const [crawlDepth, setCrawlDepth] = useState<'standard' | 'deep' | 'ultra'>('deep');
+
   useEffect(() => {
     fetchModels(selectedPlatform);
   }, [fetchModels, selectedPlatform]);
 
   const triggerCrawl = useCallback(async (
     platformParam?: PlatformType | 'all' | unknown,
-    customKeywordParam?: string | unknown
+    customKeywordParam?: string | unknown,
+    customDepthParam?: 'standard' | 'deep' | 'ultra' | unknown
   ) => {
     setIsCrawling(true);
     const safePlatform: PlatformType | 'all' = (typeof platformParam === 'string' && platformParam.trim().length > 0)
@@ -43,8 +46,11 @@ export function usePlatformCrawler() {
     const safeKeyword: string | undefined = (typeof customKeywordParam === 'string')
       ? customKeywordParam.trim()
       : (keyword.trim() || undefined);
+    const safeDepth: 'standard' | 'deep' | 'ultra' = (typeof customDepthParam === 'string' && ['standard', 'deep', 'ultra'].includes(customDepthParam))
+      ? (customDepthParam as 'standard' | 'deep' | 'ultra')
+      : crawlDepth;
 
-    setCrawlLogs([`[${new Date().toLocaleTimeString()}] 🚀 Bắt đầu gửi yêu cầu crawl tới server...`]);
+    setCrawlLogs([`[${new Date().toLocaleTimeString()}] 🚀 Bắt đầu gửi yêu cầu crawl (Độ sâu: ${safeDepth.toUpperCase()}) tới server...`]);
 
     try {
       const res = await fetch('/api/crawl', {
@@ -53,6 +59,7 @@ export function usePlatformCrawler() {
         body: JSON.stringify({
           platform: safePlatform,
           keyword: safeKeyword,
+          depth: safeDepth,
         }),
       });
 
@@ -70,7 +77,7 @@ export function usePlatformCrawler() {
     } finally {
       setIsCrawling(false);
     }
-  }, [selectedPlatform, keyword, fetchModels]);
+  }, [selectedPlatform, keyword, crawlDepth, fetchModels]);
 
   const [sortBy, setSortBy] = useState<'downloads' | 'prints' | 'recent'>('downloads');
   const [filamentFilter, setFilamentFilter] = useState<string>('all');
@@ -137,6 +144,8 @@ export function usePlatformCrawler() {
     setSortBy,
     filamentFilter,
     setFilamentFilter,
+    crawlDepth,
+    setCrawlDepth,
     triggerCrawl,
     deduplicateDatabase,
     refetchModels: () => fetchModels(selectedPlatform),

@@ -22,6 +22,8 @@ export default function CrawlerPage() {
     setSortBy,
     filamentFilter,
     setFilamentFilter,
+    crawlDepth,
+    setCrawlDepth,
     triggerCrawl,
     deduplicateDatabase,
     refetchModels,
@@ -33,11 +35,11 @@ export default function CrawlerPage() {
       <div className="vision-glass-panel rounded-[32px] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shrink-0 shadow-sm">
-            <Compass className="w-6 h-6" />
+            <Compass className="w-6 h-6 text-[#2DD4BF]" />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-              MakerWorld &amp; 3D Repositories Crawler
+              MakerWorld &amp; 3D Repositories Crawler v3.0
             </h1>
             <p className="text-xs sm:text-sm text-white/70 mt-1">
               Hệ thống bóc tách dữ liệu đa nền tảng thời gian thực: Printables (Prusa Research), GitHub 3D Open Repos, MakerWorld (Bambu Lab) và Thingiverse
@@ -73,6 +75,8 @@ export default function CrawlerPage() {
         onSelectPlatform={setSelectedPlatform}
         keyword={keyword}
         onChangeKeyword={setKeyword}
+        crawlDepth={crawlDepth}
+        onChangeDepth={setCrawlDepth}
         onTriggerCrawl={triggerCrawl}
         isCrawling={isCrawling}
         crawlLogs={crawlLogs}

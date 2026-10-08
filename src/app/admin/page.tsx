@@ -79,6 +79,7 @@ function AdminPageContent() {
   const tabQuery = searchParams.get('tab');
 
   const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler' | 'audit'>('workshop');
+  const [tabCategory, setTabCategory] = useState<'all' | 'operations' | 'growth' | 'system'>('all');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
@@ -525,231 +526,208 @@ function AdminPageContent() {
         </div>
       </div>
 
-      {/* Quick Navigation Hub for Admin & Mod */}
-      <div className="vision-glass p-3 sm:p-4 rounded-[28px] flex flex-wrap items-center justify-between gap-3 backdrop-blur-2xl border border-white/15 shadow-xl">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-white/70 uppercase tracking-wider pl-1">
-            Mục Nổi Bật:
-          </span>
+      {/* Unified Apple VisionOS Admin Navigation Hub (Zero-Horizontal-Scroll) */}
+      <div className="vision-glass p-4 rounded-[28px] space-y-3.5 backdrop-blur-2xl border border-white/15 shadow-xl">
+        {/* Top: Category Filter Tabs & Direct Seller Hub Action */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-white/10">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] font-bold text-white/50 uppercase tracking-wider mr-1">
+              Nhóm Quản Trị:
+            </span>
+            {[
+              { id: 'all', label: 'Tất Cả', count: 10 },
+              { id: 'operations', label: '🏭 Vận Hành & Kho', count: 4 },
+              { id: 'growth', label: '📈 Kinh Doanh & AI', count: 3 },
+              { id: 'system', label: '🛡️ Quản Trị & Hệ Thống', count: 3 },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setTabCategory(cat.id as any)}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all border ${
+                  tabCategory === cat.id
+                    ? 'bg-[#2DD4BF] text-[#051817] border-[#2DD4BF] shadow-[0_0_12px_rgba(45,212,191,0.35)] font-bold'
+                    : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+                }`}
+              >
+                {cat.label} ({cat.count})
+              </button>
+            ))}
+          </div>
 
-          {currentUser?.role === 'admin' && (
-            <button
-              type="button"
-              onClick={() => setActiveTab('users')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
-                activeTab === 'users'
-                  ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
-                  : 'bg-white/10 hover:bg-white/20 text-white'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5 text-[#051817] active:text-white" />
-              <span>Quản Lý Người Dùng</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 font-black">
-                {allUsers.length}
-              </span>
-            </button>
-          )}
-
-          {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
-            <button
-              type="button"
-              onClick={() => setActiveTab('products')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
-                activeTab === 'products'
-                  ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
-                  : 'bg-white/10 hover:bg-white/20 text-white'
-              }`}
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Quản Lý Sản Phẩm &amp; Kho</span>
-            </button>
-          )}
-
+          {/* Quick External Link to Seller Hub */}
           {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
             <Link
               href="/seller"
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/35 transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/35 transition-all shadow-sm shrink-0 self-start sm:self-auto"
             >
               <Store className="w-3.5 h-3.5 text-amber-300" />
               <span>Vào Kênh Gian Hàng (Seller Hub)</span>
               <ArrowUpRight className="w-3 h-3 text-amber-300/70" />
             </Link>
           )}
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('workshop')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
-              activeTab === 'workshop'
-                ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
-                : 'bg-white/10 hover:bg-white/20 text-white'
-            }`}
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Điều Phối Xưởng In</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 font-black">
-              {orders.length}
-            </span>
-          </button>
         </div>
-      </div>
 
-      {/* Main Tab Controls */}
-      <div className="vision-glass p-1.5 rounded-full flex items-center gap-2 overflow-x-auto backdrop-blur-2xl border border-white/12">
-        {/* Tab 1: Users (Admin Only) */}
-        {currentUser?.role === 'admin' && (
-          <button
-            onClick={() => setActiveTab('users')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'users'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <Users className="w-4 h-4 text-[#5EEAD4]" />
-            <span>Quản Lý Người Dùng</span>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-              activeTab === 'users' ? 'bg-[#2DD4BF] text-[#051817]' : 'bg-black/20 text-white/60'
-            }`}>
-              {allUsers.length}
-            </span>
-          </button>
-        )}
+        {/* Bottom: Responsive Wrapped Tab Pills (No Horizontal Scroll Needed) */}
+        <div className="flex flex-wrap gap-2 items-center">
+          {/* 1. Users */}
+          {currentUser?.role === 'admin' && (tabCategory === 'all' || tabCategory === 'operations') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('users')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'users'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-[#2DD4BF]/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 text-[#5EEAD4]" />
+              <span>Quản Lý Người Dùng</span>
+              <span className={`px-2 py-0.2 rounded-full text-[10px] font-black ${
+                activeTab === 'users' ? 'bg-[#2DD4BF] text-[#051817]' : 'bg-white/15 text-white/80'
+              }`}>
+                {allUsers.length}
+              </span>
+            </button>
+          )}
 
-        {/* Tab 2: Products & Inventory (Admin & Mod) */}
-        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'products'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <ShoppingBag className="w-4 h-4 text-emerald-300" />
-            <span>Kho Hàng &amp; Sản Phẩm</span>
-          </button>
-        )}
+          {/* 2. Products */}
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) &&
+            (tabCategory === 'all' || tabCategory === 'operations') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('products')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'products'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-emerald-400/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <ShoppingBag className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Kho Hàng &amp; Sản Phẩm</span>
+            </button>
+          )}
 
-        {/* Tab 3: Workshop Printing & Orders */}
-        <button
-          onClick={() => setActiveTab('workshop')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-            activeTab === 'workshop'
-              ? 'bg-white/28 text-white shadow-xs'
-              : 'text-white/60 hover:text-white'
-          }`}
-        >
-          <Printer className="w-4 h-4" />
-          <span>Điều Phối Xưởng In &amp; Đơn Hàng</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-            activeTab === 'workshop' ? 'bg-white/25 text-white' : 'bg-black/20 text-white/60'
-          }`}>
-            {orders.length}
-          </span>
-        </button>
+          {/* 3. Workshop */}
+          {(tabCategory === 'all' || tabCategory === 'operations') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('workshop')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'workshop'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-[#2DD4BF]/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Printer className="w-3.5 h-3.5 text-[#2DD4BF]" />
+              <span>Điều Phối Xưởng In &amp; Đơn Hàng</span>
+              <span className={`px-2 py-0.2 rounded-full text-[10px] font-black ${
+                activeTab === 'workshop' ? 'bg-white/25 text-white' : 'bg-white/15 text-white/80'
+              }`}>
+                {orders.length}
+              </span>
+            </button>
+          )}
 
-        {/* Tab 4: Direct Link to Seller Hub */}
-        {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
-          <Link
-            href="/seller"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold text-amber-300/80 hover:text-amber-200 hover:bg-amber-500/15 transition-all shrink-0 border border-transparent hover:border-amber-400/30"
-          >
-            <Store className="w-4 h-4 text-amber-300" />
-            <span>Kênh Gian Hàng (Seller)</span>
-            <ExternalLink className="w-3 h-3 text-amber-300/60" />
-          </Link>
-        )}
+          {/* 4. Revenue */}
+          {currentUser?.role === 'admin' && (tabCategory === 'all' || tabCategory === 'growth') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('revenue')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'revenue'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-amber-400/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <DollarSign className="w-3.5 h-3.5 text-amber-300" />
+              <span>Doanh Thu &amp; Cổng Thanh Toán</span>
+            </button>
+          )}
 
-        {/* Tab 5: Revenue & Payment Gateway (Admin) */}
-        {currentUser?.role === 'admin' && (
-          <button
-            onClick={() => setActiveTab('revenue')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'revenue'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 text-amber-300" />
-            <span>Báo Cáo Doanh Thu &amp; Cổng Thanh Toán</span>
-          </button>
-        )}
+          {/* 5. Trends */}
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) &&
+            (tabCategory === 'all' || tabCategory === 'growth') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('trends')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'trends'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-[#7EC895]/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#7EC895]" />
+              <span>Phân Tích Trend (Gemini AI)</span>
+            </button>
+          )}
 
-        {/* Tab 6: Trends AI */}
-        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
-          <button
-            onClick={() => setActiveTab('trends')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'trends'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 text-[#7EC895]" />
-            <span>Phân Tích Trend (Gemini AI)</span>
-          </button>
-        )}
+          {/* 6. Crawler */}
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) &&
+            (tabCategory === 'all' || tabCategory === 'growth') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('crawler')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'crawler'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-[#2DD4BF]/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Compass className="w-3.5 h-3.5 text-[#2DD4BF]" />
+              <span>Thu Thập Dữ Liệu 3D (Crawler v3)</span>
+            </button>
+          )}
 
-        {/* Tab 7: Crawler */}
-        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
-          <button
-            onClick={() => setActiveTab('crawler')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'crawler'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <Compass className="w-4 h-4 text-[#7EC895]" />
-            <span>Thu Thập Dữ Liệu (Crawler)</span>
-          </button>
-        )}
+          {/* 7. Settings */}
+          {currentUser?.role === 'admin' && (tabCategory === 'all' || tabCategory === 'system') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('settings')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'settings'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5 text-white" />
+              <span>Cấu Hình Giá Vốn &amp; API</span>
+            </button>
+          )}
 
-        {/* Tab 8: System Settings (Admin Only) */}
-        {currentUser?.role === 'admin' && (
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'settings'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <Settings className="w-4 h-4" />
-            <span>Cấu Hình Giá Vốn &amp; API</span>
-          </button>
-        )}
+          {/* 8. Modules */}
+          {currentUser?.role === 'admin' && (tabCategory === 'all' || tabCategory === 'system') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('modules')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'modules'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Phân Quyền Modules (8 Tính Năng)</span>
+            </button>
+          )}
 
-        {/* Tab 9: Modules Permissions Matrix (Admin Only) */}
-        {currentUser?.role === 'admin' && (
-          <button
-            onClick={() => setActiveTab('modules')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'modules'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <Sliders className="w-4 h-4" />
-            <span>Phân Quyền Module (8 Tính Năng)</span>
-          </button>
-        )}
-
-        {/* Tab 10: Audit Logs (Admin & Mod) */}
-        {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
-          <button
-            onClick={() => setActiveTab('audit')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-              activeTab === 'audit'
-                ? 'bg-white/28 text-white shadow-xs'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            <Activity className="w-4 h-4 text-cyan-300" />
-            <span>Nhật Ký Kiểm Toán (Audit)</span>
-          </button>
-        )}
+          {/* 9. Audit Logs */}
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod') &&
+            (tabCategory === 'all' || tabCategory === 'system') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('audit')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'audit'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-cyan-400/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5 text-cyan-300" />
+              <span>Nhật Ký Kiểm Toán (Audit Trail)</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* TAB 1: WORKSHOP & ORDERS COORDINATION */}

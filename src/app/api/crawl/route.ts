@@ -5,7 +5,7 @@ import { PlatformType } from '@/backend/domain/models';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { action, platform = 'all', keyword } = body;
+    const { action, platform = 'all', keyword, depth = 'deep' } = body;
 
     if (action === 'deduplicate') {
       const removed = crawlerEngine.deduplicateModels();
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const result = await crawlerEngine.executeCrawl(platform as PlatformType | 'all', keyword);
+    const result = await crawlerEngine.executeCrawl(platform as PlatformType | 'all', keyword, depth);
     return NextResponse.json({ success: true, result });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
