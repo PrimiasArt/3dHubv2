@@ -53,12 +53,13 @@ import { AdminUserManager } from '@/components/admin/AdminUserManager';
 import { AdminAuditLogManager } from '@/components/admin/AdminAuditLogManager';
 
 const DEFAULT_GEMINI_MODELS = [
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Khuyên dùng - Nhanh & Mới nhất)' },
-  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash-Lite (Siêu tốc độ, Tiết kiệm token)' },
-  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Tốc độ cao & Rất ổn định)' },
-  { id: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash-8B (Bản thu gọn)' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Phân tích chuyên sâu)' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Bản thử nghiệm Preview)' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Mô hình suy luận sâu & phân tích kỹ thuật cao nhất)' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Thế hệ mới - Siêu tốc & Thông minh)' },
+  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Phổ biến - Tốc độ cao)' },
+  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash-Lite (Tiết kiệm token)' },
+  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Chuyên sâu 2M context)' },
+  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Rất ổn định)' },
+  { id: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash-8B (Thu gọn)' },
 ];
 
 function AdminPageContent() {

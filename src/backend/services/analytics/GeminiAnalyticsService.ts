@@ -58,12 +58,13 @@ class GeminiAnalyticsService {
     if (apiKey && apiKey.trim().length > 0) {
       const preferred = requestedModel || configRepository.getPreferredGeminiModel() || 'gemini-2.0-flash';
       const fallbackList = [
+        'gemini-2.5-pro',
+        'gemini-2.5-flash',
         'gemini-2.0-flash',
         'gemini-2.0-flash-lite',
+        'gemini-1.5-pro',
         'gemini-1.5-flash',
         'gemini-1.5-flash-8b',
-        'gemini-1.5-pro',
-        'gemini-2.5-flash',
       ];
       // Candidate models list with preferred first, no duplicates
       const candidateModels = Array.from(new Set([preferred, ...fallbackList])).filter(Boolean);
