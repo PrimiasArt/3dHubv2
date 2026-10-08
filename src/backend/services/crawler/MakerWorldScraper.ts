@@ -1,4 +1,5 @@
 import { IModel3D } from '../../domain/models';
+import { slicingPresetService } from '../slicing/SlicingPresetService';
 
 export class MakerWorldScraper {
   readonly platform = 'makerworld';
@@ -88,6 +89,17 @@ export class MakerWorldScraper {
           else if (titleLower.includes('abs') || titleLower.includes('asa')) filamentType = 'Bambu ABS';
           else if (titleLower.includes('carbon') || titleLower.includes('cf')) filamentType = 'Bambu PLA-CF';
 
+          const modelCategory = titleLower.includes('ams') || titleLower.includes('winder')
+            ? 'Bambu AMS Upgrades'
+            : titleLower.includes('enclosure') || titleLower.includes('fan')
+            ? 'Printer Enclosure & Mods'
+            : 'Bambu Lab Accessories';
+
+          const slicerProfile = slicingPresetService.generateOptimalProfile(
+            { title: rawTitle, category: modelCategory, filamentType },
+            'bambu-x1c-p1s'
+          );
+
           return {
             id: `mw-bambu-${p.id}`,
             title: rawTitle,
@@ -99,14 +111,11 @@ export class MakerWorldScraper {
             prints,
             likes,
             tags: ['makerworld', 'bambu-lab', 'ams', keyword || 'trending'].filter(Boolean),
-            category: titleLower.includes('ams') || titleLower.includes('winder')
-              ? 'Bambu AMS Upgrades'
-              : titleLower.includes('enclosure') || titleLower.includes('fan')
-              ? 'Printer Enclosure & Mods'
-              : 'Bambu Lab Accessories',
+            category: modelCategory,
             filamentType,
             filamentWeightGrams: Math.floor(70 + (idx % 10) * 15),
             printTimeMinutes: Math.floor(80 + (idx % 12) * 20),
+            slicerProfile,
             createdAt: p.datePublished || new Date(Date.now() - (qIdx * 10 + idx) * 86400000).toISOString(),
             updatedAt: scrapedAt,
           };

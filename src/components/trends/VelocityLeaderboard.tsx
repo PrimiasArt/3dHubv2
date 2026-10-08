@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, Flame, TrendingUp, Layers, CheckCircle2, Sparkles, Store } from 'lucide-react';
-import { ITrendMetric } from '@/backend/domain/models';
+import { ExternalLink, Flame, TrendingUp, Layers, CheckCircle2, Sparkles, Store, Zap } from 'lucide-react';
+import { ITrendMetric, IModel3D } from '@/backend/domain/models';
 import { getMatchingSampleModelId } from '@/backend/domain/sample-models';
+import { SlicingProfileModal } from '@/components/slicing/SlicingProfileModal';
 
 interface VelocityLeaderboardProps {
   trends: ITrendMetric[];
@@ -12,6 +13,7 @@ interface VelocityLeaderboardProps {
 
 export function VelocityLeaderboard({ trends }: VelocityLeaderboardProps) {
   const [failedImgIds, setFailedImgIds] = useState<Set<string>>(new Set());
+  const [selectedModalModel, setSelectedModalModel] = useState<IModel3D | null>(null);
 
   if (trends.length === 0) {
     return (
@@ -184,6 +186,34 @@ export function VelocityLeaderboard({ trends }: VelocityLeaderboardProps) {
                   {/* Action Link to Studio & Production */}
                   <td className="py-3.5 px-4 text-center">
                     <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                      {/* Profile In Button */}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedModalModel({
+                          id: item.modelId,
+                          title: item.title,
+                          author: item.author,
+                          platform: item.platform,
+                          sourceUrl: item.sourceUrl || '',
+                          thumbnailUrl: item.thumbnailUrl,
+                          downloads: item.currentDownloads,
+                          prints: item.currentPrints,
+                          likes: 0,
+                          tags: item.tags,
+                          category: item.category,
+                          filamentType: item.filamentType,
+                          filamentWeightGrams: item.filamentWeightGrams,
+                          printTimeMinutes: item.printTimeMinutes,
+                          createdAt: new Date().toISOString(),
+                          updatedAt: new Date().toISOString(),
+                        })}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/30 text-emerald-200 font-bold text-xs transition-all active:scale-95 whitespace-nowrap"
+                        title="Xem Profile In chuẩn OrcaSlicer & Mẹo tối ưu thực tế"
+                      >
+                        <Zap className="w-3 h-3 text-emerald-300" />
+                        <span>Profile In</span>
+                      </button>
+
                       {(() => {
                         const sampleModelId = getMatchingSampleModelId(item.title, item.category, item.tags);
                         return (
@@ -235,6 +265,13 @@ export function VelocityLeaderboard({ trends }: VelocityLeaderboardProps) {
           </tbody>
         </table>
       </div>
+
+      {/* Slicing Profile Modal */}
+      <SlicingProfileModal
+        model={selectedModalModel}
+        isOpen={!!selectedModalModel}
+        onClose={() => setSelectedModalModel(null)}
+      />
     </div>
   );
 }

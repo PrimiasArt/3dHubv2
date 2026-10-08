@@ -1,3 +1,5 @@
+import { ISlicerProfilePreset } from './slicing';
+
 export type PlatformType = 'makerworld' | 'printables' | 'thingiverse' | 'github' | 'ai-generated';
 
 export type AIProviderType = 'fal-trellis' | 'meshy' | 'tripo' | 'simulation';
@@ -20,6 +22,7 @@ export interface IModel3D {
   filamentType?: string; // PLA, PETG, TPU, ABS
   filamentWeightGrams?: number;
   printTimeMinutes?: number;
+  slicerProfile?: ISlicerProfilePreset;
   createdAt: string;
   updatedAt: string;
 }

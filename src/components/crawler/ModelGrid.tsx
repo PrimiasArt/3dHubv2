@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ExternalLink, Download, Printer, Clock, Weight, Layers } from 'lucide-react';
+import { ExternalLink, Download, Printer, Clock, Weight, Layers, Zap } from 'lucide-react';
 import { IModel3D } from '@/backend/domain/models';
 import { getMatchingSampleModelId } from '@/backend/domain/sample-models';
+import { SlicingProfileModal } from '@/components/slicing/SlicingProfileModal';
 
 interface ModelGridProps {
   models: IModel3D[];
@@ -13,6 +14,7 @@ interface ModelGridProps {
 
 export function ModelGrid({ models, isLoading }: ModelGridProps) {
   const [failedImgIds, setFailedImgIds] = React.useState<Set<string>>(new Set());
+  const [selectedModalModel, setSelectedModalModel] = React.useState<IModel3D | null>(null);
 
   if (isLoading) {
     return (
@@ -128,21 +130,31 @@ export function ModelGrid({ models, isLoading }: ModelGridProps) {
                 </span>
               </div>
 
-              {/* Action Bar: Link to 3D Studio & External Source */}
+              {/* Action Bar: Link to 3D Studio, Profile In & External Source */}
               <div className="flex items-center gap-2 pt-1">
                 {(() => {
                   const sampleModelId = getMatchingSampleModelId(model.title, model.category, model.tags);
                   return (
                     <Link
                       href={`/studio?sampleModel=${sampleModelId}`}
-                      className="vision-pill-btn flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full font-bold text-xs shadow-md transition-all active:scale-[0.98] group"
+                      className="vision-pill-btn flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full font-bold text-xs shadow-md transition-all active:scale-[0.98] group"
                       title={`Nạp mô hình ${model.title} vào 3D Studio để cắt lớp`}
                     >
                       <Layers className="w-3.5 h-3.5 text-white" />
-                      <span>Nạp Vào Studio</span>
+                      <span>Studio</span>
                     </Link>
                   );
                 })()}
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedModalModel(model)}
+                  className="px-3.5 py-2.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/35 text-emerald-200 font-bold text-xs transition-all active:scale-[0.98] inline-flex items-center gap-1 shrink-0"
+                  title="Xem Profile In chuẩn OrcaSlicer & Tải file JSON"
+                >
+                  <Zap className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Profile In</span>
+                </button>
 
                 <a
                   href={model.sourceUrl}
@@ -158,6 +170,13 @@ export function ModelGrid({ models, isLoading }: ModelGridProps) {
           </div>
         );
       })}
+
+      {/* Slicing Profile Modal */}
+      <SlicingProfileModal
+        model={selectedModalModel}
+        isOpen={!!selectedModalModel}
+        onClose={() => setSelectedModalModel(null)}
+      />
     </div>
   );
 }

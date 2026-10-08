@@ -1,4 +1,5 @@
 import { IModel3D } from '../../domain/models';
+import { slicingPresetService } from '../slicing/SlicingPresetService';
 
 export class PrintablesScraper {
   readonly platform = 'printables';
@@ -93,6 +94,11 @@ export class PrintablesScraper {
           else if (textLower.includes('tpu') || textLower.includes('flex')) filamentType = 'TPU 95A';
           else if (textLower.includes('asa') || textLower.includes('abs')) filamentType = 'Prusa ASA';
 
+          const slicerProfile = slicingPresetService.generateOptimalProfile(
+            { title: rawTitle, category, filamentType },
+            'prusa-mk4'
+          );
+
           const model: IModel3D = {
             id: `pr-live-${p.id}`,
             title: rawTitle,
@@ -108,6 +114,7 @@ export class PrintablesScraper {
             filamentType,
             filamentWeightGrams: Math.floor(65 + ((offset + idx) % 15) * 12),
             printTimeMinutes: Math.floor(75 + ((offset + idx) % 12) * 18),
+            slicerProfile,
             createdAt: p.datePublished || new Date(Date.now() - (offset + idx + 1) * 86400000).toISOString(),
             updatedAt: scrapedAt,
           };
