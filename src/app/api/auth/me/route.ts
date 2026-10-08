@@ -18,9 +18,33 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { action, userId, role, name, email } = body;
+    const { action, userId, role, name, email, avatar, googleId, amount } = body;
 
-    // 1. Chuyển đổi User active nhanh (Switch User)
+    // 1. Đăng nhập hoặc đăng ký nhanh qua Google OAuth
+    if (action === 'google_login') {
+      if (!email) {
+        return NextResponse.json({ error: 'Email Google là bắt buộc' }, { status: 400 });
+      }
+
+      const { user: gUser, isNew } = userRepository.loginOrCreateGoogleUser({
+        email,
+        name: name || email.split('@')[0],
+        avatar,
+        googleId,
+      });
+
+      return NextResponse.json({
+        success: true,
+        user: gUser,
+        isNew,
+        permissions: ROLE_PERMISSIONS[gUser.role],
+        message: isNew
+          ? `🎉 Chào mừng ${gUser.name}! Bạn được tặng ngay 50.000 đ credit ví.`
+          : `👋 Chào mừng trở lại, ${gUser.name}! Đã đăng nhập bằng Google.`,
+      });
+    }
+
+    // 2. Chuyển đổi User active nhanh (Switch User)
     if (action === 'switch_user') {
       const switched = userRepository.switchActiveUser(userId);
       if (!switched) {
@@ -34,10 +58,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Đổi role của user hiện tại
+    // 3. Đổi role của user
     if (action === 'switch_role') {
-      const active = userRepository.getActiveUser();
-      userRepository.updateRole(active.id, role as UserRole);
+      const targetUserId = userId || userRepository.getActiveUser().id;
+      userRepository.updateRole(targetUserId, role as UserRole);
       const updated = userRepository.getActiveUser();
       return NextResponse.json({
         success: true,
@@ -47,15 +71,42 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 3. Đăng ký tài khoản mới
-    if (action === 'register') {
-      const newUser = userRepository.createUser(name || 'Thành Viên Mới', email || `user${Date.now()}@gmail.com`);
-      userRepository.switchActiveUser(newUser.id);
+    // 4. Tạo tài khoản mới từ Admin hoặc đăng ký
+    if (action === 'create_user' || action === 'register') {
+      const newUser = userRepository.createUser(
+        name || 'Thành Viên Mới',
+        email || `user${Date.now()}@gmail.com`,
+        (role as UserRole) || 'user',
+        avatar
+      );
+      if (action === 'register') {
+        userRepository.switchActiveUser(newUser.id);
+      }
       return NextResponse.json({
         success: true,
         user: newUser,
         permissions: ROLE_PERMISSIONS[newUser.role],
-        message: 'Đăng ký thành công! Bạn nhận được 100.000 đ vào ví.',
+        message: 'Tạo tài khoản thành công!',
+      });
+    }
+
+    // 5. Nạp / điều chỉnh số dư ví từ Admin
+    if (action === 'adjust_balance') {
+      const targetUserId = userId || userRepository.getActiveUser().id;
+      const delta = Number(amount) || 0;
+      const newBal = userRepository.updateBalance(targetUserId, delta);
+      userRepository.addTransaction({
+        userId: targetUserId,
+        amountVnd: Math.abs(delta),
+        method: 'wallet',
+        type: delta >= 0 ? 'deposit' : 'withdraw',
+        status: 'completed',
+        description: `Điều chỉnh số dư ví quản trị: ${delta >= 0 ? '+' : '-'}${Math.abs(delta).toLocaleString('vi-VN')} đ`,
+      });
+      return NextResponse.json({
+        success: true,
+        balanceVnd: newBal,
+        message: `Đã điều chỉnh ${delta >= 0 ? '+' : ''}${delta.toLocaleString('vi-VN')} đ`,
       });
     }
 
