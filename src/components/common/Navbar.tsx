@@ -192,9 +192,9 @@ export function Navbar() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 group ${
                   isOfficial
                     ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                    : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-400/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
+                    : 'bg-[#2F4736]/80 hover:bg-[#3D5B46] text-[#EBDDB6] border-[#7EC895]/50 shadow-[0_0_16px_rgba(126,200,149,0.3)]'
                 }`}
-                title={`Admin Switcher: Đang ở bản ${isOfficial ? 'Official (Thương Mại)' : 'Staging (Thử Nghiệm)'}. Click để chuyển đổi tức thì!`}
+                title={`Admin Switcher: Đang ở bản ${isOfficial ? 'Official (Thương Mại)' : 'Staging (Xanh Creamy & Pastel Đậm)'}. Click để chuyển đổi tức thì!`}
               >
                 {isOfficial ? (
                   <>
@@ -204,9 +204,9 @@ export function Navbar() {
                   </>
                 ) : (
                   <>
-                    <FlaskConical className="w-3.5 h-3.5 text-amber-300 group-hover:scale-110 transition-transform" />
-                    <span className="tracking-tight">STAGING</span>
-                    <span className="hidden xl:inline text-[10px] text-amber-200/70 font-normal">| Sandbox</span>
+                    <FlaskConical className="w-3.5 h-3.5 text-[#EBDDB6] group-hover:scale-110 transition-transform" />
+                    <span className="tracking-tight text-[#F8FAF7]">STAGING</span>
+                    <span className="hidden xl:inline text-[10px] text-[#C1DEC8] font-medium">| Xanh Creamy</span>
                   </>
                 )}
               </button>
@@ -388,10 +388,10 @@ export function Navbar() {
                           className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
                             isOfficial
                               ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                              : 'bg-amber-500/20 text-amber-300 border-amber-400/30'
+                              : 'bg-[#7EC895]/20 text-[#D7EEDB] border-[#7EC895]/40 shadow-[0_0_10px_rgba(126,200,149,0.25)]'
                           }`}
                         >
-                          {isOfficial ? 'OFFICIAL' : 'STAGING'}
+                          {isOfficial ? 'OFFICIAL' : 'STAGING (XANH CREAMY)'}
                         </span>
                       </div>
 
@@ -402,11 +402,11 @@ export function Navbar() {
                           disabled={isSwitching}
                           className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                             isStaging
-                              ? 'bg-amber-500/30 text-amber-200 border border-amber-400/30 shadow-xs'
+                              ? 'bg-[#7EC895]/30 text-[#F5EEDB] border border-[#7EC895]/50 shadow-xs'
                               : 'text-white/60 hover:text-white'
                           }`}
                         >
-                          <FlaskConical className="w-3.5 h-3.5" />
+                          <FlaskConical className="w-3.5 h-3.5 text-[#EBDDB6]" />
                           <span>Staging</span>
                         </button>
                         <button
@@ -419,7 +419,7 @@ export function Navbar() {
                               : 'text-white/60 hover:text-white'
                           }`}
                         >
-                          <ShieldCheck className="w-3.5 h-3.5" />
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
                           <span>Official</span>
                         </button>
                       </div>
@@ -427,7 +427,7 @@ export function Navbar() {
                       <p className="text-[10px] text-white/60 leading-tight">
                         {isOfficial
                           ? '🌟 Bản Thương Mại: Bảng giá niêm yết thương mại (+25%), VietQR & bảo hành 1 đổi 1.'
-                          : '🧪 Bản Staging Sandbox: Dữ liệu thử nghiệm, giá vốn gốc 0% phụ thu.'}
+                          : '🧪 Bản Staging Sandbox: Giao diện Xanh Creamy & Pastel đậm, dữ liệu thử nghiệm, giá gốc 0% phụ thu.'}
                       </p>
                     </div>
                   )}

@@ -28,13 +28,17 @@ export function useSystemEnvironment() {
         setEnvironment(data.environment);
         if (data.commercial) setCommercial(data.commercial);
         if (data.profitMarginPercent !== undefined) setProfitMarginPercent(data.profitMarginPercent);
+        if (typeof document !== 'undefined') {
+          const appliedEnv = isAdmin ? data.environment : 'official';
+          document.documentElement.setAttribute('data-env', appliedEnv);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch system environment:', err);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     fetchEnvironment();
@@ -42,11 +46,15 @@ export function useSystemEnvironment() {
     const handleEnvChanged = (e: any) => {
       if (e.detail?.environment) {
         setEnvironment(e.detail.environment);
+        if (typeof document !== 'undefined') {
+          const appliedEnv = isAdmin ? e.detail.environment : 'official';
+          document.documentElement.setAttribute('data-env', appliedEnv);
+        }
       }
     };
     window.addEventListener('3dhub-environment-change', handleEnvChanged);
     return () => window.removeEventListener('3dhub-environment-change', handleEnvChanged);
-  }, [fetchEnvironment]);
+  }, [fetchEnvironment, isAdmin]);
 
   // Nút chuyển đổi môi trường chỉ Admin mới thực hiện được
   const toggleEnvironment = useCallback(
@@ -70,6 +78,7 @@ export function useSystemEnvironment() {
           showToast(data.message || `Đã chuyển sang môi trường: ${nextEnv.toUpperCase()}`);
 
           if (typeof window !== 'undefined') {
+            document.documentElement.setAttribute('data-env', nextEnv);
             window.dispatchEvent(
               new CustomEvent('3dhub-environment-change', { detail: { environment: nextEnv } })
             );

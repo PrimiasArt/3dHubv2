@@ -13,12 +13,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className="h-full bg-[#111713] text-white antialiased">
-      <body className="min-h-full flex flex-col bg-[#111713] bg-[radial-gradient(ellipse_100%_80%_at_50%_-15%,rgba(55,80,60,0.45),rgba(20,28,22,0.85)_60%,rgba(13,18,14,1)_100%)] text-white relative selection:bg-white/20 selection:text-white">
+    <html lang="vi" data-env="staging" className="h-full bg-[var(--background)] text-[var(--vision-text-primary)] antialiased transition-colors duration-500">
+      <body className="min-h-full flex flex-col bg-[var(--background)] [background-image:var(--page-radial)] text-[var(--vision-text-primary)] relative selection:bg-white/20 selection:text-white transition-colors duration-500">
         {/* Subtle Ambient Spatial Glow Behind Everything */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-          <div className="absolute top-[-10%] left-[20%] w-[600px] h-[500px] rounded-full bg-[#46694E]/15 blur-[120px]" />
-          <div className="absolute top-[40%] right-[10%] w-[500px] h-[400px] rounded-full bg-[#36523C]/10 blur-[140px]" />
+          <div className="absolute top-[-10%] left-[20%] w-[680px] h-[540px] rounded-full bg-[var(--glow-1)] blur-[130px] transition-colors duration-500" />
+          <div className="absolute top-[38%] right-[8%] w-[580px] h-[460px] rounded-full bg-[var(--glow-2)] blur-[150px] transition-colors duration-500" />
+          <div className="absolute bottom-[-8%] left-[32%] w-[520px] h-[420px] rounded-full bg-[var(--glow-warm)] blur-[140px] transition-colors duration-500" />
         </div>
 
         <div className="relative z-10 flex flex-col min-h-screen">
@@ -26,16 +27,16 @@ export default function RootLayout({
           <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </main>
-          <footer className="border-t border-white/10 bg-[#162018]/60 backdrop-blur-xl py-10 text-xs text-white/50">
+          <footer className="border-t border-[var(--vision-border)] bg-[var(--vision-glass-panel)] backdrop-blur-xl py-10 text-xs text-[var(--vision-text-muted)] transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="font-semibold text-white/90">3D HUB Spatial Studio</span>
+                <span className="font-semibold text-[var(--vision-text-primary)]">3D HUB Spatial Studio</span>
                 <span className="hidden sm:inline text-white/20">•</span>
-                <span className="hidden sm:inline text-white/60">Hệ Sinh Thái In 3D &amp; Trí Tuệ Nhân Tạo Thế Hệ Mới</span>
+                <span className="hidden sm:inline text-[var(--vision-text-secondary)]">Hệ Sinh Thái In 3D &amp; Trí Tuệ Nhân Tạo Thế Hệ Mới</span>
               </div>
-              <div className="flex items-center gap-6 text-white/50">
-                <span className="hover:text-white/80 transition-colors">Bảo mật</span>
-                <span className="hover:text-white/80 transition-colors">Điều khoản</span>
+              <div className="flex items-center gap-6 text-[var(--vision-text-muted)]">
+                <span className="hover:text-[var(--vision-text-primary)] transition-colors">Bảo mật</span>
+                <span className="hover:text-[var(--vision-text-primary)] transition-colors">Điều khoản</span>
                 <span>© 2026 3D HUB Inc. All rights reserved.</span>
               </div>
             </div>

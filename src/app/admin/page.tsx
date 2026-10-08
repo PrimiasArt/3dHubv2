@@ -377,13 +377,13 @@ export default function AdminPage() {
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-md transition-all ${
                   systemConfig.environment === 'official'
                     ? 'bg-emerald-500/25 border-emerald-400/40 text-emerald-300 shadow-emerald-500/20'
-                    : 'bg-amber-500/25 border-amber-400/40 text-amber-300 shadow-amber-500/20'
+                    : 'bg-[#2F4736]/80 border-[#7EC895]/50 text-[#EBDDB6] shadow-[0_0_16px_rgba(126,200,149,0.3)]'
                 }`}
               >
                 {systemConfig.environment === 'official' ? (
                   <ShieldCheck className="w-6 h-6 text-emerald-300" />
                 ) : (
-                  <FlaskConical className="w-6 h-6 text-amber-300" />
+                  <FlaskConical className="w-6 h-6 text-[#EBDDB6]" />
                 )}
               </div>
               <div>
@@ -395,16 +395,16 @@ export default function AdminPage() {
                     className={`px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all ${
                       systemConfig.environment === 'official'
                         ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                        : 'bg-amber-500/20 text-amber-300 border-amber-400/40 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                        : 'bg-[#7EC895]/20 text-[#D7EEDB] border-[#7EC895]/40 shadow-[0_0_12px_rgba(126,200,149,0.3)]'
                     }`}
                   >
                     {systemConfig.environment === 'official'
                       ? 'BẢN THƯƠNG MẠI CHÍNH THỨC'
-                      : 'BẢN THỬ NGHIỆM STAGING'}
+                      : 'BẢN THỬ NGHIỆM STAGING (XANH CREAMY & PASTEL ĐẬM)'}
                   </span>
                 </div>
                 <p className="text-xs text-white/70 mt-1">
-                  Dành riêng cho Admin: Tùy biến chuyển đổi linh hoạt giữa phiên bản thử nghiệm sandbox và phiên bản thương mại chính thức đưa vào sử dụng thực tế.
+                  Dành riêng cho Admin: Tùy biến chuyển đổi linh hoạt giữa phiên bản thử nghiệm sandbox (Xanh Creamy &amp; Pastel đậm) và phiên bản thương mại chính thức đưa vào sử dụng thực tế.
                 </p>
               </div>
             </div>
@@ -421,14 +421,14 @@ export default function AdminPage() {
                 disabled={isSavingConfig}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50 ${
                   systemConfig.environment === 'official'
-                    ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30'
+                    ? 'bg-[#2F4736]/80 hover:bg-[#3D5B46] text-[#EBDDB6] border border-[#7EC895]/50'
                     : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/30'
                 }`}
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isSavingConfig ? 'animate-spin' : ''}`} />
                 <span>
                   {systemConfig.environment === 'official'
-                    ? 'Chuyển Sang Bản Staging (Thử Nghiệm)'
+                    ? 'Chuyển Sang Bản Staging (Xanh Creamy & Pastel)'
                     : 'Kích Hoạt Bản Official (Thương Mại)'}
                 </span>
               </button>
@@ -442,28 +442,28 @@ export default function AdminPage() {
               onClick={() => handleSwitchEnvironment('staging')}
               className={`cursor-pointer p-5 rounded-[24px] border transition-all ${
                 systemConfig.environment === 'staging'
-                  ? 'bg-amber-500/15 border-amber-400/50 shadow-[0_0_24px_rgba(245,158,11,0.2)] ring-1 ring-amber-400/40'
+                  ? 'bg-[#2F4736]/60 border-[#7EC895]/60 shadow-[0_0_24px_rgba(126,200,149,0.25)] ring-1 ring-[#7EC895]/50'
                   : 'bg-black/25 border-white/10 hover:border-white/20 opacity-75 hover:opacity-100'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <FlaskConical className="w-4 h-4 text-amber-300" />
-                  <span className="font-bold text-sm text-white">1. Bản Staging (Thử Nghiệm)</span>
+                  <FlaskConical className="w-4 h-4 text-[#EBDDB6]" />
+                  <span className="font-bold text-sm text-white">1. Bản Staging (Xanh Creamy &amp; Pastel Đậm)</span>
                 </div>
                 {systemConfig.environment === 'staging' ? (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-black">
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#7EC895] text-[#0E1811]">
                     ĐANG HOẠT ĐỘNG
                   </span>
                 ) : (
                   <span className="text-[10px] text-white/50">Click để kích hoạt</span>
                 )}
               </div>
-              <ul className="text-xs text-white/70 space-y-1.5 list-disc list-inside">
+              <ul className="text-xs text-[#D7E5DB] space-y-1.5 list-disc list-inside">
+                <li>Tone màu chủ đạo: Xanh Creamy matcha, sage latte &amp; pastel đậm thanh lịch.</li>
                 <li>Biên lợi nhuận 0% (bảng giá tính đúng giá vốn gốc FDM/SLA).</li>
                 <li>Chế độ thử nghiệm Sandbox: ví test, sinh đơn hàng mô phỏng.</li>
                 <li>Hiển thị thanh chuyển đổi vai trò nhanh (RBAC switcher).</li>
-                <li>Cho phép fallback AI simulation khi chưa cấu hình API keys thật.</li>
               </ul>
             </div>
 
