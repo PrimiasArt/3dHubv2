@@ -7,7 +7,10 @@ import {
   IApiKeysConfig,
   AppEnvironment,
   ICommercialConfig,
+  IModuleRoleMatrix,
+  SystemModuleKey,
 } from '../domain/config';
+import { UserRole } from '../domain/user';
 
 class ConfigRepository {
   private config: ISystemConfig = { ...DEFAULT_SYSTEM_CONFIG };
@@ -17,7 +20,7 @@ class ConfigRepository {
   }
 
   getEnvironment(): AppEnvironment {
-    return this.config.environment || 'official';
+    return this.config.environment || 'staging';
   }
 
   isOfficial(): boolean {
@@ -82,6 +85,32 @@ class ConfigRepository {
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
     return this.getConfig();
+  }
+
+  // Quản lý Ma Trận Quyền Module theo Role
+  updateModulePermissions(matrix: Partial<IModuleRoleMatrix>, updatedBy: string = 'Admin'): ISystemConfig {
+    this.config.modulePermissions = {
+      ...this.config.modulePermissions,
+      ...matrix,
+    };
+    this.config.updatedAt = new Date().toISOString();
+    this.config.updatedBy = updatedBy;
+    return this.getConfig();
+  }
+
+  setModulePermission(moduleKey: SystemModuleKey, role: UserRole, isEnabled: boolean, updatedBy: string = 'Admin'): ISystemConfig {
+    if (this.config.modulePermissions[moduleKey]) {
+      this.config.modulePermissions[moduleKey][role] = isEnabled;
+      this.config.updatedAt = new Date().toISOString();
+      this.config.updatedBy = updatedBy;
+    }
+    return this.getConfig();
+  }
+
+  isModuleEnabled(moduleKey: SystemModuleKey, role: UserRole): boolean {
+    const mod = this.config.modulePermissions[moduleKey];
+    if (!mod) return true;
+    return mod[role] ?? true;
   }
 
   // Tiện ích lấy giá theo từng loại vật liệu (đ/gram) có tính % chi phí

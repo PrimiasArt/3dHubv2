@@ -1,4 +1,20 @@
+import { UserRole } from './user';
+
 export type AppEnvironment = 'staging' | 'official';
+
+// Danh sách các Module độc lập trong hệ thống
+export type SystemModuleKey =
+  | 'studio'        // Module 1: AI 2D-to-3D Studio
+  | 'shop'          // Module 2: Cửa hàng vật tư cuộn nhựa & linh kiện
+  | 'services'      // Module 3: Xưởng in dịch vụ cấp tốc 24H
+  | 'marketplace'   // Module 4: Sàn mô hình 3D Free & Trả phí
+  | 'trends'        // Module 5: Phân tích Trend & Crawler
+  | 'seller_hub'    // Module 6: Gian hàng dành cho Seller
+  | 'wallet'        // Module 7: Ví điện tử nạp/trừ tiền
+  | 'admin_hub';    // Module 8: Trung tâm quản trị
+
+// Ma trận quyền hiển thị & truy cập từng Module theo từng Role
+export type IModuleRoleMatrix = Record<SystemModuleKey, Record<UserRole, boolean>>;
 
 export interface ICommercialConfig {
   brandName: string;            // '3D HUB VIETNAM'
@@ -57,6 +73,7 @@ export interface ISystemConfig {
   operations: IOperationCostConfig;
   aiPricing: IAICostConfig;
   apiKeys: IApiKeysConfig;
+  modulePermissions: IModuleRoleMatrix;
   updatedAt: string;
   updatedBy: string;
 }
@@ -79,8 +96,67 @@ export const DEFAULT_COMMERCIAL_CONFIG: ICommercialConfig = {
   vatEnabled: true,
 };
 
+export const DEFAULT_MODULE_PERMISSIONS: IModuleRoleMatrix = {
+  studio: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  shop: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  services: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  marketplace: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  trends: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  seller_hub: {
+    admin: true,
+    mod: false,
+    seller: true,
+    staff: false,
+    user: false,
+  },
+  wallet: {
+    admin: true,
+    mod: true,
+    seller: true,
+    staff: true,
+    user: true,
+  },
+  admin_hub: {
+    admin: true,
+    mod: true,
+    seller: false,
+    staff: true,
+    user: false,
+  },
+};
+
 export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
-  environment: 'official', // Mặc định ở bản thương mại chính thức (Admin có thể switch sang staging bất kỳ lúc nào)
+  environment: 'staging', // Bắt đầu ở bản thử nghiệm Staging theo yêu cầu của người dùng để duyệt trước
   commercial: DEFAULT_COMMERCIAL_CONFIG,
   materials: {
     plaPerKgVnd: 180000,      // 180.000 đ/kg ~ 180 đ/g
@@ -93,7 +169,7 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     machineHourlyRateVnd: 8000,
     electricityHourlyVnd: 2500,
     laborPostProcessVnd: 15000,
-    profitMarginPercent: 25, // Biên lợi nhuận thương mại mặc định 25%
+    profitMarginPercent: 0, // Staging: 0% phụ thu giá gốc
   },
   aiPricing: {
     tripoUsd: 0.01,
@@ -110,6 +186,7 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     geminiApiKey: process.env.GEMINI_API_KEY || '',
     makerWorldCookie: '',
   },
-  updatedAt: '2026-10-07T04:00:00.000Z',
-  updatedBy: 'Hệ thống thương mại',
+  modulePermissions: DEFAULT_MODULE_PERMISSIONS,
+  updatedAt: '2026-10-08T04:00:00.000Z',
+  updatedBy: 'Khởi tạo hệ thống Staging',
 };

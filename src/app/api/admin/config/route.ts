@@ -34,13 +34,25 @@ export async function POST(req: NextRequest) {
     const activeUser = userRepository.getActiveUser();
     if (activeUser.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Chỉ tài khoản Admin mới có quyền cấu hình API và giá vốn hệ thống!' },
+        { error: 'Chỉ tài khoản Admin mới có quyền cấu hình API, giá vốn và phân quyền Module!' },
         { status: 403 }
       );
     }
 
     const body = await req.json();
-    const { section, environment, commercial, materials, operations, aiPricing, apiKeys } = body;
+    const {
+      section,
+      environment,
+      commercial,
+      materials,
+      operations,
+      aiPricing,
+      apiKeys,
+      modulePermissions,
+      moduleKey,
+      role,
+      isEnabled,
+    } = body;
 
     let updatedConfig = configRepository.getConfig();
 
@@ -68,6 +80,15 @@ export async function POST(req: NextRequest) {
 
     if (section === 'apiKeys' || apiKeys) {
       updatedConfig = configRepository.updateApiKeys(apiKeys, activeUser.name);
+    }
+
+    // Quản lý Phân Quyền Module
+    if (section === 'modulePermissions' || modulePermissions) {
+      updatedConfig = configRepository.updateModulePermissions(modulePermissions, activeUser.name);
+    }
+
+    if (moduleKey && role && isEnabled !== undefined) {
+      updatedConfig = configRepository.setModulePermission(moduleKey, role, isEnabled, activeUser.name);
     }
 
     return NextResponse.json({

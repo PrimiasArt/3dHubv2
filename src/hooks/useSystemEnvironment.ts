@@ -2,11 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { AppEnvironment, ICommercialConfig, DEFAULT_COMMERCIAL_CONFIG } from '@/backend/domain/config';
+import { useUserSession } from './useUserSession';
 
 export function useSystemEnvironment() {
-  const [environment, setEnvironment] = useState<AppEnvironment>('official');
+  const { currentUser } = useUserSession();
+  const isAdmin = currentUser?.role === 'admin';
+
+  const [environment, setEnvironment] = useState<AppEnvironment>('staging');
   const [commercial, setCommercial] = useState<ICommercialConfig>(DEFAULT_COMMERCIAL_CONFIG);
-  const [profitMarginPercent, setProfitMarginPercent] = useState<number>(25);
+  const [profitMarginPercent, setProfitMarginPercent] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSwitching, setIsSwitching] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -35,7 +39,6 @@ export function useSystemEnvironment() {
   useEffect(() => {
     fetchEnvironment();
 
-    // Listen to cross-window or local custom event for environment change
     const handleEnvChanged = (e: any) => {
       if (e.detail?.environment) {
         setEnvironment(e.detail.environment);
@@ -45,8 +48,14 @@ export function useSystemEnvironment() {
     return () => window.removeEventListener('3dhub-environment-change', handleEnvChanged);
   }, [fetchEnvironment]);
 
+  // Nút chuyển đổi môi trường chỉ Admin mới thực hiện được
   const toggleEnvironment = useCallback(
     async (target?: AppEnvironment): Promise<boolean> => {
+      if (!isAdmin) {
+        showToast('Chỉ Quản trị viên (Admin) mới có quyền chuyển đổi môi trường!');
+        return false;
+      }
+
       setIsSwitching(true);
       const nextEnv: AppEnvironment = target || (environment === 'official' ? 'staging' : 'official');
       try {
@@ -59,8 +68,7 @@ export function useSystemEnvironment() {
         if (res.ok && data.success) {
           setEnvironment(nextEnv);
           showToast(data.message || `Đã chuyển sang môi trường: ${nextEnv.toUpperCase()}`);
-          
-          // Dispatch global custom event
+
           if (typeof window !== 'undefined') {
             window.dispatchEvent(
               new CustomEvent('3dhub-environment-change', { detail: { environment: nextEnv } })
@@ -78,19 +86,26 @@ export function useSystemEnvironment() {
         setIsSwitching(false);
       }
     },
-    [environment, showToast]
+    [environment, isAdmin, showToast]
   );
 
+  // Đối với các role khác ngoài Admin, luôn mặc định là Official
+  const effectiveEnv: AppEnvironment = isAdmin ? environment : 'official';
+  const effectiveIsOfficial = effectiveEnv === 'official';
+  const effectiveIsStaging = effectiveEnv === 'staging';
+
   return {
-    environment,
-    isOfficial: environment === 'official',
-    isStaging: environment === 'staging',
+    environment: effectiveEnv,
+    rawEnvironment: environment,
+    isOfficial: effectiveIsOfficial,
+    isStaging: effectiveIsStaging,
     commercial,
-    profitMarginPercent,
+    profitMarginPercent: effectiveIsOfficial ? (commercial?.commercialMarginPercent || 25) : profitMarginPercent,
     isLoading,
     isSwitching,
     toastMessage,
     showToast,
+    isAdmin,
     refreshEnvironment: fetchEnvironment,
     toggleEnvironment,
   };
