@@ -29,6 +29,9 @@ import {
   PlusCircle,
   MinusCircle,
   Eye,
+  Clock,
+  Check,
+  FileCode,
 } from 'lucide-react';
 import { useShopManagement } from '@/hooks/useShopManagement';
 import { IFilamentItem, IAccessoryItem, FilamentMaterial, AccessorySubCategory } from '@/backend/domain/shop';
@@ -80,6 +83,98 @@ export function AdminProductsManager() {
     deleteProduct,
     adjustStock,
   } = useShopManagement();
+
+  // Tab chính: Kho Chính Hãng vs Hàng Đợi Kiểm Duyệt Seller
+  const [activeMainTab, setActiveMainTab] = useState<'inventory' | 'moderation'>('inventory');
+  const [pendingItems, setPendingItems] = useState<{
+    filaments: any[];
+    accessories: any[];
+    models: any[];
+    totalCount: number;
+  }>({ filaments: [], accessories: [], models: [], totalCount: 0 });
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<any[]>([]);
+  const [isLoadingPending, setIsLoadingPending] = useState(false);
+  const [rejectModalItem, setRejectModalItem] = useState<{ id: string; name: string; type: 'filament' | 'accessory' | 'model' } | null>(null);
+  const [rejectFeedback, setRejectFeedback] = useState('Nội dung hình ảnh hoặc thông tin kỹ thuật chưa đạt tiêu chuẩn sàn.');
+
+  const fetchPendingModeration = async () => {
+    try {
+      setIsLoadingPending(true);
+      const [modRes, wdrRes] = await Promise.all([
+        fetch('/api/shop?action=get_pending_moderation'),
+        fetch('/api/shop?action=get_withdrawals'),
+      ]);
+      const modData = await modRes.json();
+      const wdrData = await wdrRes.json();
+      if (modData.success && modData.pending) {
+        setPendingItems(modData.pending);
+      }
+      if (wdrData.success && wdrData.withdrawals) {
+        setPendingWithdrawals(wdrData.withdrawals);
+      }
+    } catch (err) {
+      console.error('Lỗi tải hàng đợi kiểm duyệt:', err);
+    } finally {
+      setIsLoadingPending(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchPendingModeration();
+  }, []);
+
+  const handleModerate = async (
+    id: string,
+    type: 'filament' | 'accessory' | 'model',
+    decision: 'approve' | 'reject',
+    feedback?: string
+  ) => {
+    try {
+      const res = await fetch('/api/shop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'moderate_product',
+          id,
+          productType: type,
+          decision,
+          feedback,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(decision === 'approve' ? '🎉 ' + data.message : '⚠️ ' + data.message);
+        fetchPendingModeration();
+        refreshInventory();
+      } else {
+        showToast(data.error || 'Lỗi thao tác kiểm duyệt');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Lỗi kết nối máy chủ');
+    }
+  };
+
+  const handleApproveWithdrawal = async (withdrawalId: string) => {
+    try {
+      const res = await fetch('/api/shop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'approve_withdrawal',
+          withdrawalId,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast('🎉 Đã xác nhận chuyển khoản và hoàn tất lệnh rút tiền!');
+        fetchPendingModeration();
+      } else {
+        showToast(data.error || 'Lỗi duyệt lệnh rút tiền');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Lỗi kết nối máy chủ');
+    }
+  };
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -362,7 +457,43 @@ export function AdminProductsManager() {
         </div>
       </div>
 
-      {/* KPI Overview Grid */}
+      {/* Tab Chuyển Đổi: Kho Hàng vs Hàng Đợi Kiểm Duyệt Seller */}
+      <div className="vision-glass p-1.5 rounded-full flex items-center gap-2 overflow-x-auto backdrop-blur-2xl border border-white/15">
+        <button
+          type="button"
+          onClick={() => setActiveMainTab('inventory')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+            activeMainTab === 'inventory' ? 'bg-white/28 text-white shadow-xs' : 'text-white/60 hover:text-white'
+          }`}
+        >
+          <Package className="w-4 h-4" />
+          <span>Kho Hàng Chính Hãng ({stats.totalSKU})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveMainTab('moderation');
+            fetchPendingModeration();
+          }}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 relative ${
+            activeMainTab === 'moderation' ? 'bg-white/28 text-white shadow-xs' : 'text-white/60 hover:text-white'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 text-cyan-300" />
+          <span>Hàng Đợi Kiểm Duyệt Seller</span>
+          {(pendingItems.totalCount > 0 || pendingWithdrawals.filter(w => w.status === 'pending').length > 0) && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">
+              {pendingItems.totalCount + pendingWithdrawals.filter(w => w.status === 'pending').length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* NỘI DUNG THEO TAB CHÍNH */}
+      {activeMainTab === 'inventory' ? (
+        <>
+          {/* KPI Overview Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* KPI 1: Total SKU */}
         <div className="vision-glass rounded-[24px] p-4 space-y-1.5 backdrop-blur-2xl border border-white/15">
@@ -822,6 +953,257 @@ export function AdminProductsManager() {
               </div>
             );
           })}
+        </div>
+      )}
+      </>
+      ) : (
+        /* TAB 2: HÀNG ĐỢI KIỂM DUYỆT SELLER & QUYẾT TOÁN RÚT TIỀN */
+        <div className="space-y-6">
+          {/* Section 1: Sản phẩm Seller chờ duyệt */}
+          <div className="vision-glass rounded-[32px] p-6 border border-white/15 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-cyan-300" />
+                  <span>Sản Phẩm Mới Chờ Phê Duyệt ({pendingItems.totalCount})</span>
+                </h3>
+                <p className="text-xs text-white/60">
+                  Cuộn nhựa, linh kiện và mô hình do Seller gửi lên. Cần kiểm duyệt chất lượng trước khi kích hoạt ra Marketplace.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={fetchPendingModeration}
+                disabled={isLoadingPending}
+                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingPending ? 'animate-spin' : ''}`} />
+                <span>Tải lại</span>
+              </button>
+            </div>
+
+            {isLoadingPending ? (
+              <div className="py-12 text-center text-white/50 text-xs">Đang tải danh sách chờ duyệt...</div>
+            ) : pendingItems.totalCount === 0 ? (
+              <div className="py-12 text-center text-white/60 space-y-2">
+                <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto" />
+                <p className="text-xs">Tuyệt vời! Hiện tại không có sản phẩm nào cần kiểm duyệt.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Pending Filaments */}
+                {pendingItems.filaments.map((f: any) => (
+                  <div key={f.id} className="vision-glass rounded-[24px] p-4 border border-white/15 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+                          Cuộn Nhựa ({f.material})
+                        </span>
+                        <span className="text-white/50 text-[11px]">Người bán: <strong className="text-white">{f.sellerName || 'Seller'}</strong></span>
+                      </div>
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black/40 border border-white/10 p-2">
+                        <Image src={f.thumbnailUrl || '/thumbnails/spool-pla.svg'} alt={f.name} fill unoptimized className="object-contain" />
+                      </div>
+                      <h4 className="text-xs font-bold text-white line-clamp-2">{f.name}</h4>
+                      <div className="text-xs text-amber-300 font-bold">{(f.priceVnd || 0).toLocaleString('vi-VN')} đ • Tồn: {f.stockCount}</div>
+                      <p className="text-[11px] text-white/60 line-clamp-2">{f.description || 'Chưa có mô tả'}</p>
+                    </div>
+
+                    <div className="pt-2 border-t border-white/10 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleModerate(f.id, 'filament', 'approve')}
+                        className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Phê Duyệt</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRejectModalItem({ id: f.id, name: f.name, type: 'filament' })}
+                        className="px-3 py-2 rounded-xl bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400/30 text-rose-300 text-xs font-bold transition-all"
+                      >
+                        Từ Chối
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Pending Accessories */}
+                {pendingItems.accessories.map((a: any) => (
+                  <div key={a.id} className="vision-glass rounded-[24px] p-4 border border-white/15 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-400/30">
+                          Phụ Kiện ({a.subCategory})
+                        </span>
+                        <span className="text-white/50 text-[11px]">Người bán: <strong className="text-white">{a.sellerName || 'Seller'}</strong></span>
+                      </div>
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black/40 border border-white/10 p-2">
+                        <Image src={a.thumbnailUrl || '/thumbnails/spool-pla.svg'} alt={a.name} fill unoptimized className="object-contain" />
+                      </div>
+                      <h4 className="text-xs font-bold text-white line-clamp-2">{a.name}</h4>
+                      <div className="text-xs text-amber-300 font-bold">{(a.priceVnd || 0).toLocaleString('vi-VN')} đ • Tồn: {a.stockCount}</div>
+                      <p className="text-[11px] text-white/60 line-clamp-2">{a.description || 'Chưa có mô tả'}</p>
+                    </div>
+
+                    <div className="pt-2 border-t border-white/10 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleModerate(a.id, 'accessory', 'approve')}
+                        className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Phê Duyệt</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRejectModalItem({ id: a.id, name: a.name, type: 'accessory' })}
+                        className="px-3 py-2 rounded-xl bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400/30 text-rose-300 text-xs font-bold transition-all"
+                      >
+                        Từ Chối
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Pending Models */}
+                {pendingItems.models.map((m: any) => (
+                  <div key={m.id} className="vision-glass rounded-[24px] p-4 border border-white/15 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                          Mô Hình Bản Quyền
+                        </span>
+                        <span className="text-white/50 text-[11px]">Tác giả: <strong className="text-white">{m.author || m.sellerName || 'Seller'}</strong></span>
+                      </div>
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black/40 border border-white/10 p-2">
+                        <Image src={m.thumbnailUrl || '/thumbnails/dragon.svg'} alt={m.title || m.name} fill unoptimized className="object-contain" />
+                      </div>
+                      <h4 className="text-xs font-bold text-white line-clamp-2">{m.title || m.name}</h4>
+                      <div className="text-xs text-amber-300 font-bold">{m.priceVnd > 0 ? `${m.priceVnd.toLocaleString('vi-VN')} đ` : 'Miễn Phí'}</div>
+                      <div className="text-[10px] text-cyan-300 flex items-center gap-1 font-mono">
+                        <FileCode className="w-3 h-3" />
+                        <span>Tệp: {m.fileUrl || 'STL/OBJ'}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-white/10 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleModerate(m.id, 'model', 'approve')}
+                        className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Phê Duyệt</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRejectModalItem({ id: m.id, name: m.title || m.name, type: 'model' })}
+                        className="px-3 py-2 rounded-xl bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400/30 text-rose-300 text-xs font-bold transition-all"
+                      >
+                        Từ Chối
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Section 2: Yêu cầu giải ngân rút tiền Seller */}
+          <div className="vision-glass rounded-[32px] p-6 border border-white/15 space-y-4">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-emerald-300" />
+              <span>Yêu Cầu Rút Tiền Của Seller Chờ Xử Lý ({pendingWithdrawals.filter(w => w.status === 'pending').length})</span>
+            </h3>
+
+            <div className="divide-y divide-white/10 text-xs">
+              {pendingWithdrawals.filter(w => w.status === 'pending').length === 0 ? (
+                <div className="py-6 text-center text-white/50">Không có yêu cầu rút tiền nào đang chờ giải ngân.</div>
+              ) : (
+                pendingWithdrawals.filter(w => w.status === 'pending').map((w) => (
+                  <div key={w.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white">{w.sellerName}</span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                          Chờ Chuyển Khoản
+                        </span>
+                      </div>
+                      <div className="text-white/70">
+                        Ngân hàng: <strong>{w.bankName}</strong> • STK: <strong className="font-mono text-cyan-300">{w.bankAccount}</strong> • Chủ TK: <strong>{w.accountHolder}</strong>
+                      </div>
+                      <div className="text-[11px] text-white/50">Mã lệnh: {w.id} • {new Date(w.createdAt).toLocaleString('vi-VN')}</div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-base font-black text-emerald-300">{w.amountVnd.toLocaleString('vi-VN')} đ</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleApproveWithdrawal(w.id)}
+                        className="px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md active:scale-95"
+                      >
+                        Xác Nhận Đã Chuyển Tiền
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: TỪ CHỐI SẢN PHẨM SELLER KÈM PHẢN HỒI */}
+      {rejectModalItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+          <div className="vision-glass-panel rounded-[32px] p-6 max-w-md w-full shadow-2xl border border-rose-500/30 text-white space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <h3 className="text-base font-bold text-white">Từ Chối Duyệt Sản Phẩm</h3>
+              <button
+                type="button"
+                onClick={() => setRejectModalItem(null)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-white/70">
+              Nhập lý do hoặc phản hồi cho Seller đối với sản phẩm <strong className="text-white">&ldquo;{rejectModalItem.name}&rdquo;</strong>:
+            </p>
+
+            <textarea
+              rows={3}
+              value={rejectFeedback}
+              onChange={(e) => setRejectFeedback(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white focus:outline-none"
+            />
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setRejectModalItem(null)}
+                className="flex-1 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleModerate(rejectModalItem.id, rejectModalItem.type, 'reject', rejectFeedback);
+                  setRejectModalItem(null);
+                }}
+                className="flex-1 py-2.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-md"
+              >
+                Xác Nhận Từ Chối
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

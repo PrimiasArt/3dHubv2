@@ -7,6 +7,8 @@ import {
   IShopModelItem,
   IServiceQuoteRequest,
   IServiceQuoteResult,
+  ISellerWithdrawal,
+  IUser3DAsset,
 } from '@/backend/domain/shop';
 import {
   SHOP_FILAMENTS,
@@ -23,6 +25,66 @@ class ShopService {
   private printingServices: IPrintingServicePackage[] = [...SHOP_PRINTING_SERVICES];
   private printProfiles: IPrintProfileItem[] = [...SHOP_PRINT_PROFILES];
   private shopModels: IShopModelItem[] = [...SHOP_MODELS];
+
+  private sellerWithdrawals: ISellerWithdrawal[] = [
+    {
+      id: 'wdr-101',
+      sellerId: 'usr-seller-1',
+      sellerName: 'Hoàng 3D Maker',
+      amountVnd: 500000,
+      bankName: 'MBBank (Quân Đội)',
+      bankAccount: '0901234567',
+      accountHolder: 'NGUYEN HOANG LONG',
+      status: 'completed',
+      createdAt: '2026-10-06T09:00:00.000Z',
+      completedAt: '2026-10-06T10:30:00.000Z',
+      notes: 'Đã giải ngân qua VietQR Napas 24/7',
+    },
+    {
+      id: 'wdr-102',
+      sellerId: 'usr-seller-1',
+      sellerName: 'Hoàng 3D Maker',
+      amountVnd: 1200000,
+      bankName: 'Techcombank',
+      bankAccount: '19036789123',
+      accountHolder: 'NGUYEN HOANG LONG',
+      status: 'completed',
+      createdAt: '2026-09-28T14:20:00.000Z',
+      completedAt: '2026-09-28T15:10:00.000Z',
+      notes: 'Quyết toán doanh thu bán file 3D tháng 9',
+    },
+  ];
+
+  private userAssets: IUser3DAsset[] = [
+    {
+      id: 'asset-init-1',
+      userId: 'usr-admin-1',
+      name: 'Cyberpunk Articulated Dragon V3',
+      thumbnailUrl: '/thumbnails/dragon.svg',
+      glbUrl: '/models/dragon.glb',
+      stlUrl: '/models/dragon.stl',
+      fileFormat: '.GLB / .STL',
+      dimensionsMm: { x: 120, y: 85, z: 45 },
+      weightGrams: 95,
+      createdAt: '2026-10-05T08:30:00.000Z',
+      engineUsed: 'TripoSR Fast AI',
+      isPublishedToShop: true,
+    },
+    {
+      id: 'asset-init-2',
+      userId: 'usr-admin-1',
+      name: 'Khay Đựng Pin Gridfinity 18650',
+      thumbnailUrl: '/thumbnails/gridfinity.svg',
+      glbUrl: '/models/gridfinity.glb',
+      stlUrl: '/models/gridfinity.stl',
+      fileFormat: '.STL',
+      dimensionsMm: { x: 84, y: 84, z: 42 },
+      weightGrams: 45,
+      createdAt: '2026-10-07T14:15:00.000Z',
+      engineUsed: 'Hunyuan 3D Pro',
+      isPublishedToShop: false,
+    },
+  ];
 
   // 1. NHỰA & PHỤ KIỆN
   getFilaments(filters?: { material?: string; brand?: string; search?: string }): IFilamentItem[] {
@@ -317,6 +379,176 @@ class ShopService {
       outOfStockCount,
       totalInventoryValueVnd,
     };
+  }
+
+  // 5. Quản lý Mô Hình 3D (Shop Model)
+  addShopModel(data: Omit<IShopModelItem, 'id' | 'type'> & { id?: string }): IShopModelItem {
+    const newItem: IShopModelItem = {
+      ...data,
+      id: data.id || `mod-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      type: 'model',
+      formats: data.formats || ['.STL', '.3MF'],
+      downloads: data.downloads || 0,
+      likes: data.likes || 0,
+      rating: data.rating || 5.0,
+      reviewsCount: data.reviewsCount || 0,
+      features: data.features || ['Mô hình 3D chuẩn xác', 'Tối ưu góc nghiêng in', 'Không rỗng thành'],
+      status: data.status || 'active',
+      thumbnailUrl: data.thumbnailUrl || '/thumbnails/dragon.svg',
+    };
+    this.shopModels.unshift(newItem);
+    return newItem;
+  }
+
+  // 6. Đăng Bán Sản Phẩm Của Seller (Chờ Phê Duyệt)
+  createSellerProduct(params: {
+    sellerId: string;
+    sellerName: string;
+    productType: 'filament' | 'accessory' | 'model';
+    productData: any;
+  }): any {
+    const status = 'pending_approval';
+    if (params.productType === 'filament') {
+      return this.addFilament({
+        ...params.productData,
+        sellerId: params.sellerId,
+        sellerName: params.sellerName,
+        status,
+      });
+    } else if (params.productType === 'accessory') {
+      return this.addAccessory({
+        ...params.productData,
+        sellerId: params.sellerId,
+        sellerName: params.sellerName,
+        status,
+      });
+    } else {
+      return this.addShopModel({
+        ...params.productData,
+        author: params.sellerName,
+        sellerId: params.sellerId,
+        sellerName: params.sellerName,
+        status,
+      });
+    }
+  }
+
+  // 7. Lấy Hàng Đợi Kiểm Duyệt Dành Cho Admin & Mod
+  getPendingModerationProducts() {
+    const pendingFilaments = this.filaments.filter(f => f.status === 'pending_approval');
+    const pendingAccessories = this.accessories.filter(a => a.status === 'pending_approval');
+    const pendingModels = this.shopModels.filter(m => m.status === 'pending_approval');
+    return {
+      filaments: pendingFilaments,
+      accessories: pendingAccessories,
+      models: pendingModels,
+      totalCount: pendingFilaments.length + pendingAccessories.length + pendingModels.length,
+    };
+  }
+
+  // 8. Quyết Định Kiểm Duyệt (Phê Duyệt / Từ Chối)
+  moderateProduct(
+    id: string,
+    type: 'filament' | 'accessory' | 'model',
+    decision: 'approve' | 'reject',
+    feedback?: string
+  ): { success: boolean; message: string; item?: any } {
+    let item: any = null;
+    if (type === 'filament') {
+      item = this.filaments.find(f => f.id === id);
+    } else if (type === 'accessory') {
+      item = this.accessories.find(a => a.id === id);
+    } else if (type === 'model') {
+      item = this.shopModels.find(m => m.id === id);
+    }
+
+    if (!item) return { success: false, message: 'Không tìm thấy sản phẩm' };
+
+    item.status = decision === 'approve' ? 'active' : 'rejected';
+    if (feedback) item.moderationFeedback = feedback;
+
+    return {
+      success: true,
+      message: decision === 'approve'
+        ? `Đã phê duyệt sản phẩm "${item.name || item.title}" đưa ra Shop công khai!`
+        : `Đã từ chối sản phẩm "${item.name || item.title}"`,
+      item,
+    };
+  }
+
+  // 9. Lấy Tất Cả Sản Phẩm Của Seller (Cả Đang Bán, Chờ Duyệt, Bị Từ Chối)
+  getSellerProducts(sellerId: string) {
+    const fil = this.filaments.filter(f => f.sellerId === sellerId);
+    const acc = this.accessories.filter(a => a.sellerId === sellerId);
+    const mod = this.shopModels.filter(m => m.sellerId === sellerId);
+    return {
+      filaments: fil,
+      accessories: acc,
+      models: mod,
+      all: [...fil, ...acc, ...mod],
+    };
+  }
+
+  // 10. Quản Lý Quyết Toán & Lệnh Rút Tiền Của Seller
+  createWithdrawalRequest(params: {
+    sellerId: string;
+    sellerName: string;
+    amountVnd: number;
+    bankName: string;
+    bankAccount: string;
+    accountHolder: string;
+    notes?: string;
+  }): ISellerWithdrawal {
+    const newWdr: ISellerWithdrawal = {
+      id: `WDR-${Math.floor(100000 + Math.random() * 900000)}`,
+      sellerId: params.sellerId,
+      sellerName: params.sellerName,
+      amountVnd: params.amountVnd,
+      bankName: params.bankName,
+      bankAccount: params.bankAccount,
+      accountHolder: params.accountHolder.toUpperCase(),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      notes: params.notes,
+    };
+    this.sellerWithdrawals.unshift(newWdr);
+    return newWdr;
+  }
+
+  getSellerWithdrawals(sellerId?: string): ISellerWithdrawal[] {
+    if (sellerId) {
+      return this.sellerWithdrawals.filter(w => w.sellerId === sellerId);
+    }
+    return this.sellerWithdrawals;
+  }
+
+  approveWithdrawal(id: string): boolean {
+    const item = this.sellerWithdrawals.find(w => w.id === id);
+    if (!item) return false;
+    item.status = 'completed';
+    item.completedAt = new Date().toISOString();
+    return true;
+  }
+
+  // 11. Quản Lý Kho Tệp 3D Cá Nhân Của Người Dùng (User 3D Asset Vault)
+  getUserAssets(userId: string): IUser3DAsset[] {
+    return this.userAssets.filter(a => a.userId === userId);
+  }
+
+  addUserAsset(data: Omit<IUser3DAsset, 'id' | 'createdAt'>): IUser3DAsset {
+    const newAsset: IUser3DAsset = {
+      ...data,
+      id: `asset-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: new Date().toISOString(),
+    };
+    this.userAssets.unshift(newAsset);
+    return newAsset;
+  }
+
+  deleteUserAsset(id: string, userId: string): boolean {
+    const initialLen = this.userAssets.length;
+    this.userAssets = this.userAssets.filter(a => !(a.id === id && a.userId === userId));
+    return this.userAssets.length < initialLen;
   }
 }
 

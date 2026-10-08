@@ -12,7 +12,9 @@ export type OrderFulfillmentStatus =
   | 'packaging'        // Đóng gói chống sốc
   | 'delivering'       // Đang giao hàng (Viettel Post/GHN)
   | 'completed'        // Đã giao thành công
-  | 'cancelled';       // Đã hủy
+  | 'cancelled'        // Đã hủy
+  | 'warranty_claimed' // Khiếu nại bảo hành 1 đổi 1
+  | 'warranty_reprinting'; // Xưởng đang in lại bảo hành
 
 export interface IOrderItem extends ICartItem {
   technology?: string;
@@ -42,6 +44,12 @@ export interface IOrder {
   estimatedCompletion?: string;
   createdAt: string;
   updatedAt: string;
+  // Giai đoạn 3: Bảo hành 1 đổi 1 & Đánh giá
+  warrantyReason?: string;
+  warrantyNotes?: string;
+  warrantyStatus?: 'pending' | 'approved' | 'rejected' | 'reprinting';
+  rating?: number; // 1 - 5
+  reviewText?: string;
 }
 
 export interface IPrinterDevice {

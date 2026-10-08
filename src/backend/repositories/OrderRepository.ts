@@ -143,6 +143,82 @@ class OrderRepository {
       totalPrintersCount,
     };
   }
+
+  // Giai đoạn 3: Hủy đơn hoàn tiền, Khiếu nại bảo hành 1 đổi 1, Đánh giá sản phẩm
+  cancelOrder(id: string, reason?: string): { success: boolean; message: string; refundedAmount: number } {
+    const order = this.getOrderById(id);
+    if (!order) return { success: false, message: 'Không tìm thấy đơn hàng', refundedAmount: 0 };
+
+    if (order.fulfillmentStatus === 'delivering' || order.fulfillmentStatus === 'completed') {
+      return {
+        success: false,
+        message: 'Đơn hàng đang giao hoặc đã hoàn tất. Bạn không thể hủy đơn, vui lòng sử dụng tính năng Bảo Hành 1 Đổi 1!',
+        refundedAmount: 0,
+      };
+    }
+
+    if (order.fulfillmentStatus === 'cancelled') {
+      return { success: false, message: 'Đơn hàng này đã được hủy trước đó', refundedAmount: 0 };
+    }
+
+    order.fulfillmentStatus = 'cancelled';
+    order.updatedAt = new Date().toISOString();
+    if (reason) order.notes = (order.notes ? `${order.notes} | ` : '') + `Lý do hủy: ${reason}`;
+
+    // Giải phóng máy in nếu đã gán
+    if (order.assignedPrinter) {
+      const prt = this.printers.find((p) => p.name === order.assignedPrinter);
+      if (prt && prt.currentOrderId === order.id) {
+        prt.status = 'idle';
+        prt.currentOrderId = undefined;
+        prt.currentProgressPercent = undefined;
+      }
+    }
+
+    let refunded = 0;
+    if (order.paymentStatus === 'paid') {
+      order.paymentStatus = 'refunded';
+      refunded = order.totalAmountVnd;
+    }
+
+    return {
+      success: true,
+      message: refunded > 0
+        ? `Đã hủy đơn hàng thành công và hoàn trả 100% (${refunded.toLocaleString('vi-VN')} đ) vào ví số dư của bạn!`
+        : 'Đã hủy đơn hàng thành công!',
+      refundedAmount: refunded,
+    };
+  }
+
+  claimWarranty(id: string, reason: string, notes?: string): { success: boolean; message: string } {
+    const order = this.getOrderById(id);
+    if (!order) return { success: false, message: 'Không tìm thấy đơn hàng' };
+
+    order.fulfillmentStatus = 'warranty_claimed';
+    order.warrantyStatus = 'pending';
+    order.warrantyReason = reason;
+    order.warrantyNotes = notes;
+    order.updatedAt = new Date().toISOString();
+
+    return {
+      success: true,
+      message: 'Đã tiếp nhận yêu cầu bảo hành 1 đổi 1. Kỹ thuật viên xưởng sẽ kiểm tra và in lại miễn phí trong 24h!',
+    };
+  }
+
+  reviewOrder(id: string, rating: number, reviewText?: string): { success: boolean; message: string } {
+    const order = this.getOrderById(id);
+    if (!order) return { success: false, message: 'Không tìm thấy đơn hàng' };
+
+    order.rating = Math.max(1, Math.min(5, rating));
+    order.reviewText = reviewText;
+    order.updatedAt = new Date().toISOString();
+
+    return {
+      success: true,
+      message: 'Cảm ơn bạn đã gửi đánh giá trải nghiệm sản phẩm!',
+    };
+  }
 }
 
 export const orderRepository = new OrderRepository();

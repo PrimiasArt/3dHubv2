@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { orderRepository } from '@/backend/repositories/OrderRepository';
 import { userRepository } from '@/backend/repositories/UserRepository';
+import { userWalletService } from '@/backend/services/wallet/UserWalletService';
 import { OrderFulfillmentStatus } from '@/backend/domain/order';
 
 export async function GET(req: NextRequest) {
@@ -48,7 +49,80 @@ export async function POST(req: NextRequest) {
     const { action, orderId, status, printerName, printerId, progressPercent } = body;
     const activeUser = userRepository.getActiveUser();
 
-    // Quyền cập nhật: admin, staff, mod
+    // ==========================================
+    // CÁC HÀNH ĐỘNG DÀNH CHO KHÁCH HÀNG (HỦY ĐƠN, BẢO HÀNH, REVIEW)
+    // ==========================================
+    if (action === 'cancel_order') {
+      if (!orderId) {
+        return NextResponse.json({ error: 'Thiếu mã đơn hàng' }, { status: 400 });
+      }
+      const order = orderRepository.getOrderById(orderId);
+      if (!order) {
+        return NextResponse.json({ error: 'Không tìm thấy đơn hàng' }, { status: 404 });
+      }
+
+      const isOwner = order.userId === activeUser.id;
+      const isStaffOrAdmin = activeUser.role === 'admin' || activeUser.role === 'staff' || activeUser.role === 'mod';
+      if (!isOwner && !isStaffOrAdmin) {
+        return NextResponse.json({ error: 'Bạn không có quyền hủy đơn hàng của người khác' }, { status: 403 });
+      }
+
+      const cancelRes = orderRepository.cancelOrder(orderId, body.reason);
+      if (!cancelRes.success) {
+        return NextResponse.json({ error: cancelRes.message }, { status: 400 });
+      }
+
+      if (cancelRes.refundedAmount > 0) {
+        userWalletService.deposit(cancelRes.refundedAmount, `Hoàn 100% tiền hủy đơn hàng #${orderId}`);
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: cancelRes.message,
+        refundedAmount: cancelRes.refundedAmount,
+        newBalanceVnd: userWalletService.getBalance(),
+      });
+    }
+
+    if (action === 'claim_warranty') {
+      if (!orderId || !body.reason) {
+        return NextResponse.json({ error: 'Thiếu thông tin đơn hàng hoặc lý do yêu cầu bảo hành' }, { status: 400 });
+      }
+
+      const order = orderRepository.getOrderById(orderId);
+      if (!order) {
+        return NextResponse.json({ error: 'Không tìm thấy đơn hàng' }, { status: 404 });
+      }
+
+      const isOwner = order.userId === activeUser.id;
+      const isStaffOrAdmin = activeUser.role === 'admin' || activeUser.role === 'staff' || activeUser.role === 'mod';
+      if (!isOwner && !isStaffOrAdmin) {
+        return NextResponse.json({ error: 'Bạn không có quyền thao tác trên đơn hàng này' }, { status: 403 });
+      }
+
+      const claimRes = orderRepository.claimWarranty(orderId, body.reason, body.notes);
+      if (!claimRes.success) {
+        return NextResponse.json({ error: claimRes.message }, { status: 400 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: claimRes.message,
+      });
+    }
+
+    if (action === 'review_order') {
+      if (!orderId || body.rating === undefined) {
+        return NextResponse.json({ error: 'Thiếu mã đơn hàng hoặc số sao đánh giá' }, { status: 400 });
+      }
+
+      const revRes = orderRepository.reviewOrder(orderId, Number(body.rating), body.reviewText);
+      return NextResponse.json(revRes);
+    }
+
+    // ==========================================
+    // CÁC HÀNH ĐỘNG DÀNH CHO XƯỞNG & ADMIN (STAFF / MOD / ADMIN)
+    // ==========================================
     const canManageOrders = activeUser.role === 'admin' || activeUser.role === 'staff' || activeUser.role === 'mod';
     if (!canManageOrders) {
       return NextResponse.json(

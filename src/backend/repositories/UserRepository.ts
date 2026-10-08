@@ -62,6 +62,28 @@ class UserRepository {
     return user.walletBalanceVnd;
   }
 
+  addSellerPendingBalance(id: string, deltaVnd: number): number {
+    const user = this.getUserById(id);
+    if (!user) return 0;
+    user.sellerPendingBalanceVnd = Math.max(0, (user.sellerPendingBalanceVnd || 0) + deltaVnd);
+    return user.sellerPendingBalanceVnd;
+  }
+
+  addTransaction(tx: Omit<IPaymentTransaction, 'id' | 'createdAt' | 'updatedAt'>): IPaymentTransaction {
+    const newTx: IPaymentTransaction = {
+      ...tx,
+      id: `tx-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.transactions.unshift(newTx);
+    return newTx;
+  }
+
+  getTransactionsByUser(userId: string): IPaymentTransaction[] {
+    return this.transactions.filter((t) => t.userId === userId);
+  }
+
   updateRole(id: string, newRole: UserRole): boolean {
     const user = this.getUserById(id);
     if (!user) return false;
@@ -171,21 +193,6 @@ class UserRepository {
     };
     this.users.push(newUser);
     return newUser;
-  }
-
-  addTransaction(tx: Omit<IPaymentTransaction, 'id' | 'createdAt' | 'updatedAt'>): IPaymentTransaction {
-    const newTx: IPaymentTransaction = {
-      ...tx,
-      id: `tx-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    this.transactions.unshift(newTx);
-    return newTx;
-  }
-
-  getTransactionsByUser(userId: string): IPaymentTransaction[] {
-    return this.transactions.filter((t) => t.userId === userId);
   }
 
   getAllTransactions(): IPaymentTransaction[] {

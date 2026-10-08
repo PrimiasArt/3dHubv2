@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, Flame, TrendingUp, Layers, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Flame, TrendingUp, Layers, CheckCircle2, Sparkles, Store } from 'lucide-react';
 import { ITrendMetric } from '@/backend/domain/models';
 import { getMatchingSampleModelId } from '@/backend/domain/sample-models';
 
@@ -181,32 +181,50 @@ export function VelocityLeaderboard({ trends }: VelocityLeaderboardProps) {
                     </div>
                   </td>
 
-                  {/* Action Link to Studio */}
+                  {/* Action Link to Studio & Production */}
                   <td className="py-3.5 px-4 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
+                    <div className="flex items-center justify-center gap-1.5 flex-wrap">
                       {(() => {
                         const sampleModelId = getMatchingSampleModelId(item.title, item.category, item.tags);
                         return (
                           <Link
                             href={`/studio?sampleModel=${sampleModelId}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 border border-white/20 text-white font-medium text-xs transition-all active:scale-95 whitespace-nowrap"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/30 text-cyan-200 font-bold text-xs transition-all active:scale-95 whitespace-nowrap"
                             title={`Nạp mô hình ${item.title} vào 3D Studio`}
                           >
-                            <Layers className="w-3.5 h-3.5" />
-                            <span>In Studio</span>
+                            <Layers className="w-3 h-3 text-cyan-300" />
+                            <span>In 3D</span>
                           </Link>
                         );
                       })()}
+
+                      <Link
+                        href={`/studio?prompt=${encodeURIComponent(item.title)}`}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 text-purple-200 font-bold text-xs transition-all active:scale-95 whitespace-nowrap"
+                        title="Dựng mô hình biến thể mới bằng AI"
+                      >
+                        <Sparkles className="w-3 h-3 text-purple-300" />
+                        <span>Sinh AI</span>
+                      </Link>
+
+                      <Link
+                        href="/seller"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 font-bold text-xs transition-all active:scale-95 whitespace-nowrap"
+                        title="Đăng bán đón trend trên Marketplace"
+                      >
+                        <Store className="w-3 h-3 text-amber-300" />
+                        <span>Bán Trend</span>
+                      </Link>
 
                       {item.sourceUrl && (
                         <a
                           href={item.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white/70 hover:text-white transition-colors"
+                          className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white/70 hover:text-white transition-colors"
                           title="Mở trang gốc trên sàn"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
                     </div>

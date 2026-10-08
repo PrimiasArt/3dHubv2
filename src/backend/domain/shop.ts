@@ -27,6 +27,10 @@ export interface IFilamentItem {
   highlights: string[];
   thumbnailUrl: string;
   badge?: 'Bán chạy' | 'Mới ra mắt' | 'Khuyên dùng' | 'Sale 15%';
+  sellerId?: string;
+  sellerName?: string;
+  status?: 'active' | 'pending_approval' | 'rejected';
+  moderationFeedback?: string;
 }
 
 export interface IAccessoryItem {
@@ -46,6 +50,10 @@ export interface IAccessoryItem {
   specs: Record<string, string>;
   thumbnailUrl: string;
   badge?: 'Chính hãng' | 'Được mua nhiều' | 'Độ bền cao';
+  sellerId?: string;
+  sellerName?: string;
+  status?: 'active' | 'pending_approval' | 'rejected';
+  moderationFeedback?: string;
 }
 
 // 2. IN DỊCH VỤ & PROFILE IN
@@ -114,6 +122,42 @@ export interface IShopModelItem {
   features: string[];
   thumbnailUrl: string;
   badge?: 'Miễn phí 100%' | 'Best Seller' | 'Độc quyền' | 'Độ chính xác cao';
+  sellerId?: string;
+  sellerName?: string;
+  status?: 'active' | 'pending_approval' | 'rejected';
+  moderationFeedback?: string;
+  fileUrl?: string;
+}
+
+// 4. LỆNH RÚT TIỀN CỦA SELLER
+export interface ISellerWithdrawal {
+  id: string;
+  sellerId: string;
+  sellerName: string;
+  amountVnd: number;
+  bankName: string;
+  bankAccount: string;
+  accountHolder: string;
+  status: 'pending' | 'completed' | 'rejected';
+  createdAt: string;
+  completedAt?: string;
+  notes?: string;
+}
+
+// 5. TỆP 3D DO NGƯỜI DÙNG TẠO TỪ AI / UPLOAD (MY 3D ASSETS VAULT)
+export interface IUser3DAsset {
+  id: string;
+  userId: string;
+  name: string;
+  thumbnailUrl: string;
+  glbUrl?: string;
+  stlUrl?: string;
+  fileFormat: string;
+  dimensionsMm: { x: number; y: number; z: number };
+  weightGrams: number;
+  createdAt: string;
+  engineUsed?: string;
+  isPublishedToShop: boolean;
 }
 
 // GIỎ HÀNG
@@ -125,6 +169,7 @@ export interface ICartItem {
   type: 'filament' | 'accessory' | 'service' | 'profile' | 'model';
   imageUrl: string;
   subText?: string;
+  sellerId?: string;
 }
 
 // BÁO GIÁ DỊCH VỤ NHANH

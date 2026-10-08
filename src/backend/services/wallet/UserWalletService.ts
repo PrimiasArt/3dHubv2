@@ -59,6 +59,22 @@ class UserWalletService {
     }
     return { success: true, newBalance: newBal };
   }
+
+  deposit(amount: number, reason?: string): number {
+    const active = userRepository.getActiveUser();
+    const newBal = userRepository.updateBalance(active.id, amount);
+    if (reason) {
+      userRepository.addTransaction({
+        userId: active.id,
+        amountVnd: amount,
+        method: 'wallet',
+        type: 'deposit',
+        status: 'completed',
+        description: reason,
+      });
+    }
+    return newBal;
+  }
 }
 
 export const userWalletService = new UserWalletService();

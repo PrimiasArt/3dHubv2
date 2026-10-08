@@ -2,7 +2,23 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Sparkles, Wand2, RefreshCw, AlertCircle, CheckCircle, Sliders, Printer, Layers, Box } from 'lucide-react';
+import {
+  Sparkles,
+  Wand2,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle,
+  Sliders,
+  Printer,
+  Layers,
+  Box,
+  Save,
+  Store,
+  Download,
+  X,
+  Tag,
+  FileCheck,
+} from 'lucide-react';
 import { use3DGenerator } from '@/hooks/use3DGenerator';
 import { useModelViewer } from '@/hooks/useModelViewer';
 import { usePrintSlicer } from '@/hooks/usePrintSlicer';
@@ -104,9 +120,94 @@ function StudioInner() {
   const [studioToast, setStudioToast] = useState<string | null>(null);
   const [isOrderServiceModalOpen, setIsOrderServiceModalOpen] = useState(false);
 
+  // Giai đoạn 2: Vault Tệp 3D & Bán Marketplace 1-Click
+  const [isSavingVault, setIsSavingVault] = useState(false);
+  const [isMarketplaceModalOpen, setIsMarketplaceModalOpen] = useState(false);
+  const [marketplacePriceVnd, setMarketplacePriceVnd] = useState(45000);
+  const [marketplaceDescription, setMarketplaceDescription] = useState('Mô hình 3D bản quyền tối ưu góc in từ 3D Studio.');
+  const [isSubmittingMarketplace, setIsSubmittingMarketplace] = useState(false);
+
   const showStudioToast = (msg: string) => {
     setStudioToast(msg);
     setTimeout(() => setStudioToast(null), 4500);
+  };
+
+  const handleSaveToVault = async () => {
+    setIsSavingVault(true);
+    try {
+      const currentName = customModel
+        ? customModel.fileName
+        : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || 'Mô hình AI 3D');
+
+      const res = await fetch('/api/shop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'user_assets',
+          subAction: 'add',
+          assetData: {
+            name: currentName,
+            format: 'STL',
+            fileUrl: '/models/sample.stl',
+            fileSizeMb: Number((estimation.filamentWeightGrams * 0.15).toFixed(1)) || 8.5,
+            previewUrl: '/thumbnails/dragon.svg',
+            tags: ['AI Generated', 'Studio 3D', selectedPrinter.name],
+            category: 'Art & Figures',
+          },
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showStudioToast('🎉 Đã lưu mô hình vào Vault cá nhân! Bạn có thể xem tại trang Profile.');
+      } else {
+        showStudioToast(data.error || 'Không thể lưu vào Vault');
+      }
+    } catch (err: any) {
+      showStudioToast(err.message || 'Lỗi mạng khi lưu Vault');
+    } finally {
+      setIsSavingVault(false);
+    }
+  };
+
+  const handlePublishToMarketplace = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingMarketplace(true);
+    try {
+      const currentName = customModel
+        ? customModel.fileName
+        : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || 'Mô hình AI 3D');
+
+      const res = await fetch('/api/shop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_seller_product',
+          productType: 'model',
+          productData: {
+            title: currentName,
+            name: currentName,
+            category: 'Art & Figures',
+            priceVnd: Number(marketplacePriceVnd),
+            isFree: Number(marketplacePriceVnd) === 0,
+            thumbnailUrl: '/thumbnails/dragon.svg',
+            fileUrl: '/models/sample.stl',
+            formats: ['.STL', '.3MF'],
+            description: marketplaceDescription || 'Mô hình 3D bản quyền tối ưu góc in từ 3D Studio.',
+          },
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showStudioToast('🎉 ' + data.message);
+        setIsMarketplaceModalOpen(false);
+      } else {
+        showStudioToast(data.error || 'Lỗi khi đăng bán');
+      }
+    } catch (err: any) {
+      showStudioToast(err.message || 'Lỗi kết nối máy chủ');
+    } finally {
+      setIsSubmittingMarketplace(false);
+    }
   };
 
   // Tự động nạp model nếu được chuyển từ trang Trends, Crawler hoặc Shop qua URL Query (?sampleModel=... hoặc ?model=...)
@@ -372,48 +473,169 @@ function StudioInner() {
             estimation={estimation}
           />
 
-          {/* FAST CONVERSION ACTION BAR: Đặt in dịch vụ & Báo giá tức thì từ Studio */}
-          <div className="p-4 sm:p-5 rounded-[28px] vision-glass flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shadow-md flex-shrink-0">
-                <Printer className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm sm:text-base font-bold text-white">
-                    Đặt In Dịch Vụ Mẫu Này Ngay
-                  </h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white/90 border border-white/20">
-                    Báo giá tức thì
-                  </span>
+          {/* FAST CONVERSION & 3D ASSET LIFECYCLE ACTION BAR */}
+          <div className="p-4 sm:p-5 rounded-[28px] vision-glass flex flex-col gap-4 shadow-xl">
+            {/* Row 1: Đặt In 3D Trực Tiếp */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shadow-md flex-shrink-0">
+                  <Printer className="w-6 h-6" />
                 </div>
-                <p className="text-xs text-white/70 mt-0.5">
-                  Ước tính: ~{estimation.filamentWeightGrams}g nhựa • Thời gian in: ~{Math.round((estimation.estimatedPrintTimeMinutes / 60) * 10) / 10}h • Giao toàn quốc
-                </p>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm sm:text-base font-bold text-white">
+                      Đặt In Dịch Vụ Mẫu Này Ngay
+                    </h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white/90 border border-white/20">
+                      Báo giá tức thì
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/70 mt-0.5">
+                    Ước tính: ~{estimation.filamentWeightGrams}g nhựa • Thời gian in: ~{Math.round((estimation.estimatedPrintTimeMinutes / 60) * 10) / 10}h • Giao toàn quốc
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setIsOrderServiceModalOpen(true)}
+                  className="vision-pill-btn flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-white font-bold text-xs shadow-lg active:scale-95"
+                >
+                  <Sparkles className="w-4 h-4 text-white" />
+                  <span>Đặt In (Tạm Tính {Math.max(25000, estimation.filamentWeightGrams * 600 + Math.round(estimation.estimatedPrintTimeMinutes / 60) * 15000).toLocaleString('vi-VN')} đ)</span>
+                </button>
+
+                <Link
+                  href={`/shop?tab=services&modelName=${encodeURIComponent(customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || '3D Benchy'))}&weight=${estimation.filamentWeightGrams}&dimX=${dimensionsMm.x}&dimY=${dimensionsMm.y}&dimZ=${dimensionsMm.z}`}
+                  className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/15 text-xs font-semibold transition-all whitespace-nowrap"
+                  title="Tùy chỉnh cấu hình báo giá chi tiết tại Cửa Hàng 3D Hub"
+                >
+                  <span>Xem tại Shop →</span>
+                </Link>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            {/* Row 2: Khép kín vòng đời tệp 3D: Lưu Vault, Đăng Bán Marketplace, Tải STL */}
+            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleSaveToVault}
+                  disabled={isSavingVault}
+                  className="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/30 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
+                >
+                  <Save className={`w-3.5 h-3.5 ${isSavingVault ? 'animate-spin' : ''}`} />
+                  <span>{isSavingVault ? 'Đang Lưu...' : 'Lưu Vào 3D Vault'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsMarketplaceModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                >
+                  <Store className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Đưa Lên Bán Marketplace</span>
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={() => setIsOrderServiceModalOpen(true)}
-                className="vision-pill-btn flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-white font-bold text-xs shadow-lg active:scale-95"
+                onClick={() => {
+                  PresetGeneratorService.downloadSTL(selectedModelId);
+                  showStudioToast('📥 Đang tải tệp STL về thiết bị...');
+                }}
+                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
               >
-                <Sparkles className="w-4 h-4 text-white" />
-                <span>Đặt In (Tạm Tính {Math.max(25000, estimation.filamentWeightGrams * 600 + Math.round(estimation.estimatedPrintTimeMinutes / 60) * 15000).toLocaleString('vi-VN')} đ)</span>
+                <Download className="w-3.5 h-3.5" />
+                <span>Tải File (.STL)</span>
               </button>
-
-              <Link
-                href={`/shop?tab=services&modelName=${encodeURIComponent(customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || '3D Benchy'))}&weight=${estimation.filamentWeightGrams}&dimX=${dimensionsMm.x}&dimY=${dimensionsMm.y}&dimZ=${dimensionsMm.z}`}
-                className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/15 text-xs font-semibold transition-all whitespace-nowrap"
-                title="Tùy chỉnh cấu hình báo giá chi tiết tại Cửa Hàng 3D Hub"
-              >
-                <span>Xem tại Shop →</span>
-              </Link>
             </div>
           </div>
         </div>
       </div>
+
+      {/* MODAL: ĐĂNG BÁN MÔ HÌNH LÊN MARKETPLACE 1-CLICK */}
+      {isMarketplaceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+          <div className="vision-glass-panel rounded-[32px] p-6 sm:p-7 max-w-md w-full shadow-2xl border border-white/20 text-white space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2 text-amber-300 font-bold text-sm sm:text-base">
+                <Store className="w-5 h-5" />
+                <span>Đăng Bán Lên Marketplace 3D</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMarketplaceModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handlePublishToMarketplace} className="space-y-3.5 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-white block">Tên Mô Hình 3D</label>
+                <input
+                  type="text"
+                  disabled
+                  value={customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || 'Mô hình AI 3D')}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-white/80 font-medium"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-white block">Giá Bán Niêm Yết (VNĐ)</label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    step="5000"
+                    required
+                    value={marketplacePriceVnd}
+                    onChange={(e) => setMarketplacePriceVnd(parseInt(e.target.value) || 0)}
+                    placeholder="0 = Miễn phí"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-amber-300 font-bold focus:outline-none focus:border-amber-400"
+                  />
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 text-[11px]">
+                    {marketplacePriceVnd === 0 ? 'Miễn Phí' : 'VNĐ'}
+                  </span>
+                </div>
+                <p className="text-[10px] text-white/50">
+                  Khi khách mua: Sàn giữ 8% hoa hồng, 92% doanh thu chuyển vào ví của bạn.
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-white block">Mô Tả Sản Phẩm</label>
+                <textarea
+                  rows={2}
+                  value={marketplaceDescription}
+                  onChange={(e) => setMarketplaceDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/15 text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMarketplaceModalOpen(false)}
+                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingMarketplace}
+                  className="vision-pill-btn px-5 py-2.5 rounded-full text-white font-bold shadow-md"
+                >
+                  {isSubmittingMarketplace ? 'Đang Gửi...' : 'Gửi Phê Duyệt'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* PRO EXPERT PRINT PROFILE & SLICING GUIDE CARD (MỞ KHÓA 1.000 VNĐ & XUẤT .3MF) */}
       <section className="pt-2">

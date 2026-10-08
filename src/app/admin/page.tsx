@@ -23,6 +23,7 @@ import {
   Filter,
   SlidersHorizontal,
   ChevronRight,
+  Activity,
   ExternalLink,
   Cpu,
   Flame,
@@ -49,6 +50,7 @@ import { AdminModulesManager } from '@/components/admin/AdminModulesManager';
 import { AdminTrendsManager } from '@/components/admin/AdminTrendsManager';
 import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
 import { AdminUserManager } from '@/components/admin/AdminUserManager';
+import { AdminAuditLogManager } from '@/components/admin/AdminAuditLogManager';
 
 function AdminPageContent() {
   const {
@@ -76,13 +78,13 @@ function AdminPageContent() {
   const searchParams = useSearchParams();
   const tabQuery = searchParams.get('tab');
 
-  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler'>('workshop');
+  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler' | 'audit'>('workshop');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
   // Sync tab with query parameters (?tab=users, ?tab=products, etc.)
   useEffect(() => {
-    if (tabQuery && ['users', 'workshop', 'revenue', 'settings', 'products', 'modules', 'trends', 'crawler'].includes(tabQuery)) {
+    if (tabQuery && ['users', 'workshop', 'revenue', 'settings', 'products', 'modules', 'trends', 'crawler', 'audit'].includes(tabQuery)) {
       setActiveTab(tabQuery as any);
     } else if (currentUser?.role === 'mod') {
       setActiveTab('products');
@@ -731,6 +733,21 @@ function AdminPageContent() {
           >
             <Sliders className="w-4 h-4" />
             <span>Phân Quyền Module (8 Tính Năng)</span>
+          </button>
+        )}
+
+        {/* Tab 10: Audit Logs (Admin & Mod) */}
+        {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+          <button
+            onClick={() => setActiveTab('audit')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+              activeTab === 'audit'
+                ? 'bg-white/28 text-white shadow-xs'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <Activity className="w-4 h-4 text-cyan-300" />
+            <span>Nhật Ký Kiểm Toán (Audit)</span>
           </button>
         )}
       </div>
@@ -1852,6 +1869,11 @@ function AdminPageContent() {
       {/* TAB 8: MULTI-PLATFORM 3D DATA CRAWLER */}
       {activeTab === 'crawler' && (
         <AdminCrawlerManager />
+      )}
+
+      {/* TAB 9: AUDIT TRAIL LOGS (ADMIN & MOD) */}
+      {activeTab === 'audit' && (
+        <AdminAuditLogManager />
       )}
     </div>
   );
