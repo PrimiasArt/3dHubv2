@@ -38,6 +38,7 @@ import {
   Store,
   Sliders,
   Compass,
+  BookOpen,
 } from 'lucide-react';
 import { useUserSession } from '@/hooks/useUserSession';
 import { useOrders } from '@/hooks/useOrders';
@@ -51,6 +52,7 @@ import { AdminTrendsManager } from '@/components/admin/AdminTrendsManager';
 import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
 import { AdminUserManager } from '@/components/admin/AdminUserManager';
 import { AdminAuditLogManager } from '@/components/admin/AdminAuditLogManager';
+import { AdminKnowledgeManager } from '@/components/admin/AdminKnowledgeManager';
 
 const DEFAULT_GEMINI_MODELS = [
   { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Mô hình suy luận sâu & phân tích kỹ thuật cao nhất)' },
@@ -88,7 +90,7 @@ function AdminPageContent() {
   const searchParams = useSearchParams();
   const tabQuery = searchParams.get('tab');
 
-  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler' | 'audit'>('workshop');
+  const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler' | 'audit' | 'knowledge'>('workshop');
   const [tabCategory, setTabCategory] = useState<'all' | 'operations' | 'growth' | 'system'>('all');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
@@ -152,7 +154,7 @@ function AdminPageContent() {
 
   // Sync tab with query parameters (?tab=users, ?tab=products, etc.)
   useEffect(() => {
-    if (tabQuery && ['users', 'workshop', 'revenue', 'settings', 'products', 'modules', 'trends', 'crawler', 'audit'].includes(tabQuery)) {
+    if (tabQuery && ['users', 'workshop', 'revenue', 'settings', 'products', 'modules', 'trends', 'crawler', 'audit', 'knowledge'].includes(tabQuery)) {
       setActiveTab(tabQuery as any);
     } else if (currentUser?.role === 'mod') {
       setActiveTab('products');
@@ -602,9 +604,9 @@ function AdminPageContent() {
               Nhóm Quản Trị:
             </span>
             {[
-              { id: 'all', label: 'Tất Cả', count: 10 },
+              { id: 'all', label: 'Tất Cả', count: 11 },
               { id: 'operations', label: '🏭 Vận Hành & Kho', count: 4 },
-              { id: 'growth', label: '📈 Kinh Doanh & AI', count: 3 },
+              { id: 'growth', label: '📈 Kinh Doanh & AI', count: 4 },
               { id: 'system', label: '🛡️ Quản Trị & Hệ Thống', count: 3 },
             ].map((cat) => (
               <button
@@ -743,6 +745,23 @@ function AdminPageContent() {
             >
               <Compass className="w-3.5 h-3.5 text-[#2DD4BF]" />
               <span>Thu Thập Dữ Liệu 3D (Crawler v3)</span>
+            </button>
+          )}
+
+          {/* 7. Knowledge Base */}
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) &&
+            (tabCategory === 'all' || tabCategory === 'growth') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('knowledge')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                activeTab === 'knowledge'
+                  ? 'bg-white/25 text-white border-white/40 shadow-sm shadow-emerald-400/20 scale-[1.02]'
+                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Kho Tri Thức Đối Chiếu</span>
             </button>
           )}
 
@@ -1976,6 +1995,11 @@ function AdminPageContent() {
       {/* TAB 9: AUDIT TRAIL LOGS (ADMIN & MOD) */}
       {activeTab === 'audit' && (
         <AdminAuditLogManager />
+      )}
+
+      {/* TAB 10: KNOWLEDGE BASE & GROUND TRUTH RULES (ADMIN & MOD) */}
+      {activeTab === 'knowledge' && (
+        <AdminKnowledgeManager />
       )}
     </div>
   );

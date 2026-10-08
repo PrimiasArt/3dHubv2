@@ -105,6 +105,12 @@ Vật liệu: ${profile.filamentType}
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-200 border border-amber-400/30">
                 Tiết Kiệm ~22% Giờ Máy
               </span>
+              {profile?.crossCheckedRulesCount && profile.crossCheckedRulesCount > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                  <span>Đối chiếu {profile.crossCheckedRulesCount} quy tắc ({profile.confidenceScore}% tin cậy)</span>
+                </span>
+              )}
             </div>
             <h3 className="text-lg sm:text-xl font-black text-white mt-1">
               Profile In Chuẩn Đẹp &amp; Tối Ưu Tốc Độ
@@ -114,6 +120,36 @@ Vật liệu: ${profile.filamentType}
             </p>
           </div>
         </div>
+
+        {/* Risk Warnings Banner if any */}
+        {profile?.riskWarnings && profile.riskWarnings.length > 0 && (
+          <div className="space-y-2">
+            {profile.riskWarnings.map((warn, wIdx) => (
+              <div
+                key={wIdx}
+                className={`p-3.5 rounded-2xl border text-xs flex items-start gap-3 backdrop-blur-md ${
+                  warn.severity === 'high'
+                    ? 'bg-rose-500/20 border-rose-400/40 text-rose-200'
+                    : 'bg-amber-500/20 border-amber-400/40 text-amber-200'
+                }`}
+              >
+                <Flame className="w-4 h-4 shrink-0 text-amber-300 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold flex items-center gap-2">
+                    <span>{warn.title}</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] uppercase font-black bg-rose-500/30 text-rose-200">
+                      {warn.severity.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-[11px] opacity-90 leading-relaxed">{warn.description}</p>
+                  <p className="text-[11px] font-semibold text-white pt-0.5">
+                    👉 Khuyến nghị xử lý: {warn.suggestedFix}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Printer Selector */}
         <div className="p-4 rounded-2xl bg-black/30 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

@@ -83,6 +83,9 @@ export interface ISlicerProfilePreset {
   communityTips: string[];
   commercialTier: 'free' | 'vip' | 'farm_optimized';
   estimatedPrintTimeReductionPercent?: number; // e.g. 18%
+  confidenceScore?: number; // 0 - 100
+  crossCheckedRulesCount?: number;
+  riskWarnings?: { severity: 'low' | 'medium' | 'high'; title: string; description: string; suggestedFix: string }[];
   createdAt: string;
 }
 
