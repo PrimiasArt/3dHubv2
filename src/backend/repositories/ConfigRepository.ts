@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import {
   ISystemConfig,
   DEFAULT_SYSTEM_CONFIG,
@@ -14,6 +16,69 @@ import { UserRole } from '../domain/user';
 
 class ConfigRepository {
   private config: ISystemConfig = { ...DEFAULT_SYSTEM_CONFIG };
+  private filePath: string = path.join(process.cwd(), 'data', 'system_config.json');
+
+  constructor() {
+    this.loadFromDisk();
+  }
+
+  private loadFromDisk(): void {
+    try {
+      if (fs.existsSync(this.filePath)) {
+        const raw = fs.readFileSync(this.filePath, 'utf-8');
+        const parsed = JSON.parse(raw);
+        this.config = {
+          ...DEFAULT_SYSTEM_CONFIG,
+          ...parsed,
+          apiKeys: {
+            ...DEFAULT_SYSTEM_CONFIG.apiKeys,
+            ...(parsed.apiKeys || {}),
+          },
+        };
+      }
+
+      // Đọc đồng bộ từ biến môi trường nếu có
+      if (process.env.GEMINI_API_KEY && !this.config.apiKeys.geminiApiKey) {
+        this.config.apiKeys.geminiApiKey = process.env.GEMINI_API_KEY;
+      }
+      if (process.env.FAL_KEY && !this.config.apiKeys.falKey) {
+        this.config.apiKeys.falKey = process.env.FAL_KEY;
+      }
+      if (process.env.MESHY_API_KEY && !this.config.apiKeys.meshyApiKey) {
+        this.config.apiKeys.meshyApiKey = process.env.MESHY_API_KEY;
+      }
+
+      // Đẩy ngược lại biến môi trường của tiến trình hiện tại
+      if (this.config.apiKeys.geminiApiKey) {
+        process.env.GEMINI_API_KEY = this.config.apiKeys.geminiApiKey;
+      }
+    } catch (e: any) {
+      console.warn('[ConfigRepository] Không thể đọc cấu hình từ đĩa, sử dụng mặc định:', e.message);
+    }
+  }
+
+  private saveToDisk(): void {
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(this.filePath, JSON.stringify(this.config, null, 2), 'utf-8');
+
+      // Ghi chú đồng bộ biến môi trường runtime
+      if (this.config.apiKeys?.geminiApiKey) {
+        process.env.GEMINI_API_KEY = this.config.apiKeys.geminiApiKey;
+      }
+      if (this.config.apiKeys?.falKey) {
+        process.env.FAL_KEY = this.config.apiKeys.falKey;
+      }
+      if (this.config.apiKeys?.meshyApiKey) {
+        process.env.MESHY_API_KEY = this.config.apiKeys.meshyApiKey;
+      }
+    } catch (e: any) {
+      console.warn('[ConfigRepository] Không thể lưu cấu hình ra đĩa:', e.message);
+    }
+  }
 
   getConfig(): ISystemConfig {
     return { ...this.config };
@@ -46,6 +111,7 @@ class ConfigRepository {
       this.config.operations.profitMarginPercent = 0;
     }
 
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -56,6 +122,7 @@ class ConfigRepository {
     }
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -63,6 +130,7 @@ class ConfigRepository {
     this.config.materials = { ...this.config.materials, ...materials };
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -70,6 +138,7 @@ class ConfigRepository {
     this.config.operations = { ...this.config.operations, ...operations };
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -77,6 +146,7 @@ class ConfigRepository {
     this.config.aiPricing = { ...this.config.aiPricing, ...aiPricing };
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -84,6 +154,7 @@ class ConfigRepository {
     this.config.apiKeys = { ...this.config.apiKeys, ...keys };
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -95,6 +166,7 @@ class ConfigRepository {
     };
     this.config.updatedAt = new Date().toISOString();
     this.config.updatedBy = updatedBy;
+    this.saveToDisk();
     return this.getConfig();
   }
 
@@ -103,6 +175,7 @@ class ConfigRepository {
       this.config.modulePermissions[moduleKey][role] = isEnabled;
       this.config.updatedAt = new Date().toISOString();
       this.config.updatedBy = updatedBy;
+      this.saveToDisk();
     }
     return this.getConfig();
   }
