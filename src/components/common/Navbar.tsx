@@ -72,21 +72,24 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Dynamic Navigation Items based on Module Permissions Matrix - Streamlined 3-Pillar Architecture
+  // Clean 3-Pillar Customer Navigation (Always strictly 3 items to avoid blowing up navbar width)
   const navItems = [
     { label: 'Trang Chủ', href: '/', icon: Box },
   ];
   if (isModuleVisible('studio')) {
-    navItems.push({ label: 'AI Studio (Tạo 3D)', href: '/studio', icon: Sparkles });
+    navItems.push({ label: 'AI Studio', href: '/studio', icon: Sparkles });
   }
   if (isModuleVisible('shop')) {
-    navItems.push({ label: 'Cửa Hàng & Dịch Vụ In', href: '/shop', icon: ShoppingBag });
+    navItems.push({ label: 'Cửa Hàng & In 3D', href: '/shop', icon: ShoppingBag });
   }
+
+  // Full items list for Mobile Drawer navigation
+  const mobileNavItems = [...navItems];
   if ((isModuleVisible('seller_hub') || currentUser?.role === 'seller' || permissions.canAccessSeller) && currentUser?.role !== 'user') {
-    navItems.push({ label: 'Kênh Người Bán', href: '/seller', icon: Store });
+    mobileNavItems.push({ label: 'Kênh Người Bán', href: '/seller', icon: Store });
   }
   if (permissions.canAccessAdmin && isModuleVisible('admin_hub')) {
-    navItems.push({
+    mobileNavItems.push({
       label: 'Quản Trị Hệ Thống',
       href: '/admin',
       icon: Building2,
@@ -125,12 +128,13 @@ export function Navbar() {
 
   const currentBadge = getRoleBadge(currentUser?.role);
   const isAdmin = currentUser?.role === 'admin';
+  const hasAdminAccess = permissions.canAccessAdmin && isModuleVisible('admin_hub');
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4">
-        {/* Apple VisionOS Floating Frosted Glass Capsule Bar */}
-        <div className="max-w-7xl mx-auto h-16 rounded-full px-3 sm:px-6 flex items-center justify-between vision-glass shadow-[0_16px_40px_rgba(0,0,0,0.35)] border border-white/15 relative">
+      <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+        {/* Apple VisionOS Floating Frosted Glass Capsule Bar with safe inner padding */}
+        <div className="max-w-7xl mx-auto h-16 rounded-full px-4 sm:px-6 lg:px-7 flex items-center justify-between vision-glass shadow-[0_16px_40px_rgba(0,0,0,0.35)] border border-white/15 relative">
           {/* Brand Logo with VisionOS Circular Glass Icon */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 flex items-center justify-center text-white transition-all shadow-sm group-hover:scale-105">
@@ -158,17 +162,16 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation - VisionOS Segmented Pill Control (Hidden on Mobile/Tablet to Prevent Breaking) */}
-          <nav className="hidden lg:flex items-center p-1 rounded-full bg-black/25 backdrop-blur-xl border border-white/10 shrink-0">
+          {/* Center Customer Navigation - VisionOS Segmented Pill Control (Strictly 3 Items) */}
+          <nav className="hidden md:flex items-center p-1 rounded-full bg-black/25 backdrop-blur-xl border border-white/10 shrink-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
-              const isAdminTab = item.href === '/admin';
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-[#2DD4BF]/25 backdrop-blur-md text-[#5EEAD4] font-bold border border-[#2DD4BF]/40 shadow-[0_2px_8px_rgba(0,0,0,0.2)]'
                       : 'text-white/70 hover:text-white font-medium hover:bg-white/10'
@@ -180,23 +183,37 @@ export function Navbar() {
                     }`}
                   />
                   <span>{item.label}</span>
-                  {isAdminTab && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
-                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* User Profile, Admin Switcher & VisionOS Wallet Capsule */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Quick Admin Environment Switcher Button (Chỉ hiển thị cho riêng Admin trên desktop) */}
+          {/* User Profile, Action Buttons & VisionOS Wallet Capsule */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Direct Admin Command Link for Admin & Mod (Tucked in Right Action Group) */}
+            {hasAdminAccess && (
+              <Link
+                href="/admin"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 ${
+                  pathname === '/admin'
+                    ? 'bg-[#2DD4BF]/25 text-[#5EEAD4] border-[#2DD4BF]/40 shadow-[0_0_12px_rgba(45,212,191,0.25)]'
+                    : 'bg-white/10 hover:bg-white/20 text-white/90 border-white/15'
+                }`}
+                title="Trung tâm Quản trị hệ thống &amp; Xưởng in"
+              >
+                <Building2 className="w-3.5 h-3.5 text-[#5EEAD4]" />
+                <span className="hidden xl:inline">Quản Trị</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              </Link>
+            )}
+
+            {/* Quick Admin Environment Switcher Button (Chỉ hiển thị cho riêng Admin) */}
             {isAdmin && (
               <button
                 type="button"
                 onClick={() => toggleEnvironment()}
                 disabled={isSwitching}
-                className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 group ${
+                className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 group ${
                   isOfficial
                     ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
                     : 'bg-[#0A2E2A]/80 hover:bg-[#12423D] text-[#E6FAF6] border-[#2DD4BF]/50 shadow-[0_0_16px_rgba(45,212,191,0.3)]'
@@ -207,13 +224,13 @@ export function Navbar() {
                   <>
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-300 group-hover:scale-110 transition-transform" />
                     <span className="tracking-tight">OFFICIAL</span>
-                    <span className="hidden xl:inline text-[10px] text-emerald-200/70 font-normal">| Live</span>
+                    <span className="hidden 2xl:inline text-[10px] text-emerald-200/70 font-normal">| Live</span>
                   </>
                 ) : (
                   <>
                     <FlaskConical className="w-3.5 h-3.5 text-[#5EEAD4] group-hover:scale-110 transition-transform" />
                     <span className="tracking-tight text-[#F0FDFA]">STAGING</span>
-                    <span className="hidden xl:inline text-[10px] text-[#99F6E4] font-medium">| Ngọc Bích &amp; Cyan</span>
+                    <span className="hidden 2xl:inline text-[10px] text-[#99F6E4] font-medium">| Ngọc Bích</span>
                   </>
                 )}
               </button>
@@ -223,11 +240,11 @@ export function Navbar() {
             {isModuleVisible('wallet') && (
               <button
                 onClick={() => setIsTopUpModalOpen(true)}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/15 text-white text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/15 text-white text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
                 title="Nạp tiền vào ví qua VietQR hoặc MoMo"
               >
                 <Wallet className="w-3.5 h-3.5 text-[#5EEAD4] group-hover:scale-110 transition-transform" />
-                <span suppressHydrationWarning className="font-semibold text-xs tracking-tight text-white">
+                <span suppressHydrationWarning className="font-semibold text-xs tracking-tight text-white font-mono">
                   {new Intl.NumberFormat('en-US').format(currentUser?.walletBalanceVnd ?? balanceVnd)} đ
                 </span>
                 <span className="w-4 h-4 rounded-full bg-white/25 flex items-center justify-center text-white text-[10px] hidden sm:flex">
@@ -236,7 +253,7 @@ export function Navbar() {
               </button>
             )}
 
-            {/* VisionOS User Profile Trigger */}
+            {/* VisionOS User Profile Trigger (Compact with overflow safety) */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -258,9 +275,9 @@ export function Navbar() {
                   )}
                 </div>
 
-                <div className="hidden md:block">
+                <div className="hidden sm:block">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-white truncate max-w-[85px]">
+                    <span className="text-xs font-semibold text-white truncate max-w-[65px] md:max-w-[75px] xl:max-w-[90px]">
                       {currentUser?.name || 'Tài khoản'}
                     </span>
                     <span
@@ -502,7 +519,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white transition-all active:scale-95 ml-1"
+              className="md:hidden w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white transition-all active:scale-95 ml-0.5"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? (
@@ -516,10 +533,10 @@ export function Navbar() {
 
         {/* Mobile Navigation Drawer Sheet (Renders smoothly on phones/tablets) */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-[#2DD4BF]/30 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-3xl space-y-3 animate-fadeIn text-white">
+          <div className="md:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-[#2DD4BF]/30 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-3xl space-y-3 animate-fadeIn text-white">
             {/* Mobile Navigation Links */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {navItems.map((item) => {
+              {mobileNavItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
