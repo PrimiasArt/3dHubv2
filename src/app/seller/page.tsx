@@ -39,7 +39,10 @@ export default function SellerPage() {
   const [bankName, setBankName] = useState('MBBank (Ngân hàng Quân Đội)');
   const [isSubmittingWithdraw, setIsSubmittingWithdraw] = useState(false);
 
-  const isSeller = currentUser?.role === 'seller' || currentUser?.role === 'admin';
+  const isSeller =
+    currentUser?.role === 'seller' ||
+    currentUser?.role === 'admin' ||
+    currentUser?.role === 'mod';
 
   // Demo products uploaded by seller
   const sellerProducts = [
@@ -124,20 +127,29 @@ export default function SellerPage() {
           <div>
             <h2 className="text-xl font-black text-white">Đăng Ký Gian Hàng Seller</h2>
             <p className="text-xs text-white/70 mt-2 leading-relaxed">
-              Tài khoản hiện tại của bạn là <strong className="text-white">{currentUser?.role?.toUpperCase()}</strong>. Hãy kích hoạt quyền <strong className="text-amber-300">SELLER</strong> để mở gian hàng, bán cuộn nhựa, linh kiện và nhận tiền bản quyền file 3D.
+              Tài khoản hiện tại của bạn là <strong className="text-white">{currentUser?.role?.toUpperCase()}</strong>. Quyền truy cập Kênh Gian Hàng dành cho người bán đã xác thực, Quản trị viên và Điều phối viên (Mod).
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              switchRole('seller');
-              showToast('🎉 Đã chuyển sang vai trò Seller! Chào mừng bạn đến với Seller Hub.');
-            }}
-            className="vision-pill-btn w-full py-3 rounded-full text-white text-xs font-bold transition-all shadow-md active:scale-95"
-          >
-            Kích Hoạt Tài Khoản Seller Ngay (Thử Nghiệm)
-          </button>
+          {currentUser?.role === 'admin' ? (
+            <button
+              type="button"
+              onClick={() => {
+                switchRole('seller');
+                showToast('🎉 Đã chuyển sang vai trò Seller! Chào mừng bạn đến với Seller Hub.');
+              }}
+              className="vision-pill-btn w-full py-3 rounded-full text-white text-xs font-bold transition-all shadow-md active:scale-95"
+            >
+              Kích Hoạt Quyền Seller Test (Chỉ Dành Cho Admin)
+            </button>
+          ) : (
+            <Link
+              href="/shop"
+              className="vision-pill-btn block w-full py-3 rounded-full text-white text-xs font-bold transition-all text-center shadow-md"
+            >
+              Quay Lại Cửa Hàng &amp; Mua Sắm
+            </Link>
+          )}
         </div>
       </div>
     );

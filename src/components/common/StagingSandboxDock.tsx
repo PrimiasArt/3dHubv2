@@ -13,8 +13,27 @@ export function StagingSandboxDock() {
   const { topUpBalance } = useUserWallet();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Chỉ hiển thị trên bản Staging cho Admin hoặc Developer test
-  if (!isStaging || !isAdmin) return null;
+  // Ghi nhớ phiên Admin khi Admin bắt đầu test đổi vai trò
+  const [hasAdminPrivilege, setHasAdminPrivilege] = useState(false);
+
+  React.useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      setHasAdminPrivilege(true);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('3dhub_admin_authorized', 'true');
+      }
+    } else if (typeof window !== 'undefined' && sessionStorage.getItem('3dhub_admin_authorized') === 'true') {
+      setHasAdminPrivilege(true);
+    } else {
+      setHasAdminPrivilege(false);
+    }
+  }, [currentUser?.role]);
+
+  // Tuyệt đối chỉ hiển thị trên bản Staging VÀ chỉ dành cho tài khoản Admin (hoặc Admin đang test vai trò khác)
+  // Các tài khoản thường (mod, seller, staff, user) không bao giờ nhìn thấy dock hoặc tag chuyển đổi RBAC
+  if (!isStaging || !hasAdminPrivilege) return null;
+
+  const isTestingOtherRole = currentUser?.role !== 'admin';
 
   return (
     <div className="fixed bottom-5 right-5 z-40 animate-fadeIn">
@@ -22,11 +41,17 @@ export function StagingSandboxDock() {
         <button
           type="button"
           onClick={() => setIsExpanded(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#0B2523]/90 hover:bg-[#123835] border border-[#2DD4BF]/40 text-[#E6FAF6] text-xs font-bold shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all active:scale-95 group"
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-full border text-xs font-bold shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all active:scale-95 group ${
+            isTestingOtherRole
+              ? 'bg-amber-950/90 border-amber-400/40 text-amber-200'
+              : 'bg-[#0B2523]/90 hover:bg-[#123835] border-[#2DD4BF]/40 text-[#E6FAF6]'
+          }`}
           title="Mở bảng điều khiển nhanh Staging Sandbox"
         >
           <FlaskConical className="w-4 h-4 text-[#5EEAD4] group-hover:rotate-12 transition-transform" />
-          <span className="text-[#F0FDFA]">Staging Sandbox</span>
+          <span className="text-[#F0FDFA]">
+            {isTestingOtherRole ? `Test: ${currentUser?.role?.toUpperCase()}` : 'Staging Sandbox'}
+          </span>
           <span className="w-2 h-2 rounded-full bg-[#2DD4BF] animate-ping" />
         </button>
       ) : (
@@ -35,7 +60,7 @@ export function StagingSandboxDock() {
           <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
             <div className="flex items-center gap-2 text-xs font-black text-[#F0FDFA]">
               <FlaskConical className="w-4 h-4 text-[#5EEAD4]" />
-              <span>Staging Sandbox Dock</span>
+              <span>Staging Sandbox Dock (Admin Only)</span>
             </div>
             <button
               onClick={() => setIsExpanded(false)}
@@ -74,6 +99,20 @@ export function StagingSandboxDock() {
                 );
               })}
             </div>
+
+            {/* If currently testing another role, show 1-click return to Admin */}
+            {isTestingOtherRole && (
+              <button
+                onClick={() => {
+                  const adminUser = allUsers.find((u) => u.role === 'admin');
+                  if (adminUser) switchUser(adminUser.id);
+                }}
+                className="w-full mt-2 py-1.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-bold border border-rose-400/30 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Trở Về Tài Khoản Admin Gốc</span>
+              </button>
+            )}
           </div>
 
           {/* Quick Wallet Top Up */}

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ShieldAlert,
   Users,
@@ -33,6 +34,7 @@ import {
   FlaskConical,
   ShieldCheck,
   ShoppingBag,
+  Store,
   Sliders,
   Compass,
 } from 'lucide-react';
@@ -48,7 +50,7 @@ import { AdminTrendsManager } from '@/components/admin/AdminTrendsManager';
 import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
 import { AdminUserManager } from '@/components/admin/AdminUserManager';
 
-export default function AdminPage() {
+function AdminPageContent() {
   const {
     currentUser,
     permissions,
@@ -71,16 +73,21 @@ export default function AdminPage() {
     refreshOrders,
   } = useOrders();
 
+  const searchParams = useSearchParams();
+  const tabQuery = searchParams.get('tab');
+
   const [activeTab, setActiveTab] = useState<'users' | 'workshop' | 'revenue' | 'settings' | 'products' | 'modules' | 'trends' | 'crawler'>('workshop');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
-  // If user is Mod (or has product manage permission without order manage), default to products tab
-  React.useEffect(() => {
-    if (currentUser?.role === 'mod' && !permissions.canManageOrders) {
+  // Sync tab with query parameters (?tab=users, ?tab=products, etc.)
+  useEffect(() => {
+    if (tabQuery && ['users', 'workshop', 'revenue', 'settings', 'products', 'modules', 'trends', 'crawler'].includes(tabQuery)) {
+      setActiveTab(tabQuery as any);
+    } else if (currentUser?.role === 'mod') {
       setActiveTab('products');
     }
-  }, [currentUser?.role, permissions.canManageOrders]);
+  }, [tabQuery, currentUser?.role]);
 
   // Fetch admin system configuration
   React.useEffect(() => {
@@ -216,48 +223,57 @@ export default function AdminPage() {
           <div>
             <h2 className="text-xl font-black text-white">Yêu Cầu Quyền Quản Trị</h2>
             <p className="text-xs text-white/70 mt-2 leading-relaxed">
-              Tài khoản hiện tại của bạn là <strong className="text-white">Khách hàng (User)</strong>. Bạn cần vai trò <strong className="text-rose-300">Admin</strong>, <strong className="text-white">Mod</strong>, hoặc <strong className="text-emerald-300">Staff</strong> để truy cập hệ thống quản trị và điều phối xưởng in.
+              Tài khoản hiện tại của bạn là <strong className="text-white">Khách hàng ({currentUser?.role?.toUpperCase()})</strong>. Bạn không có quyền truy cập hệ thống quản trị nội bộ.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
-            <p className="text-[11px] font-bold text-amber-300 uppercase tracking-wider">
-              Chọn nhanh vai trò để trải nghiệm:
-            </p>
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                onClick={() => switchUser('usr-admin-1')}
-                className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
-              >
-                <div className="font-black">Nguyễn Văn Admin</div>
-                <div className="text-[10px] text-white/60">Toàn quyền hệ thống</div>
-              </button>
+          {currentUser?.role === 'admin' ? (
+            <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
+              <p className="text-[11px] font-bold text-amber-300 uppercase tracking-wider">
+                Chọn nhanh vai trò để trải nghiệm (Admin Only):
+              </p>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={() => switchUser('usr-admin-1')}
+                  className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
+                >
+                  <div className="font-black">Nguyễn Văn Admin</div>
+                  <div className="text-[10px] text-white/60">Toàn quyền hệ thống</div>
+                </button>
 
-              <button
-                onClick={() => switchUser('usr-staff-1')}
-                className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
-              >
-                <div className="font-black">Lê Kỹ Thuật (Staff)</div>
-                <div className="text-[10px] text-emerald-300">Quản lý xưởng in</div>
-              </button>
+                <button
+                  onClick={() => switchUser('usr-staff-1')}
+                  className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
+                >
+                  <div className="font-black">Lê Kỹ Thuật (Staff)</div>
+                  <div className="text-[10px] text-emerald-300">Quản lý xưởng in</div>
+                </button>
 
-              <button
-                onClick={() => switchUser('usr-mod-1')}
-                className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
-              >
-                <div className="font-black">Trần Thị Moderator</div>
-                <div className="text-[10px] text-white/70">Kiểm duyệt sản phẩm</div>
-              </button>
+                <button
+                  onClick={() => switchUser('usr-mod-1')}
+                  className="p-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-bold transition-all text-left shadow-sm"
+                >
+                  <div className="font-black">Trần Thị Moderator</div>
+                  <div className="text-[10px] text-white/70">Kiểm duyệt sản phẩm</div>
+                </button>
 
-              <button
-                onClick={() => switchRole('admin')}
-                className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-xs font-bold transition-all text-left shadow-sm"
-              >
-                <div className="font-black">Nâng Cấp Quyền</div>
-                <div className="text-[10px] text-amber-300">Biến user thành Admin</div>
-              </button>
+                <button
+                  onClick={() => switchRole('admin')}
+                  className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-xs font-bold transition-all text-left shadow-sm"
+                >
+                  <div className="font-black">Khôi Phục Quyền</div>
+                  <div className="text-[10px] text-amber-300">Về quyền Admin</div>
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <Link
+              href="/shop"
+              className="vision-pill-btn block w-full py-3 rounded-full text-white text-xs font-bold transition-all text-center shadow-md"
+            >
+              Quay Lại Cửa Hàng &amp; Mua Sắm
+            </Link>
+          )}
 
           <Link
             href="/shop"
@@ -507,26 +523,79 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* Quick Navigation Hub for Admin & Mod */}
+      <div className="vision-glass p-3 sm:p-4 rounded-[28px] flex flex-wrap items-center justify-between gap-3 backdrop-blur-2xl border border-white/15 shadow-xl">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold text-white/70 uppercase tracking-wider pl-1">
+            Mục Nổi Bật:
+          </span>
+
+          {currentUser?.role === 'admin' && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('users')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
+                activeTab === 'users'
+                  ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
+                  : 'bg-white/10 hover:bg-white/20 text-white'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 text-[#051817] active:text-white" />
+              <span>Quản Lý Người Dùng</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 font-black">
+                {allUsers.length}
+              </span>
+            </button>
+          )}
+
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('products')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
+                activeTab === 'products'
+                  ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
+                  : 'bg-white/10 hover:bg-white/20 text-white'
+              }`}
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Quản Lý Sản Phẩm &amp; Kho</span>
+            </button>
+          )}
+
+          {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+            <Link
+              href="/seller"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/35 transition-all shadow-sm"
+            >
+              <Store className="w-3.5 h-3.5 text-amber-300" />
+              <span>Vào Kênh Gian Hàng (Seller Hub)</span>
+              <ArrowUpRight className="w-3 h-3 text-amber-300/70" />
+            </Link>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('workshop')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
+              activeTab === 'workshop'
+                ? 'bg-[#2DD4BF] text-[#051817] shadow-[0_0_12px_rgba(45,212,191,0.4)] scale-105'
+                : 'bg-white/10 hover:bg-white/20 text-white'
+            }`}
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Điều Phối Xưởng In</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 font-black">
+              {orders.length}
+            </span>
+          </button>
+        </div>
+      </div>
+
       {/* Main Tab Controls */}
       <div className="vision-glass p-1.5 rounded-full flex items-center gap-2 overflow-x-auto backdrop-blur-2xl border border-white/12">
-        <button
-          onClick={() => setActiveTab('workshop')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-            activeTab === 'workshop'
-              ? 'bg-white/28 text-white shadow-xs'
-              : 'text-white/60 hover:text-white'
-          }`}
-        >
-          <Printer className="w-4 h-4" />
-          <span>Điều Phối Xưởng In &amp; Đơn Hàng</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-            activeTab === 'workshop' ? 'bg-white/25 text-white' : 'bg-black/20 text-white/60'
-          }`}>
-            {orders.length}
-          </span>
-        </button>
-
-        {(permissions.canManageUsers || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+        {/* Tab 1: Users (Admin Only) */}
+        {currentUser?.role === 'admin' && (
           <button
             onClick={() => setActiveTab('users')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
@@ -545,19 +614,8 @@ export default function AdminPage() {
           </button>
         )}
 
-        <button
-          onClick={() => setActiveTab('revenue')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
-            activeTab === 'revenue'
-              ? 'bg-white/28 text-white shadow-xs'
-              : 'text-white/60 hover:text-white'
-          }`}
-        >
-          <TrendingUp className="w-4 h-4" />
-          <span>Báo Cáo Doanh Thu &amp; Cổng Thanh Toán</span>
-        </button>
-
-        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+        {/* Tab 2: Products & Inventory (Admin & Mod) */}
+        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
           <button
             onClick={() => setActiveTab('products')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
@@ -566,12 +624,58 @@ export default function AdminPage() {
                 : 'text-white/60 hover:text-white'
             }`}
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-4 h-4 text-emerald-300" />
             <span>Kho Hàng &amp; Sản Phẩm</span>
           </button>
         )}
 
-        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+        {/* Tab 3: Workshop Printing & Orders */}
+        <button
+          onClick={() => setActiveTab('workshop')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+            activeTab === 'workshop'
+              ? 'bg-white/28 text-white shadow-xs'
+              : 'text-white/60 hover:text-white'
+          }`}
+        >
+          <Printer className="w-4 h-4" />
+          <span>Điều Phối Xưởng In &amp; Đơn Hàng</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+            activeTab === 'workshop' ? 'bg-white/25 text-white' : 'bg-black/20 text-white/60'
+          }`}>
+            {orders.length}
+          </span>
+        </button>
+
+        {/* Tab 4: Direct Link to Seller Hub */}
+        {(currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+          <Link
+            href="/seller"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold text-amber-300/80 hover:text-amber-200 hover:bg-amber-500/15 transition-all shrink-0 border border-transparent hover:border-amber-400/30"
+          >
+            <Store className="w-4 h-4 text-amber-300" />
+            <span>Kênh Gian Hàng (Seller)</span>
+            <ExternalLink className="w-3 h-3 text-amber-300/60" />
+          </Link>
+        )}
+
+        {/* Tab 5: Revenue & Payment Gateway (Admin) */}
+        {currentUser?.role === 'admin' && (
+          <button
+            onClick={() => setActiveTab('revenue')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
+              activeTab === 'revenue'
+                ? 'bg-white/28 text-white shadow-xs'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <TrendingUp className="w-4 h-4 text-amber-300" />
+            <span>Báo Cáo Doanh Thu &amp; Cổng Thanh Toán</span>
+          </button>
+        )}
+
+        {/* Tab 6: Trends AI */}
+        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
           <button
             onClick={() => setActiveTab('trends')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
@@ -585,7 +689,8 @@ export default function AdminPage() {
           </button>
         )}
 
-        {(permissions.canManageProducts || currentUser?.role === 'admin' || currentUser?.role === 'mod') && (
+        {/* Tab 7: Crawler */}
+        {(currentUser?.role === 'admin' || currentUser?.role === 'mod' || permissions.canManageProducts) && (
           <button
             onClick={() => setActiveTab('crawler')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shrink-0 ${
@@ -599,6 +704,7 @@ export default function AdminPage() {
           </button>
         )}
 
+        {/* Tab 8: System Settings (Admin Only) */}
         {currentUser?.role === 'admin' && (
           <button
             onClick={() => setActiveTab('settings')}
@@ -613,6 +719,7 @@ export default function AdminPage() {
           </button>
         )}
 
+        {/* Tab 9: Modules Permissions Matrix (Admin Only) */}
         {currentUser?.role === 'admin' && (
           <button
             onClick={() => setActiveTab('modules')}
@@ -1747,5 +1854,20 @@ export default function AdminPage() {
         <AdminCrawlerManager />
       )}
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[75vh] flex flex-col items-center justify-center space-y-3">
+          <div className="w-10 h-10 border-2 border-[#2DD4BF] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-white/60 font-semibold">Đang tải bảng điều khiển quản trị...</p>
+        </div>
+      }
+    >
+      <AdminPageContent />
+    </Suspense>
   );
 }

@@ -24,6 +24,7 @@ import {
   ChevronRight,
   Store,
   User,
+  Users,
   Menu,
   X,
   Coins,
@@ -85,10 +86,18 @@ export function Navbar() {
 
   // Full items list for Mobile Drawer navigation
   const mobileNavItems = [...navItems];
-  if ((isModuleVisible('seller_hub') || currentUser?.role === 'seller' || permissions.canAccessSeller) && currentUser?.role !== 'user') {
-    mobileNavItems.push({ label: 'Kênh Người Bán', href: '/seller', icon: Store });
-  }
-  if (permissions.canAccessAdmin && isModuleVisible('admin_hub')) {
+  if (currentUser?.role === 'admin') {
+    mobileNavItems.push({ label: 'Quản Lý Người Dùng', href: '/admin?tab=users', icon: Users });
+    mobileNavItems.push({ label: 'Quản Lý Sản Phẩm & Kho', href: '/admin?tab=products', icon: ShoppingBag });
+    mobileNavItems.push({ label: 'Kênh Gian Hàng (Seller)', href: '/seller', icon: Store });
+    mobileNavItems.push({ label: 'Trung Tâm Quản Trị Hệ Thống', href: '/admin', icon: Building2 });
+  } else if (currentUser?.role === 'mod') {
+    mobileNavItems.push({ label: 'Quản Lý Sản Phẩm & Kho', href: '/admin?tab=products', icon: ShoppingBag });
+    mobileNavItems.push({ label: 'Kênh Gian Hàng (Seller)', href: '/seller', icon: Store });
+    mobileNavItems.push({ label: 'Quản Trị Điều Phối Xưởng', href: '/admin', icon: Building2 });
+  } else if (currentUser?.role === 'seller' || permissions.canAccessSeller) {
+    mobileNavItems.push({ label: 'Kênh Người Bán (Seller)', href: '/seller', icon: Store });
+  } else if (permissions.canAccessAdmin && isModuleVisible('admin_hub')) {
     mobileNavItems.push({
       label: 'Quản Trị Hệ Thống',
       href: '/admin',
@@ -145,19 +154,36 @@ export function Navbar() {
                 <span className="font-semibold text-sm sm:text-base lg:text-lg tracking-tight text-white">
                   3D HUB
                 </span>
-                {/* Chỉ hiển thị badge Staging/Official cho Admin, các Role khác luôn là Official */}
-                <span
-                  className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded-full border transition-all ${
-                    isAdmin
-                      ? isOfficial
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30 shadow-[0_0_8px_rgba(16,185,129,0.2)]'
-                        : 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40 shadow-[0_0_8px_rgba(45,212,191,0.25)]'
-                      : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                  }`}
-                  title={isAdmin ? (isOfficial ? 'Phiên bản thương mại chính thức' : 'Phiên bản thử nghiệm Staging (Ngọc Bích & Cyan)') : '3D Hub Official'}
-                >
-                  {isAdmin ? (isOfficial ? 'OFFICIAL' : 'STAGING') : 'OFFICIAL'}
-                </span>
+                {/* Badge Staging / Official: Admin có thể click để chuyển đổi giữa / và /staging */}
+                {isAdmin ? (
+                  <Link
+                    href={isOfficial ? '/staging' : '/'}
+                    onClick={(e) => e.stopPropagation()}
+                    className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded-full border transition-all hover:scale-105 active:scale-95 ${
+                      isOfficial
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30 shadow-[0_0_8px_rgba(16,185,129,0.2)] hover:bg-emerald-500/30'
+                        : 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40 shadow-[0_0_8px_rgba(45,212,191,0.25)] hover:bg-[#2DD4BF]/30'
+                    }`}
+                    title={
+                      isOfficial
+                        ? 'Admin: Click để chuyển sang bản Staging Sandbox (/staging)'
+                        : 'Admin: Click để chuyển về bản Official thương mại (/)'
+                    }
+                  >
+                    {isOfficial ? 'OFFICIAL' : 'STAGING'}
+                  </Link>
+                ) : (
+                  <span
+                    className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded-full border ${
+                      isStaging
+                        ? 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40'
+                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                    }`}
+                    title={isStaging ? 'Bản Thử Nghiệm Staging 3D Hub' : '3D Hub Official'}
+                  >
+                    {isStaging ? 'STAGING' : 'OFFICIAL'}
+                  </span>
+                )}
               </div>
             </div>
           </Link>
@@ -345,28 +371,63 @@ export function Navbar() {
                       <ChevronRight className="w-3.5 h-3.5 text-white/50" />
                     </Link>
 
-                    {/* Link to Seller Hub if Seller */}
-                    {(currentUser?.role === 'seller' || permissions.canAccessSeller) && (
+                    {/* Dành riêng cho ADMIN: Quản Lý Người Dùng */}
+                    {isAdmin && (
+                      <Link
+                        href="/admin?tab=users"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 text-[#CCFBF1] text-xs font-bold transition-all border border-[#2DD4BF]/40 shadow-xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Users className="w-3.5 h-3.5 text-[#5EEAD4]" />
+                          <span>Quản Lý Người Dùng</span>
+                        </div>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#2DD4BF] text-[#051817] font-black">
+                          Admin
+                        </span>
+                      </Link>
+                    )}
+
+                    {/* Dành cho ADMIN và MOD: Quản Lý Sản Phẩm & Kho Hàng */}
+                    {(isAdmin || currentUser?.role === 'mod') && (
+                      <Link
+                        href="/admin?tab=products"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 text-xs font-bold transition-all border border-emerald-400/30 shadow-xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <ShoppingBag className="w-3.5 h-3.5 text-emerald-300" />
+                          <span>Quản Lý Sản Phẩm &amp; Kho</span>
+                        </div>
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 font-semibold">
+                          Kho
+                        </span>
+                      </Link>
+                    )}
+
+                    {/* Dành cho ADMIN, MOD và SELLER: Kênh Gian Hàng (Seller Hub) */}
+                    {(isAdmin || currentUser?.role === 'mod' || currentUser?.role === 'seller' || permissions.canAccessSeller) && (
                       <Link
                         href="/seller"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 text-xs font-semibold transition-all border border-amber-400/25"
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold transition-all border border-amber-400/30 shadow-xs"
                       >
                         <div className="flex items-center gap-2">
                           <Store className="w-3.5 h-3.5 text-amber-300" />
-                          <span>Gian Hàng Bán Hàng (Seller)</span>
+                          <span>Kênh Gian Hàng (Seller Hub)</span>
                         </div>
                         <ChevronRight className="w-3.5 h-3.5 text-amber-300/60" />
                       </Link>
                     )}
 
+                    {/* Dành cho ADMIN, MOD, STAFF: Trang Quản Trị Hệ Thống */}
                     {permissions.canAccessAdmin && (
                       <Link
                         href="/admin"
                         onClick={() => setIsUserMenuOpen(false)}
                         className="mt-1.5 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-medium transition-all shadow-xs border border-white/15"
                       >
-                        <Building2 className="w-3.5 h-3.5" />
+                        <Building2 className="w-3.5 h-3.5 text-white/80" />
                         <span>Mở Trang Quản Trị Hệ Thống</span>
                       </Link>
                     )}

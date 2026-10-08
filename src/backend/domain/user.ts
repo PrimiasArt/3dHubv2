@@ -41,9 +41,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, IPermission> = {
   },
   mod: {
     canAccessAdmin: true,
-    canAccessSeller: false,
+    canAccessSeller: true,
     canManageUsers: false,
-    canManageOrders: false,
+    canManageOrders: true,
     canManageProducts: true,
     canModerateCommunity: true,
     canAdjustWallet: false,

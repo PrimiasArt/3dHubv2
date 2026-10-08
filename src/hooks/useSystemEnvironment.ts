@@ -1,16 +1,20 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { AppEnvironment, ICommercialConfig, DEFAULT_COMMERCIAL_CONFIG } from '@/backend/domain/config';
 import { useUserSession } from './useUserSession';
 
 export function useSystemEnvironment() {
+  const pathname = usePathname();
+  const isStagingPath = pathname?.startsWith('/staging');
+
   const { currentUser } = useUserSession();
   const isAdmin = currentUser?.role === 'admin';
 
-  const [environment, setEnvironment] = useState<AppEnvironment>('staging');
+  const [environment, setEnvironment] = useState<AppEnvironment>('official');
   const [commercial, setCommercial] = useState<ICommercialConfig>(DEFAULT_COMMERCIAL_CONFIG);
-  const [profitMarginPercent, setProfitMarginPercent] = useState<number>(0);
+  const [profitMarginPercent, setProfitMarginPercent] = useState<number>(25);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSwitching, setIsSwitching] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -28,17 +32,13 @@ export function useSystemEnvironment() {
         setEnvironment(data.environment);
         if (data.commercial) setCommercial(data.commercial);
         if (data.profitMarginPercent !== undefined) setProfitMarginPercent(data.profitMarginPercent);
-        if (typeof document !== 'undefined') {
-          const appliedEnv = isAdmin ? data.environment : 'official';
-          document.documentElement.setAttribute('data-env', appliedEnv);
-        }
       }
     } catch (err) {
       console.error('Failed to fetch system environment:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [isAdmin]);
+  }, []);
 
   useEffect(() => {
     fetchEnvironment();
@@ -46,15 +46,11 @@ export function useSystemEnvironment() {
     const handleEnvChanged = (e: any) => {
       if (e.detail?.environment) {
         setEnvironment(e.detail.environment);
-        if (typeof document !== 'undefined') {
-          const appliedEnv = isAdmin ? e.detail.environment : 'official';
-          document.documentElement.setAttribute('data-env', appliedEnv);
-        }
       }
     };
     window.addEventListener('3dhub-environment-change', handleEnvChanged);
     return () => window.removeEventListener('3dhub-environment-change', handleEnvChanged);
-  }, [fetchEnvironment, isAdmin]);
+  }, [fetchEnvironment]);
 
   // Nút chuyển đổi môi trường chỉ Admin mới thực hiện được
   const toggleEnvironment = useCallback(
@@ -98,18 +94,29 @@ export function useSystemEnvironment() {
     [environment, isAdmin, showToast]
   );
 
-  // Đối với các role khác ngoài Admin, luôn mặc định là Official
-  const effectiveEnv: AppEnvironment = isAdmin ? environment : 'official';
+  // Phân giải môi trường hiệu lực:
+  // 1. Nếu đang ở URL /staging: Luôn là 'staging'
+  // 2. Nếu Admin tự chuyển: theo trạng thái toggle
+  // 3. Với các role khác ở URL thường: Luôn là 'official'
+  const effectiveEnv: AppEnvironment = isStagingPath ? 'staging' : (isAdmin ? environment : 'official');
   const effectiveIsOfficial = effectiveEnv === 'official';
   const effectiveIsStaging = effectiveEnv === 'staging';
+
+  // Đồng bộ thuộc tính data-env trên HTML document
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-env', effectiveEnv);
+    }
+  }, [effectiveEnv]);
 
   return {
     environment: effectiveEnv,
     rawEnvironment: environment,
     isOfficial: effectiveIsOfficial,
     isStaging: effectiveIsStaging,
+    isStagingPath,
     commercial,
-    profitMarginPercent: effectiveIsOfficial ? (commercial?.commercialMarginPercent || 25) : profitMarginPercent,
+    profitMarginPercent: effectiveIsOfficial ? (commercial?.commercialMarginPercent || 25) : 0,
     isLoading,
     isSwitching,
     toastMessage,
