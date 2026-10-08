@@ -220,6 +220,10 @@ class ConfigRepository {
   getGeminiApiKey(): string {
     return this.config.apiKeys.geminiApiKey || process.env.GEMINI_API_KEY || '';
   }
+
+  getPreferredGeminiModel(): string {
+    return this.config.apiKeys.preferredGeminiModel || 'gemini-2.0-flash';
+  }
 }
 
 export const configRepository = new ConfigRepository();

@@ -33,7 +33,7 @@ export interface IGeminiTrendAnalysisResult {
 }
 
 class GeminiAnalyticsService {
-  async analyzeTrends(trends: ITrendMetric[]): Promise<IGeminiTrendAnalysisResult> {
+  async analyzeTrends(trends: ITrendMetric[], requestedModel?: string): Promise<IGeminiTrendAnalysisResult> {
     const apiKey = configRepository.getGeminiApiKey();
 
     // Chuẩn bị dữ liệu mô hình thực tế từ kho dữ liệu
@@ -56,11 +56,17 @@ class GeminiAnalyticsService {
 
     // 1. Nếu có API Key, thử gọi qua các model Google Gemini chính thức
     if (apiKey && apiKey.trim().length > 0) {
-      const candidateModels = [
+      const preferred = requestedModel || configRepository.getPreferredGeminiModel() || 'gemini-2.0-flash';
+      const fallbackList = [
         'gemini-2.0-flash',
+        'gemini-2.0-flash-lite',
         'gemini-1.5-flash',
+        'gemini-1.5-flash-8b',
+        'gemini-1.5-pro',
         'gemini-2.5-flash',
       ];
+      // Candidate models list with preferred first, no duplicates
+      const candidateModels = Array.from(new Set([preferred, ...fallbackList])).filter(Boolean);
 
       const prompt = `
 Bạn là Giám Đốc Phân Tích Dữ Liệu & Kinh Doanh In 3D (Senior 3D Printing Market Intelligence Lead).
@@ -155,7 +161,7 @@ Hãy phân tích sâu sắc các xu hướng trên và trả về kết quả b�
                 maxOutputTokens: 2500,
               },
             }),
-            signal: AbortSignal.timeout(12000),
+            signal: AbortSignal.timeout(30000),
           });
 
           if (response.ok) {

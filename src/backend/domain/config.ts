@@ -63,6 +63,7 @@ export interface IApiKeysConfig {
   falKey: string;
   meshyApiKey: string;
   geminiApiKey: string;
+  preferredGeminiModel?: string;
   makerWorldCookie: string;
 }
 
@@ -184,6 +185,7 @@ export const DEFAULT_SYSTEM_CONFIG: ISystemConfig = {
     falKey: process.env.FAL_KEY || '',
     meshyApiKey: process.env.MESHY_API_KEY || '',
     geminiApiKey: process.env.GEMINI_API_KEY || '',
+    preferredGeminiModel: 'gemini-2.0-flash',
     makerWorldCookie: '',
   },
   modulePermissions: DEFAULT_MODULE_PERMISSIONS,

@@ -52,6 +52,15 @@ import { AdminCrawlerManager } from '@/components/admin/AdminCrawlerManager';
 import { AdminUserManager } from '@/components/admin/AdminUserManager';
 import { AdminAuditLogManager } from '@/components/admin/AdminAuditLogManager';
 
+const DEFAULT_GEMINI_MODELS = [
+  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Khuyên dùng - Nhanh & Mới nhất)' },
+  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash-Lite (Siêu tốc độ, Tiết kiệm token)' },
+  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Tốc độ cao & Rất ổn định)' },
+  { id: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash-8B (Bản thu gọn)' },
+  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Phân tích chuyên sâu)' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Bản thử nghiệm Preview)' },
+];
+
 function AdminPageContent() {
   const {
     currentUser,
@@ -82,6 +91,63 @@ function AdminPageContent() {
   const [tabCategory, setTabCategory] = useState<'all' | 'operations' | 'growth' | 'system'>('all');
   const [systemConfig, setSystemConfig] = useState<ISystemConfig>(DEFAULT_SYSTEM_CONFIG);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
+
+  // Dynamic Gemini Models state
+  const [availableGeminiModels, setAvailableGeminiModels] = useState<
+    { id: string; name: string; description?: string }[]
+  >([]);
+  const [isLoadingGeminiModels, setIsLoadingGeminiModels] = useState<boolean>(false);
+  const [geminiModelStatus, setGeminiModelStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
+  const handleFetchGeminiModels = async () => {
+    setIsLoadingGeminiModels(true);
+    setGeminiModelStatus({ type: null, message: '' });
+    try {
+      const apiKey = systemConfig.apiKeys.geminiApiKey?.trim();
+      const res = await fetch('/api/admin/gemini/models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.models) && data.models.length > 0) {
+        setAvailableGeminiModels(data.models);
+        setGeminiModelStatus({
+          type: 'success',
+          message: `Kết nối thành công! Đã tải ${data.models.length} model từ Google Gemini API.`,
+        });
+        showToast(`Đã tải ${data.models.length} model từ Google API`);
+        if (!systemConfig.apiKeys.preferredGeminiModel) {
+          setSystemConfig((prev) => ({
+            ...prev,
+            apiKeys: {
+              ...prev.apiKeys,
+              preferredGeminiModel: data.models[0].id,
+            },
+          }));
+        }
+      } else {
+        const errMsg = data.error || 'Không thể tải danh sách model từ Google API';
+        setGeminiModelStatus({
+          type: 'error',
+          message: errMsg,
+        });
+        showToast(`Lỗi: ${errMsg}`);
+      }
+    } catch (err: any) {
+      const errMsg = `Lỗi kết nối Google API: ${err.message}`;
+      setGeminiModelStatus({
+        type: 'error',
+        message: errMsg,
+      });
+      showToast(errMsg);
+    } finally {
+      setIsLoadingGeminiModels(false);
+    }
+  };
 
   // Sync tab with query parameters (?tab=users, ?tab=products, etc.)
   useEffect(() => {
@@ -1175,11 +1241,23 @@ function AdminPageContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-              {/* Gemini Key */}
-              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-2">
-                <label className="text-xs font-bold text-white block">
-                  Google Gemini API Key
-                </label>
+              {/* Gemini Key & Model Selector */}
+              <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-white block">
+                    Google Gemini API Key
+                  </label>
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] text-emerald-300 hover:underline font-semibold"
+                  >
+                    <span>Lấy key Google miễn phí</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
                 <input
                   type="text"
                   placeholder="AIzaSy..."
@@ -1192,18 +1270,63 @@ function AdminPageContent() {
                   }
                   className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-xs text-white font-mono focus:outline-none focus:border-white/40"
                 />
+
+                {/* Model Selector & Live Load Button */}
+                <div className="space-y-2 pt-2 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-white/90">
+                      Mô hình Gemini sử dụng:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleFetchGeminiModels}
+                      disabled={isLoadingGeminiModels}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#2DD4BF]/20 text-[#5EEAD4] hover:bg-[#2DD4BF]/30 border border-[#2DD4BF]/35 transition-all disabled:opacity-50"
+                      title="Kết nối trực tiếp tới Google AI API để tải danh sách các model đang hoạt động theo API Key này"
+                    >
+                      <RefreshCw className={`w-3 h-3 ${isLoadingGeminiModels ? 'animate-spin' : ''}`} />
+                      <span>{isLoadingGeminiModels ? 'Đang tải...' : 'Tải Model từ API'}</span>
+                    </button>
+                  </div>
+
+                  <select
+                    value={systemConfig.apiKeys.preferredGeminiModel || 'gemini-2.0-flash'}
+                    onChange={(e) =>
+                      setSystemConfig({
+                        ...systemConfig,
+                        apiKeys: {
+                          ...systemConfig.apiKeys,
+                          preferredGeminiModel: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/20 text-xs text-emerald-300 font-semibold focus:outline-none focus:border-emerald-400"
+                  >
+                    {(availableGeminiModels.length > 0 ? availableGeminiModels : DEFAULT_GEMINI_MODELS).map((m) => (
+                      <option key={m.id} value={m.id} className="bg-slate-900 text-white">
+                        {m.name || m.id}
+                      </option>
+                    ))}
+                  </select>
+
+                  {geminiModelStatus.type === 'success' && (
+                    <div className="p-2 rounded-lg bg-emerald-500/15 border border-emerald-400/30 text-[11px] text-emerald-200 flex items-center gap-1.5 font-medium">
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+                      <span>{geminiModelStatus.message}</span>
+                    </div>
+                  )}
+
+                  {geminiModelStatus.type === 'error' && (
+                    <div className="p-2 rounded-lg bg-rose-500/15 border border-rose-400/30 text-[11px] text-rose-200 flex items-start gap-1.5 font-medium">
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-300 shrink-0 mt-0.5" />
+                      <span className="leading-snug">{geminiModelStatus.message}</span>
+                    </div>
+                  )}
+                </div>
+
                 <p className="text-[11px] text-white/60">
                   Dùng cho phân tích xu hướng MakerWorld và khuyến nghị sản xuất cho xưởng in.
                 </p>
-                <a
-                  href="https://aistudio.google.com/app/apikey"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] text-emerald-300 hover:underline font-semibold"
-                >
-                  <span>Lấy key Google AI Studio miễn phí</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
               </div>
 
               {/* Fal.ai Key */}

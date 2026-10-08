@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category') || undefined;
+    const model = searchParams.get('model') || undefined;
 
     // Lấy dữ liệu mô hình thực tế và tính điểm trend
     const allTrends = trendScoringEngine.calculateTrends('24h', 'all');
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
       ? allTrends.filter(t => t.category?.toLowerCase() === category.toLowerCase())
       : allTrends;
 
-    const analysis = await geminiAnalyticsService.analyzeTrends(trends);
+    const analysis = await geminiAnalyticsService.analyzeTrends(trends, model);
 
     return NextResponse.json({
       success: true,
@@ -29,13 +30,14 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
     const category = body.category || undefined;
+    const model = body.model || undefined;
 
     const allTrends = trendScoringEngine.calculateTrends('24h', 'all');
     const trends = category && category !== 'all'
       ? allTrends.filter(t => t.category?.toLowerCase() === category.toLowerCase())
       : allTrends;
 
-    const analysis = await geminiAnalyticsService.analyzeTrends(trends);
+    const analysis = await geminiAnalyticsService.analyzeTrends(trends, model);
 
     return NextResponse.json({
       success: true,

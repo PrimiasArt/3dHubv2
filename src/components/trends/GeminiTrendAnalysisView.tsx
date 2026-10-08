@@ -26,18 +26,62 @@ interface GeminiTrendAnalysisViewProps {
   selectedCategory?: string;
 }
 
+const DEFAULT_MODELS = [
+  { id: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Khuyên dùng)' },
+  { id: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash-Lite (Siêu nhanh)' },
+  { id: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (Rất ổn định)' },
+  { id: 'gemini-1.5-flash-8b', label: 'Gemini 1.5 Flash-8B' },
+  { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Chuyên sâu)' },
+  { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Preview)' },
+];
+
 export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysisViewProps) {
   const [analysis, setAnalysis] = useState<IGeminiTrendAnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<string>('gemini-2.0-flash');
+  const [availableModels, setAvailableModels] = useState<{ id: string; label: string }[]>(DEFAULT_MODELS);
+  const [isLoadingModels, setIsLoadingModels] = useState<boolean>(false);
 
-  const fetchGeminiAnalysis = async () => {
+  // Load configured or available models from backend on mount
+  useEffect(() => {
+    setIsLoadingModels(true);
+    fetch('/api/admin/gemini/models')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.models) && data.models.length > 0) {
+          setAvailableModels(
+            data.models.map((m: any) => ({
+              id: m.id,
+              label: m.name || m.id,
+            }))
+          );
+        }
+        if (data.preferredModel) {
+          setSelectedModel(data.preferredModel);
+        }
+      })
+      .catch(() => {
+        // Maintain DEFAULT_MODELS
+      })
+      .finally(() => {
+        setIsLoadingModels(false);
+      });
+  }, []);
+
+  const fetchGeminiAnalysis = async (modelOverride?: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const url = selectedCategory && selectedCategory !== 'all'
-        ? `/api/trends/analyze?category=${encodeURIComponent(selectedCategory)}`
-        : '/api/trends/analyze';
+      const activeModel = modelOverride || selectedModel;
+      const params = new URLSearchParams();
+      if (selectedCategory && selectedCategory !== 'all') {
+        params.set('category', selectedCategory);
+      }
+      if (activeModel) {
+        params.set('model', activeModel);
+      }
+      const url = `/api/trends/analyze?${params.toString()}`;
 
       const res = await fetch(url);
       const data = await res.json();
@@ -57,10 +101,15 @@ export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysi
     fetchGeminiAnalysis();
   }, [selectedCategory]);
 
+  const handleModelChange = (newModel: string) => {
+    setSelectedModel(newModel);
+    fetchGeminiAnalysis(newModel);
+  };
+
   return (
     <div className="rounded-[36px] vision-glass-panel border border-white/20 p-6 sm:p-8 space-y-6 shadow-[0_24px_60px_rgba(0,0,0,0.4)] relative overflow-hidden text-white">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-5">
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-sm">
             <Sparkles className="w-5 h-5 text-[#2DD4BF] animate-pulse" />
@@ -90,20 +139,37 @@ export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysi
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
+          {/* Model Selector Dropdown */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 border border-white/20 text-xs backdrop-blur-md">
+            <span className="text-[11px] text-white/60 font-semibold hidden sm:inline">Model:</span>
+            <select
+              value={selectedModel}
+              onChange={(e) => handleModelChange(e.target.value)}
+              className="bg-transparent text-emerald-300 font-bold text-xs focus:outline-none cursor-pointer pr-1"
+              title="Chọn mô hình Gemini AI để chạy phân tích"
+            >
+              {availableModels.map((m) => (
+                <option key={m.id} value={m.id} className="bg-slate-900 text-white">
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <Link
             href="/admin?tab=settings"
             className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 text-xs font-semibold transition-all"
-            title="Cấu hình Google Gemini API Key"
+            title="Cấu hình Google Gemini API Key & Model Mặc Định"
           >
             <KeyRound className="w-3.5 h-3.5 text-[#2DD4BF]" />
             <span className="hidden sm:inline">Cài Đặt API</span>
           </Link>
 
           <button
-            onClick={fetchGeminiAnalysis}
+            onClick={() => fetchGeminiAnalysis()}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/20 text-white text-xs font-semibold transition-all backdrop-blur-md disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 border border-[#2DD4BF]/40 text-[#5EEAD4] text-xs font-bold transition-all backdrop-blur-md disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             <span>{isLoading ? 'Đang phân tích...' : 'Phân tích lại'}</span>
