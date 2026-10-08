@@ -89,11 +89,10 @@ export class TrendScoringEngine {
     const seenTitles = new Set<string>();
     const deduplicatedMetrics: ITrendMetric[] = [];
     for (const item of metrics) {
-      const cleanKey = item.title
+      const cleanKey = `${item.platform}:${item.title
         .toLowerCase()
         .replace(/\[.*?\]|\(.*?\)/g, '')
-        .replace(/[^a-z0-9]/g, '')
-        .slice(0, 30);
+        .replace(/[^a-z0-9]/g, '')}`;
       if (seenTitles.has(cleanKey)) continue;
       seenTitles.add(cleanKey);
       deduplicatedMetrics.push(item);

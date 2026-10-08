@@ -69,6 +69,18 @@ export function usePlatformCrawler() {
         setCrawlLogs(data.result.logs || []);
         // Refresh lại danh sách sau khi crawl xong
         await fetchModels(selectedPlatform);
+        // Bắn tín hiệu toàn cục thông báo cho các module khác (như Phân Tích Trend) tự động làm mới
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('3dhub-crawled-models-updated', {
+              detail: {
+                totalCrawled: data.result.totalCrawled,
+                newModels: data.result.newModelsFound,
+                timestamp: Date.now(),
+              },
+            })
+          );
+        }
       } else {
         setCrawlLogs(prev => [...prev, `❌ Lỗi: ${data.error || 'Crawl không thành công'}`]);
       }
@@ -121,6 +133,13 @@ export function usePlatformCrawler() {
       const data = await res.json();
       if (data.models) {
         setModels(data.models);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('3dhub-crawled-models-updated', {
+              detail: { timestamp: Date.now() },
+            })
+          );
+        }
       }
     } catch (err: any) {
       console.error('Lỗi lọc trùng dữ liệu:', err);

@@ -70,9 +70,12 @@ export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysi
       });
   }, []);
 
+  const [hasNewCrawlData, setHasNewCrawlData] = useState<boolean>(false);
+
   const fetchGeminiAnalysis = async (modelOverride?: string) => {
     setIsLoading(true);
     setError(null);
+    setHasNewCrawlData(false);
     try {
       const activeModel = modelOverride || selectedModel;
       const params = new URLSearchParams();
@@ -101,6 +104,22 @@ export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysi
   useEffect(() => {
     fetchGeminiAnalysis();
   }, [selectedCategory]);
+
+  // Lắng nghe sự kiện cào dữ liệu mới từ Crawler
+  useEffect(() => {
+    const handleCrawlUpdate = () => {
+      setHasNewCrawlData(true);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('3dhub-crawled-models-updated', handleCrawlUpdate);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('3dhub-crawled-models-updated', handleCrawlUpdate);
+      }
+    };
+  }, []);
 
   const handleModelChange = (newModel: string) => {
     setSelectedModel(newModel);
@@ -177,6 +196,25 @@ export function GeminiTrendAnalysisView({ selectedCategory }: GeminiTrendAnalysi
           </button>
         </div>
       </div>
+
+      {/* Real-time notification if new crawl data arrived */}
+      {hasNewCrawlData && (
+        <div className="p-3.5 rounded-2xl bg-[#2DD4BF]/20 border border-[#2DD4BF]/40 text-emerald-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#2DD4BF] animate-ping shrink-0" />
+            <span className="font-semibold text-white">
+              Phát hiện dữ liệu mô hình mới vừa được cào về từ Crawler!
+            </span>
+          </div>
+          <button
+            onClick={() => fetchGeminiAnalysis()}
+            disabled={isLoading}
+            className="px-4 py-1.5 rounded-full bg-[#2DD4BF] text-[#051817] font-bold text-xs hover:bg-[#5EEAD4] transition-all shadow-sm shrink-0"
+          >
+            Phân Tích Dữ Liệu Mới Ngay
+          </button>
+        </div>
+      )}
 
       {/* Warning Box if API Key was provided but Google returned an error */}
       {!isLoading && analysis?.apiError && (

@@ -58,6 +58,22 @@ export function useTrendAnalytics() {
     fetchTrends(timeframe, selectedPlatform);
   }, [fetchTrends, timeframe, selectedPlatform]);
 
+  // Tự động đồng bộ ngay lập tức khi Crawler vừa hoàn thành một mẻ cào mới
+  useEffect(() => {
+    const handleModelsUpdate = () => {
+      fetchTrends(timeframe, selectedPlatform);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('3dhub-crawled-models-updated', handleModelsUpdate);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('3dhub-crawled-models-updated', handleModelsUpdate);
+      }
+    };
+  }, [fetchTrends, timeframe, selectedPlatform]);
+
   // Bộ lọc dữ liệu theo từ khóa tìm kiếm và danh mục
   const filteredTrends = useMemo(() => {
     return trends.filter((item) => {

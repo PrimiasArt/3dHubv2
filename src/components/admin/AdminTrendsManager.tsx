@@ -40,6 +40,12 @@ export function AdminTrendsManager() {
     refetch,
   } = useTrendAnalytics();
 
+  const getPlatformCount = (pId: PlatformType | 'all') => {
+    if (pId === 'all') return summary?.totalTrackedModels || 0;
+    const found = platformStats.find((ps) => ps.platform === pId);
+    return found?.count || 0;
+  };
+
   const platformTabs: { id: PlatformType | 'all'; label: string }[] = [
     { id: 'all', label: 'Tất cả sàn' },
     { id: 'makerworld', label: 'MakerWorld' },
@@ -90,10 +96,11 @@ export function AdminTrendsManager() {
           <button
             onClick={refetch}
             disabled={isLoading}
-            className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-white flex items-center justify-center transition-all shadow-xs"
-            title="Làm mới dữ liệu phân tích"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-200 text-xs font-bold transition-all shadow-xs"
+            title="Đồng bộ dữ liệu xu hướng với dữ liệu mới nhất từ Crawler"
           >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Đồng Bộ ({summary?.totalTrackedModels || 0})</span>
           </button>
         </div>
       </div>
@@ -104,19 +111,31 @@ export function AdminTrendsManager() {
           <span className="text-xs font-semibold text-white/70 pr-1 flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5 text-white/90" /> Sàn:
           </span>
-          {platformTabs.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setSelectedPlatform(p.id)}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${
-                selectedPlatform === p.id
-                  ? 'bg-white/30 text-white border-white/40 shadow-xs'
-                  : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/25'
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
+          {platformTabs.map((p) => {
+            const count = getPlatformCount(p.id);
+            return (
+              <button
+                key={p.id}
+                onClick={() => setSelectedPlatform(p.id)}
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                  selectedPlatform === p.id
+                    ? 'bg-white/30 text-white border-white/40 shadow-xs'
+                    : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/25'
+                }`}
+              >
+                <span>{p.label}</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                    selectedPlatform === p.id
+                      ? 'bg-white text-black'
+                      : 'bg-white/15 text-white/80'
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="text-[11px] text-white/70 pr-4 flex items-center gap-2">

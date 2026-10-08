@@ -17,9 +17,24 @@ export function VelocityLeaderboard({ trends }: VelocityLeaderboardProps) {
 
   if (trends.length === 0) {
     return (
-      <div className="vision-glass rounded-[28px] border border-white/15 p-8 text-center space-y-2 text-white shadow-sm">
-        <p className="font-semibold text-sm">Không tìm thấy mô hình nào phù hợp với bộ lọc.</p>
-        <p className="text-white/60 text-xs">Hãy thử đổi từ khóa tìm kiếm hoặc chọn danh mục khác.</p>
+      <div className="vision-glass rounded-[28px] border border-white/15 p-8 text-center space-y-3 text-white shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 mx-auto flex items-center justify-center text-white/70">
+          <Layers className="w-6 h-6 text-[#2DD4BF]" />
+        </div>
+        <div className="space-y-1">
+          <p className="font-bold text-sm text-white">Chưa có mô hình nào khớp với bộ lọc hiện tại</p>
+          <p className="text-white/60 text-xs max-w-md mx-auto">
+            Dữ liệu có thể đang bị lọc bởi sàn hoặc từ khóa tìm kiếm. Bạn có thể xóa bộ lọc hoặc chuyển sang bộ thu thập dữ liệu để cào thêm mô hình mới.
+          </p>
+        </div>
+        <div className="pt-2 flex items-center justify-center gap-3">
+          <Link
+            href="/admin?tab=crawler"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 text-[#5EEAD4] border border-[#2DD4BF]/40 transition-all"
+          >
+            <span>Sang Bộ Thu Thập Dữ Liệu (Crawler)</span>
+          </Link>
+        </div>
       </div>
     );
   }
