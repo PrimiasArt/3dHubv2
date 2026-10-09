@@ -55,8 +55,8 @@ export async function GET(req: NextRequest) {
         };
       });
 
-    // Sắp xếp ưu tiên: gemini-2.0-flash, gemini-2.0-flash-lite, gemini-1.5-flash, gemini-1.5-pro, gemini-2.5-flash
-    const priority = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+    // Sắp xếp ưu tiên: gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash, gemini-2.0-flash-lite
+    const priority = ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
     contentModels.sort((a, b) => {
       const idxA = priority.indexOf(a.id);
       const idxB = priority.indexOf(b.id);
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
         };
       });
 
-    const priority = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+    const priority = ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-2.0-flash-lite'];
     contentModels.sort((a, b) => {
       const idxA = priority.indexOf(a.id);
       const idxB = priority.indexOf(b.id);

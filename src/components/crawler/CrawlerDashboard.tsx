@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Terminal,
   Play,
@@ -14,8 +14,13 @@ import {
   Link2,
   PlusCircle,
   Brain,
+  Globe,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { PlatformType } from '@/backend/domain/models';
+import { CrawlUrlModal } from './CrawlUrlModal';
+import { ManualIngestModal } from './ManualIngestModal';
 
 interface CrawlerDashboardProps {
   selectedPlatform: PlatformType | 'all';
@@ -44,6 +49,16 @@ export function CrawlerDashboard({
   onOpenCrawlUrlModal,
   onOpenManualIngestModal,
 }: CrawlerDashboardProps) {
+  // Modal states
+  const [internalUrlModalOpen, setInternalUrlModalOpen] = useState(false);
+  const [internalManualModalOpen, setInternalManualModalOpen] = useState(false);
+
+  // Direct Inline URL Paste states (hiển thị trực tiếp khi chọn "Thủ công & URL")
+  const [directUrl, setDirectUrl] = useState('');
+  const [isDirectCrawling, setIsDirectCrawling] = useState(false);
+  const [directFeedback, setDirectFeedback] = useState<any>(null);
+  const [directError, setDirectError] = useState<string | null>(null);
+
   const platforms: { id: PlatformType | 'all'; label: string }[] = [
     { id: 'all', label: 'Tất cả nguồn (8+)' },
     { id: 'printables', label: 'Printables (Prusa)' },
@@ -65,8 +80,71 @@ export function CrawlerDashboard({
 
   const suggestedKeywords = ['dragon', 'gear', 'bambu', 'voron', 'tpu', 'gridfinity', 'scarf seam', 'hull line'];
 
+  const sampleUrls = [
+    { label: '▶️ Video YouTube (AI Phân Tích)', url: 'https://www.youtube.com/watch?v=0kF_3v-eJ0Q' },
+    { label: 'MakerWorld', url: 'https://makerworld.com/en/models/42190' },
+    { label: 'Printables', url: 'https://www.printables.com/model/3161-3d-benchy' },
+    { label: 'GitHub Voron', url: 'https://github.com/VoronDesign/Voron-Stealthburner' },
+  ];
+
+  // Xử lý cào trực tiếp từ link dán trên thanh điều khiển
+  const handleExecuteDirectCrawl = async (urlToCrawl?: string) => {
+    const targetUrl = (urlToCrawl || directUrl).trim();
+    if (!targetUrl) return;
+
+    setIsDirectCrawling(true);
+    setDirectError(null);
+    setDirectFeedback(null);
+
+    try {
+      const res = await fetch('/api/crawl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'crawl_url', url: targetUrl }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.result) {
+        setDirectFeedback(data.result);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('3dhub-crawled-models-updated', {
+              detail: { timestamp: Date.now() },
+            })
+          );
+        }
+      } else {
+        setDirectError(data.error || data.result?.error || 'Không thể bóc tách dữ liệu từ đường dẫn này.');
+      }
+    } catch (err: any) {
+      setDirectError(err.message || 'Lỗi mạng khi cào URL.');
+    } finally {
+      setIsDirectCrawling(false);
+    }
+  };
+
+  const handleManualIngestSubmit = async (payload: any) => {
+    const res = await fetch('/api/crawl', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'manual_ingest', ...payload }),
+    });
+    const data = await res.json();
+    if (data.success && typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('3dhub-crawled-models-updated', {
+          detail: { timestamp: Date.now() },
+        })
+      );
+    }
+    return data;
+  };
+
+  const isManualOrUrlMode = selectedPlatform === 'manual' || selectedPlatform === 'custom-url';
+
   return (
     <div className="vision-glass rounded-[32px] p-5 sm:p-6 shadow-2xl space-y-4">
+      {/* Top Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shrink-0 shadow-sm">
@@ -90,29 +168,25 @@ export function CrawlerDashboard({
 
         {/* Action Buttons: Trigger Crawl + Custom URL + Manual Ingest */}
         <div className="flex items-center gap-2 flex-wrap">
-          {onOpenCrawlUrlModal && (
-            <button
-              type="button"
-              onClick={onOpenCrawlUrlModal}
-              title="Cào và bóc tách dữ liệu từ một liên kết web bất kỳ"
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-200 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
-            >
-              <Link2 className="w-3.5 h-3.5 text-teal-300" />
-              <span>Cào Link URL</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => (onOpenCrawlUrlModal ? onOpenCrawlUrlModal() : setInternalUrlModalOpen(true))}
+            title="Cào và bóc tách dữ liệu từ một liên kết web hoặc YouTube"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-200 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+          >
+            <Link2 className="w-3.5 h-3.5 text-teal-300" />
+            <span>Cào Link URL &amp; YouTube</span>
+          </button>
 
-          {onOpenManualIngestModal && (
-            <button
-              type="button"
-              onClick={onOpenManualIngestModal}
-              title="Tự nhập mô hình, profile in hoặc mẹo xử lý lỗi thủ công"
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-violet-200 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
-            >
-              <PlusCircle className="w-3.5 h-3.5 text-violet-300" />
-              <span>Nạp Thủ Công</span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => (onOpenManualIngestModal ? onOpenManualIngestModal() : setInternalManualModalOpen(true))}
+            title="Tự nhập mô hình, profile in hoặc mẹo xử lý lỗi thủ công"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-violet-200 text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+          >
+            <PlusCircle className="w-3.5 h-3.5 text-violet-300" />
+            <span>Nạp Thủ Công</span>
+          </button>
 
           <button
             onClick={() => onTriggerCrawl()}
@@ -138,9 +212,141 @@ export function CrawlerDashboard({
         </div>
       </div>
 
-      {/* Controls Bar */}
+      {/* PROMINENT DIRECT URL & YOUTUBE AI INPUT BOX (Luôn hiển thị khi bấm "Thủ công & URL") */}
+      {isManualOrUrlMode && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-teal-950/50 via-purple-950/40 to-black/60 border border-teal-400/50 shadow-2xl space-y-3 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 shadow">
+                <Link2 className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2 flex-wrap">
+                  <span>DÁN LINK YOUTUBE HOẶC URL 3D ĐỂ AI BÓC TÁCH:</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/40 font-mono">
+                    ▶️ YouTube AI Slicing
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/30 font-mono">
+                    🌐 Web Scraper
+                  </span>
+                </h4>
+                <p className="text-[11px] text-white/60">
+                  Dán link video YouTube (AI tự xem &amp; đúc kết thông số), MakerWorld, Printables, Thingiverse, Reddit, GitHub...
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => (onOpenManualIngestModal ? onOpenManualIngestModal() : setInternalManualModalOpen(true))}
+              className="px-3.5 py-1.5 rounded-xl bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-violet-200 text-xs font-bold flex items-center gap-1.5 transition-all self-start sm:self-auto cursor-pointer"
+            >
+              <PlusCircle className="w-3.5 h-3.5 text-violet-300" />
+              <span>Hoặc Nhập Thông Số Thủ Công</span>
+            </button>
+          </div>
+
+          {/* Input & Action Button */}
+          <div className="flex flex-col sm:flex-row items-stretch gap-2">
+            <div className="relative flex-1">
+              <input
+                type="url"
+                value={directUrl}
+                onChange={(e) => setDirectUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleExecuteDirectCrawl();
+                  }
+                }}
+                placeholder="Dán link vào đây: https://www.youtube.com/watch?v=... hoặc link MakerWorld, Printables, Reddit..."
+                className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-white/25 text-xs text-white placeholder-white/40 focus:outline-none focus:border-teal-400 font-mono"
+              />
+              {directUrl && (
+                <button
+                  type="button"
+                  onClick={() => setDirectUrl('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleExecuteDirectCrawl()}
+              disabled={isDirectCrawling || !directUrl.trim()}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-300 hover:to-emerald-300 text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 cursor-pointer shrink-0 shadow-lg shadow-teal-500/20"
+            >
+              {isDirectCrawling ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-black" />
+                  <span>Đang Bóc Tách &amp; AI Phân Tích...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 text-black" />
+                  <span>Bóc Tách &amp; Lưu Vào Obsidian</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Quick Sample Links */}
+          <div className="flex items-center gap-1.5 flex-wrap text-[11px] text-white/50 pt-1 border-t border-white/10">
+            <span>Link mẫu thử nhanh:</span>
+            {sampleUrls.map((s, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setDirectUrl(s.url);
+                  handleExecuteDirectCrawl(s.url);
+                }}
+                className={`px-2.5 py-0.5 rounded-md border font-mono text-[10px] cursor-pointer transition-all active:scale-95 ${
+                  s.label.includes('YouTube')
+                    ? 'bg-red-500/15 hover:bg-red-500/25 text-red-300 border-red-500/30'
+                    : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Direct Error / Success Feedback */}
+          {directError && (
+            <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-200 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+              <span>{directError}</span>
+            </div>
+          )}
+
+          {directFeedback && (
+            <div className="p-3 rounded-xl bg-teal-500/20 border border-teal-400/40 text-teal-200 text-xs space-y-1.5">
+              <div className="flex items-center gap-1.5 font-bold text-teal-300">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Bóc tách thành công &amp; Đã lưu vào kho tri thức!</span>
+              </div>
+              <div className="text-white/85 text-[11px] space-y-0.5">
+                <p>• <strong>Tiêu đề:</strong> {directFeedback.model?.title}</p>
+                <p>• <strong>Tác giả:</strong> {directFeedback.model?.author} ({directFeedback.model?.platform})</p>
+                {directFeedback.obsidianNotePath && (
+                  <p className="text-purple-300 font-mono pt-1 border-t border-teal-500/20 flex items-center gap-1">
+                    <Brain className="w-3.5 h-3.5" />
+                    <span>Obsidian Vault: {directFeedback.obsidianNotePath.split('obsidian-vault')[1] || directFeedback.obsidianNotePath}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Controls Bar: 3 Columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-        {/* Platform Selector */}
+        {/* Column 1: Platform Selector */}
         <div>
           <label className="block text-[11px] font-semibold text-white/70 uppercase mb-2 px-0.5">
             1. Nền tảng mục tiêu:
@@ -163,7 +369,7 @@ export function CrawlerDashboard({
           </div>
         </div>
 
-        {/* Crawl Depth Selector */}
+        {/* Column 2: Crawl Depth Selector */}
         <div>
           <label className="block text-[11px] font-semibold text-white/70 uppercase mb-2 px-0.5">
             2. Số lượng &amp; Độ sâu quét:
@@ -196,11 +402,11 @@ export function CrawlerDashboard({
           </div>
         </div>
 
-        {/* Keyword Filter */}
+        {/* Column 3: Keyword Search OR Direct URL Input prompt */}
         <div className="space-y-2">
           <div className="flex items-center justify-between px-0.5">
             <label className="text-[11px] font-semibold text-white/70 uppercase">
-              3. Từ khóa tìm kiếm:
+              {isManualOrUrlMode ? '3. Nhập từ khóa lọc dữ liệu:' : '3. Từ khóa tìm kiếm:'}
             </label>
             {keyword && (
               <button
@@ -282,6 +488,34 @@ export function CrawlerDashboard({
           ))
         )}
       </div>
+
+      {/* Internal Modals (Đảm bảo luôn mở được dù ở bất kỳ trang nào) */}
+      <CrawlUrlModal
+        isOpen={internalUrlModalOpen}
+        onClose={() => setInternalUrlModalOpen(false)}
+        onCrawlUrl={async (url, category) => {
+          const res = await fetch('/api/crawl', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'crawl_url', url, category }),
+          });
+          const data = await res.json();
+          if (data.success && typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('3dhub-crawled-models-updated', {
+                detail: { timestamp: Date.now() },
+              })
+            );
+          }
+          return data;
+        }}
+      />
+
+      <ManualIngestModal
+        isOpen={internalManualModalOpen}
+        onClose={() => setInternalManualModalOpen(false)}
+        onManualIngest={handleManualIngestSubmit}
+      />
     </div>
   );
 }

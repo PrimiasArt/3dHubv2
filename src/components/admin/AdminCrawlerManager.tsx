@@ -1,12 +1,17 @@
 'use client';
 
-import React from 'react';
-import { Compass, RefreshCw, Layers, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Compass, RefreshCw, Layers, ShieldCheck, Link2, PlusCircle } from 'lucide-react';
 import { usePlatformCrawler } from '@/hooks/usePlatformCrawler';
 import { CrawlerDashboard } from '@/components/crawler/CrawlerDashboard';
 import { ModelGrid } from '@/components/crawler/ModelGrid';
+import { CrawlUrlModal } from '@/components/crawler/CrawlUrlModal';
+import { ManualIngestModal } from '@/components/crawler/ManualIngestModal';
 
 export function AdminCrawlerManager() {
+  const [isCrawlUrlModalOpen, setIsCrawlUrlModalOpen] = useState(false);
+  const [isManualIngestModalOpen, setIsManualIngestModalOpen] = useState(false);
+
   const {
     models,
     rawModels,
@@ -24,6 +29,8 @@ export function AdminCrawlerManager() {
     crawlDepth,
     setCrawlDepth,
     triggerCrawl,
+    crawlCustomUrl,
+    manualIngestModel,
     deduplicateDatabase,
     refetchModels,
   } = usePlatformCrawler();
@@ -46,7 +53,25 @@ export function AdminCrawlerManager() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <button
+            onClick={() => setIsCrawlUrlModalOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-200 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
+            title="Dán đường dẫn URL hoặc YouTube bất kỳ để bóc tách tự động"
+          >
+            <Link2 className="w-3.5 h-3.5 text-teal-300" />
+            <span>Cào Link URL & YouTube</span>
+          </button>
+
+          <button
+            onClick={() => setIsManualIngestModalOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-violet-200 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
+            title="Nạp mô hình hoặc mẹo in thủ công vào kho"
+          >
+            <PlusCircle className="w-3.5 h-3.5 text-violet-300" />
+            <span>Nạp Thủ Công</span>
+          </button>
+
           <button
             onClick={deduplicateDatabase}
             disabled={isLoadingModels}
@@ -79,6 +104,8 @@ export function AdminCrawlerManager() {
         onTriggerCrawl={triggerCrawl}
         isCrawling={isCrawling}
         crawlLogs={crawlLogs}
+        onOpenCrawlUrlModal={() => setIsCrawlUrlModalOpen(true)}
+        onOpenManualIngestModal={() => setIsManualIngestModalOpen(true)}
       />
 
       {/* Model Repository Grid with Filter & Sort Toolbar */}
@@ -133,6 +160,20 @@ export function AdminCrawlerManager() {
 
         <ModelGrid models={models} isLoading={isLoadingModels} />
       </div>
+
+      {/* Crawl URL Modal */}
+      <CrawlUrlModal
+        isOpen={isCrawlUrlModalOpen}
+        onClose={() => setIsCrawlUrlModalOpen(false)}
+        onCrawlUrl={crawlCustomUrl}
+      />
+
+      {/* Manual Ingest Modal */}
+      <ManualIngestModal
+        isOpen={isManualIngestModalOpen}
+        onClose={() => setIsManualIngestModalOpen(false)}
+        onManualIngest={manualIngestModel}
+      />
     </div>
   );
 }
