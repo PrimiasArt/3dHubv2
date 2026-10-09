@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiSlicingProfileService } from '@/backend/services/slicing/AISlicingProfileService';
+import { obsidianVaultService } from '@/backend/services/knowledge/ObsidianVaultService';
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,11 +42,20 @@ export async function POST(req: NextRequest) {
       triangleCount,
     });
 
+    const matchedNote = obsidianVaultService.getModelKnowledge(modelName);
+    const relatedNotes = obsidianVaultService.searchNotes(modelName).slice(0, 4);
+    const stats = obsidianVaultService.getVaultStats();
+
     return NextResponse.json({
       success: true,
       modelName,
       inspection,
       profiles,
+      vaultKnowledge: {
+        matchedNote,
+        relatedNotes,
+        stats,
+      },
     });
   } catch (err: any) {
     console.error('API /api/slicing/ai-analyze error:', err);
