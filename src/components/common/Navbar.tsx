@@ -137,7 +137,7 @@ export function Navbar() {
           </Link>
 
           {/* Center Customer Navigation - VisionOS Segmented Pill Control */}
-          <nav className="hidden md:flex items-center p-1 rounded-full bg-slate-100/80 backdrop-blur-xl border border-slate-200/80 shrink-0">
+          <nav className="hidden lg:flex items-center p-1 rounded-full bg-slate-100/80 backdrop-blur-xl border border-slate-200/80 shrink-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -145,7 +145,7 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-gradient-to-r from-cyan-600 to-sky-600 text-white font-bold shadow-sm'
                       : 'text-slate-600 hover:text-slate-900 font-medium hover:bg-white/80'
@@ -176,7 +176,7 @@ export function Navbar() {
                 title="Trung tâm Quản trị hệ thống & Xưởng in"
               >
                 <Building2 className="w-3.5 h-3.5 text-cyan-600" />
-                <span className="hidden lg:inline">Quản Trị</span>
+                <span className="hidden xl:inline">Quản Trị</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
               </Link>
             )}
@@ -185,7 +185,7 @@ export function Navbar() {
             {isModuleVisible('wallet') && (
               <button
                 onClick={() => setIsTopUpModalOpen(true)}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-cyan-50/80 hover:bg-cyan-100/80 border border-cyan-200 text-slate-800 text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-cyan-50/80 hover:bg-cyan-100/80 border border-cyan-200 text-slate-800 text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group shrink-0"
                 title="Nạp tiền vào ví qua VietQR hoặc MoMo"
               >
                 <Wallet className="w-3.5 h-3.5 text-cyan-600 group-hover:scale-110 transition-transform" />
@@ -199,10 +199,10 @@ export function Navbar() {
             )}
 
             {/* VisionOS User Profile Trigger */}
-            <div className="relative" ref={userMenuRef}>
+            <div className="relative shrink-0" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pr-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200 transition-all text-left shadow-xs backdrop-blur-md"
+                className="flex items-center gap-1.5 p-1 sm:pr-2 rounded-full bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200 transition-all text-left shadow-xs backdrop-blur-md"
               >
                 <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
                   {currentUser?.avatar ? (
@@ -220,18 +220,24 @@ export function Navbar() {
                   )}
                 </div>
 
-                <div className="hidden sm:block">
+                <div className="hidden xl:block">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-slate-800 truncate max-w-[65px] md:max-w-[75px] xl:max-w-[90px]">
+                    <span className="text-xs font-semibold text-slate-800 truncate max-w-[85px]">
                       {currentUser?.name || 'Tài khoản'}
                     </span>
                     <span
-                      className={`text-[9px] font-semibold px-2 py-0.2 rounded-full border ${currentBadge.bg}`}
+                      className={`text-[9px] font-semibold px-1.5 py-0.2 rounded-full border ${currentBadge.bg}`}
                     >
                       {currentBadge.text}
                     </span>
                   </div>
                 </div>
+
+                <span
+                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border xl:hidden ${currentBadge.bg}`}
+                >
+                  {currentBadge.text}
+                </span>
 
                 <ChevronDown
                   className={`w-3.5 h-3.5 text-slate-500 transition-transform ${
@@ -391,7 +397,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition-all active:scale-95 ml-0.5"
+              className="lg:hidden w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition-all active:scale-95 ml-0.5"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? (
@@ -405,7 +411,7 @@ export function Navbar() {
 
         {/* Mobile Navigation Drawer Sheet */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-slate-200/90 p-4 shadow-xl backdrop-blur-3xl space-y-3 animate-fadeIn text-slate-800 bg-white/95">
+          <div className="lg:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-slate-200/90 p-4 shadow-xl backdrop-blur-3xl space-y-3 animate-fadeIn text-slate-800 bg-white/95">
             {/* Mobile Navigation Links */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {mobileNavItems.map((item) => {

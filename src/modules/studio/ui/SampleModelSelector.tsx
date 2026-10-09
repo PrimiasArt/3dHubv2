@@ -38,7 +38,7 @@ export function SampleModelSelector({
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 gap-2">
         {SAMPLE_PRINT_MODELS.map((item) => {
           const isSelected = selectedModelId === item.id;
           const Icon = ICONS[item.id] || Ship;
@@ -63,19 +63,23 @@ export function SampleModelSelector({
                 >
                   <Icon className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-bold truncate">{item.name.split(' - ')[0]}</span>
+                <span className="text-xs font-bold truncate" title={item.name}>
+                  {item.name.split(' - ')[0]}
+                </span>
               </div>
 
-              <div className="mt-2 text-[10px] text-slate-500 flex items-center justify-between">
-                <span>{item.defaultDimensionsMm.x}×{item.defaultDimensionsMm.y}×{item.defaultDimensionsMm.z}mm</span>
+              <div className="mt-2 text-[10px] text-slate-500 flex items-center justify-between gap-1 pt-1 border-t border-slate-100">
+                <span className="font-mono text-slate-600 truncate text-[10px]">
+                  {item.defaultDimensionsMm.x}×{item.defaultDimensionsMm.y}×{item.defaultDimensionsMm.z}mm
+                </span>
                 <span
-                  className={`px-1.5 py-0.5 rounded-full font-bold text-[9px] border ${
+                  className={`px-1.5 py-0.2 rounded-full font-bold text-[9px] border shrink-0 ${
                     item.recommendedSupport === 'tree'
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       : 'bg-slate-100 text-slate-600 border-slate-200'
                   }`}
                 >
-                  {item.recommendedSupport === 'tree' ? 'Tree Sup' : 'No Sup'}
+                  {item.recommendedSupport === 'tree' ? 'Tree' : 'NoSup'}
                 </span>
               </div>
             </button>
