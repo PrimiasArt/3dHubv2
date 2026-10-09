@@ -39,7 +39,7 @@ Dự án được xây dựng chuẩn Next.js App Router, tương thích 100% v�
 
 1. Đăng nhập [Vercel](https://vercel.com/) bằng tài khoản GitHub của bạn.
 2. Chọn **"Add New..."** -> **"Project"**.
-3. Chọn kho lưu trữ **`PrimiasArt/HLC-3DHub`** và bấm **"Import"**.
+3. Chọn kho lưu trữ **`PrimiasArt/3dHubv2`** và bấm **"Import"**.
 4. (Tùy chọn) Thêm các biến môi trường tại phần **Environment Variables**:
    - `GEMINI_API_KEY`: Key từ Google AI Studio (miễn phí)
    - `FAL_KEY`: Key từ Fal.ai

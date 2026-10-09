@@ -142,16 +142,16 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
-        {/* Apple VisionOS Floating Frosted Glass Capsule Bar with safe inner padding */}
-        <div className="max-w-7xl mx-auto h-16 rounded-full px-4 sm:px-6 lg:px-7 flex items-center justify-between vision-glass shadow-[0_16px_40px_rgba(0,0,0,0.35)] border border-white/15 relative">
+        {/* Apple VisionOS Floating Frosted Glass Capsule Bar */}
+        <div className="max-w-7xl mx-auto h-16 rounded-full px-4 sm:px-6 lg:px-7 flex items-center justify-between vision-glass shadow-[0_12px_36px_rgba(15,23,42,0.06)] border border-slate-200/80 bg-white/80 backdrop-blur-2xl relative">
           {/* Brand Logo with VisionOS Circular Glass Icon */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 flex items-center justify-center text-white transition-all shadow-sm group-hover:scale-105">
-              <Box className="w-4 h-4 sm:w-5 sm:h-5 text-[#5EEAD4]" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center text-cyan-600 transition-all shadow-xs group-hover:scale-105">
+              <Box className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-600" />
             </div>
             <div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-semibold text-sm sm:text-base lg:text-lg tracking-tight text-white">
+                <span className="font-bold text-sm sm:text-base lg:text-lg tracking-tight text-slate-900">
                   3D HUB
                 </span>
                 {/* Badge Staging / Official: Admin có thể click để chuyển đổi giữa / và /staging */}
@@ -189,7 +189,7 @@ export function Navbar() {
           </Link>
 
           {/* Center Customer Navigation - VisionOS Segmented Pill Control (Strictly 3 Items) */}
-          <nav className="hidden md:flex items-center p-1 rounded-full bg-black/25 backdrop-blur-xl border border-white/10 shrink-0">
+          <nav className="hidden md:flex items-center p-1 rounded-full bg-slate-100/70 backdrop-blur-xl border border-slate-200/80 shrink-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -197,15 +197,15 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
                     isActive
-                      ? 'bg-[#2DD4BF]/25 backdrop-blur-md text-[#5EEAD4] font-bold border border-[#2DD4BF]/40 shadow-[0_2px_8px_rgba(0,0,0,0.2)]'
-                      : 'text-white/70 hover:text-white font-medium hover:bg-white/10'
+                      ? 'bg-cyan-500 text-white font-bold shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 font-medium hover:bg-white/80'
                   }`}
                 >
                   <Icon
                     className={`w-3.5 h-3.5 shrink-0 transition-colors ${
-                      isActive ? 'text-[#5EEAD4]' : 'text-white/60'
+                      isActive ? 'text-white' : 'text-slate-500'
                     }`}
                   />
                   <span>{item.label}</span>
@@ -216,24 +216,24 @@ export function Navbar() {
 
           {/* User Profile, Action Buttons & VisionOS Wallet Capsule */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Direct Admin Command Link for Admin & Mod (Tucked in Right Action Group) */}
+            {/* Direct Admin Command Link for Admin & Mod */}
             {hasAdminAccess && (
               <Link
                 href="/admin"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 ${
                   pathname === '/admin'
-                    ? 'bg-[#2DD4BF]/25 text-[#5EEAD4] border-[#2DD4BF]/40 shadow-[0_0_12px_rgba(45,212,191,0.25)]'
-                    : 'bg-white/10 hover:bg-white/20 text-white/90 border-white/15'
+                    ? 'bg-cyan-100 text-cyan-800 border-cyan-300 shadow-xs'
+                    : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 border-slate-200'
                 }`}
-                title="Trung tâm Quản trị hệ thống &amp; Xưởng in"
+                title="Trung tâm Quản trị hệ thống & Xưởng in"
               >
-                <Building2 className="w-3.5 h-3.5 text-[#5EEAD4]" />
+                <Building2 className="w-3.5 h-3.5 text-cyan-600" />
                 <span className="hidden xl:inline">Quản Trị</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
               </Link>
             )}
 
-            {/* Quick Admin Environment Switcher Button (Chỉ hiển thị cho riêng Admin) */}
+            {/* Quick Admin Environment Switcher Button */}
             {isAdmin && (
               <button
                 type="button"
@@ -241,22 +241,22 @@ export function Navbar() {
                 disabled={isSwitching}
                 className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 group ${
                   isOfficial
-                    ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                    : 'bg-[#0A2E2A]/80 hover:bg-[#12423D] text-[#E6FAF6] border-[#2DD4BF]/50 shadow-[0_0_16px_rgba(45,212,191,0.3)]'
+                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+                    : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border-cyan-200'
                 }`}
-                title={`Admin Switcher: Đang ở bản ${isOfficial ? 'Official (Thương Mại)' : 'Staging (Xanh Ngọc Bích & Cyan Pastel)'}. Click để chuyển đổi tức thì!`}
+                title={`Admin Switcher: Đang ở bản ${isOfficial ? 'Official (Thương Mại)' : 'Staging'}. Click để chuyển đổi tức thì!`}
               >
                 {isOfficial ? (
                   <>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-300 group-hover:scale-110 transition-transform" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 group-hover:scale-110 transition-transform" />
                     <span className="tracking-tight">OFFICIAL</span>
-                    <span className="hidden 2xl:inline text-[10px] text-emerald-200/70 font-normal">| Live</span>
+                    <span className="hidden 2xl:inline text-[10px] text-emerald-600/70 font-normal">| Live</span>
                   </>
                 ) : (
                   <>
-                    <FlaskConical className="w-3.5 h-3.5 text-[#5EEAD4] group-hover:scale-110 transition-transform" />
-                    <span className="tracking-tight text-[#F0FDFA]">STAGING</span>
-                    <span className="hidden 2xl:inline text-[10px] text-[#99F6E4] font-medium">| Ngọc Bích</span>
+                    <FlaskConical className="w-3.5 h-3.5 text-cyan-600 group-hover:scale-110 transition-transform" />
+                    <span className="tracking-tight text-cyan-900">STAGING</span>
+                    <span className="hidden 2xl:inline text-[10px] text-cyan-700 font-medium">| Sandbox</span>
                   </>
                 )}
               </button>
@@ -266,24 +266,24 @@ export function Navbar() {
             {isModuleVisible('wallet') && (
               <button
                 onClick={() => setIsTopUpModalOpen(true)}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/15 text-white text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/90 border border-slate-200 text-slate-800 text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
                 title="Nạp tiền vào ví qua VietQR hoặc MoMo"
               >
-                <Wallet className="w-3.5 h-3.5 text-[#5EEAD4] group-hover:scale-110 transition-transform" />
-                <span suppressHydrationWarning className="font-semibold text-xs tracking-tight text-white font-mono">
+                <Wallet className="w-3.5 h-3.5 text-cyan-600 group-hover:scale-110 transition-transform" />
+                <span suppressHydrationWarning className="font-bold text-xs tracking-tight text-slate-900 font-mono">
                   {new Intl.NumberFormat('en-US').format(currentUser?.walletBalanceVnd ?? balanceVnd)} đ
                 </span>
-                <span className="w-4 h-4 rounded-full bg-white/25 flex items-center justify-center text-white text-[10px] hidden sm:flex">
+                <span className="w-4 h-4 rounded-full bg-cyan-600 text-white flex items-center justify-center text-[10px] hidden sm:flex">
                   <Plus className="w-2.5 h-2.5" />
                 </span>
               </button>
             )}
 
-            {/* VisionOS User Profile Trigger (Compact with overflow safety) */}
+            {/* VisionOS User Profile Trigger */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pr-2.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/15 transition-all text-left shadow-xs backdrop-blur-md"
+                className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pr-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200 transition-all text-left shadow-xs backdrop-blur-md"
               >
                 <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-black/30 border border-white/20 shrink-0">
                   {currentUser?.avatar ? (
@@ -303,7 +303,7 @@ export function Navbar() {
 
                 <div className="hidden sm:block">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold text-white truncate max-w-[65px] md:max-w-[75px] xl:max-w-[90px]">
+                    <span className="text-xs font-semibold text-slate-800 truncate max-w-[65px] md:max-w-[75px] xl:max-w-[90px]">
                       {currentUser?.name || 'Tài khoản'}
                     </span>
                     <span
@@ -315,7 +315,7 @@ export function Navbar() {
                 </div>
 
                 <ChevronDown
-                  className={`w-3.5 h-3.5 text-white/60 transition-transform ${
+                  className={`w-3.5 h-3.5 text-slate-500 transition-transform ${
                     isUserMenuOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -323,11 +323,11 @@ export function Navbar() {
 
               {/* VisionOS Popover Glass Sheet */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-3 w-80 max-w-[calc(100vw-32px)] rounded-[28px] vision-glass-panel border border-white/20 shadow-[0_24px_60px_rgba(0,0,0,0.5)] p-4 z-50 space-y-3 text-white animate-fadeIn">
+                <div className="absolute right-0 mt-3 w-80 max-w-[calc(100vw-32px)] rounded-[28px] vision-glass-panel border border-slate-200/90 shadow-[0_24px_60px_rgba(15,23,42,0.12)] p-4 z-50 space-y-3 text-slate-800 animate-fadeIn bg-white/95">
                   {/* Current User Header */}
-                  <div className="p-3 rounded-2xl bg-white/10 border border-white/15">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
                     <div className="flex items-center gap-2.5">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-black/40 border border-white/20 shrink-0">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
                         {currentUser?.avatar ? (
                           <Image
                             src={currentUser.avatar}
@@ -337,22 +337,22 @@ export function Navbar() {
                             className="object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center font-bold text-white">
+                          <div className="w-full h-full flex items-center justify-center font-bold text-slate-700">
                             {currentUser?.name?.charAt(0) || 'U'}
                           </div>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-white truncate">{currentUser?.name}</p>
+                          <p className="text-xs font-bold text-slate-900 truncate">{currentUser?.name}</p>
                           <span
                             className={`text-[9px] font-semibold px-1.5 py-0.2 rounded-full border ${currentBadge.bg}`}
                           >
                             {currentBadge.text}
                           </span>
                         </div>
-                        <p className="text-[11px] text-white/70 truncate">{currentUser?.email}</p>
-                        <p className="text-[11px] text-[#5EEAD4] font-semibold mt-0.5">
+                        <p className="text-[11px] text-slate-500 truncate">{currentUser?.email}</p>
+                        <p className="text-[11px] text-cyan-700 font-bold mt-0.5">
                           Ví: {(currentUser?.walletBalanceVnd ?? balanceVnd).toLocaleString('vi-VN')} đ
                         </p>
                       </div>
@@ -362,13 +362,13 @@ export function Navbar() {
                     <Link
                       href="/profile"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="mt-2.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold transition-all border border-white/15"
+                      className="mt-2.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-semibold transition-all border border-slate-200/80 shadow-xs"
                     >
                       <div className="flex items-center gap-2">
-                        <User className="w-3.5 h-3.5 text-[#5EEAD4]" />
+                        <User className="w-3.5 h-3.5 text-cyan-600" />
                         <span>Hồ Sơ Cá Nhân &amp; Đơn Hàng</span>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-white/50" />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </Link>
 
                     {/* Dành riêng cho ADMIN: Quản Lý Người Dùng */}

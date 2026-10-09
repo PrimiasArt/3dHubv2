@@ -1,82 +1,56 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   DEFAULT & STAGING THEME: XANH NGỌC BÍCH CREAMY & CYAN PASTEL
-   Rich Velvety Jade Green, Frosted Mint Cream, Pastel Cyan & Soft Jade Glass
+   APPLE VISIONOS SPATIAL LUXURY THEME: TRẮNG KEM + XANH CYAN KEM
+   Creamy White & Milk Frosted Glass • Soft Creamy Cyan & Mint Accents
    ========================================================================== */
 :root,
-[data-env="staging"] {
-  --background: #071716;
-  --foreground: #F0FDFA;
-  --page-radial: radial-gradient(ellipse 110% 90% at 50% -12%, #113B37 0%, #0A2724 40%, #071C1A 75%, #04100F 100%);
-  --glow-1: rgba(45, 212, 191, 0.28);
-  --glow-2: rgba(20, 110, 100, 0.24);
-  --glow-warm: rgba(230, 250, 246, 0.16);
-
-  --vision-glass: rgba(13, 38, 35, 0.72);
-  --vision-glass-hover: rgba(18, 52, 48, 0.85);
-  --vision-glass-panel: rgba(10, 32, 29, 0.82);
-  --vision-glass-card: rgba(15, 44, 40, 0.65);
-  --vision-glass-subtle: rgba(94, 234, 212, 0.12);
-
-  --vision-border: rgba(94, 234, 212, 0.26);
-  --vision-border-light: rgba(153, 246, 228, 0.42);
-  --vision-pill-btn: rgba(94, 234, 212, 0.18);
-  --vision-pill-btn-hover: rgba(94, 234, 212, 0.32);
-  --vision-pill-active: rgba(94, 234, 212, 0.45);
-
-  --vision-accent: #2DD4BF; /* Vibrant Jade Cyan */
-  --vision-accent-soft: rgba(45, 212, 191, 0.22);
-  --vision-pastel-yellow: #E6FAF6; /* Creamy Jade Vanilla Frost */
-  --vision-pastel-mint: #5EEAD4; /* Pastel Cyan Light */
-  --vision-pastel-sage: #99F6E4; /* Bright Pastel Cyan */
-  --vision-pastel-rose: #FDA4AF; /* Soft Pastel Rose */
-
-  --vision-text-primary: #F0FDFA;
-  --vision-text-secondary: #CCFBF1;
-  --vision-text-muted: #7ECEC5;
-
-  --vision-shadow: 0 20px 50px rgba(3, 15, 14, 0.5);
-  --vision-panel-shadow: 0 24px 60px rgba(2, 12, 11, 0.58);
-}
-
-/* ==========================================================================
-   OFFICIAL THEME: XANH NGỌC BÍCH THƯƠNG MẠI & CYAN PASTEL
-   Sleek Commercial Production, Rich Creamy Jade, Pastel Cyan & High-Tech Accents
-   ========================================================================== */
+[data-env="staging"],
 [data-env="official"] {
-  --background: #061615;
-  --foreground: #F0FDFA;
-  --page-radial: radial-gradient(ellipse 110% 90% at 50% -12%, #113B37 0%, #0A2724 40%, #061917 75%, #030E0D 100%);
-  --glow-1: rgba(45, 212, 191, 0.26);
-  --glow-2: rgba(16, 185, 129, 0.22);
-  --glow-warm: rgba(230, 250, 246, 0.14);
+  /* Canvas Background: Warm Cream & Milk White */
+  --background: #F8F9FA;
+  --background-secondary: #F1F4F6;
+  --foreground: #0F172A;
+  
+  /* Spatial Ambient Radial Gradients */
+  --page-radial: radial-gradient(ellipse 110% 90% at 50% -10%, #E0F2FE 0%, #EFF6FF 25%, #F8FAFC 60%, #F1F5F9 100%);
+  --glow-1: rgba(6, 182, 212, 0.14);   /* Soft Pastel Cyan */
+  --glow-2: rgba(14, 165, 233, 0.12);  /* Creamy Sky Blue */
+  --glow-warm: rgba(254, 243, 199, 0.22); /* Gentle Vanilla Cream */
 
-  --vision-glass: rgba(12, 38, 35, 0.74);
-  --vision-glass-hover: rgba(18, 52, 48, 0.85);
-  --vision-glass-panel: rgba(10, 32, 29, 0.84);
-  --vision-glass-card: rgba(15, 44, 40, 0.68);
-  --vision-glass-subtle: rgba(94, 234, 212, 0.12);
+  /* VisionOS Frosted Milk Glass Materials */
+  --vision-glass: rgba(255, 255, 255, 0.78);
+  --vision-glass-hover: rgba(255, 255, 255, 0.92);
+  --vision-glass-panel: rgba(255, 255, 255, 0.84);
+  --vision-glass-card: rgba(255, 255, 255, 0.88);
+  --vision-glass-subtle: rgba(240, 249, 255, 0.7);
 
-  --vision-border: rgba(94, 234, 212, 0.25);
-  --vision-border-light: rgba(153, 246, 228, 0.4);
-  --vision-pill-btn: rgba(94, 234, 212, 0.18);
-  --vision-pill-btn-hover: rgba(94, 234, 212, 0.32);
-  --vision-pill-active: rgba(94, 234, 212, 0.45);
+  /* Glass Borders & Specular Highlights */
+  --vision-border: rgba(226, 232, 240, 0.85);
+  --vision-border-light: rgba(255, 255, 255, 0.95);
+  --vision-border-cyan: rgba(6, 182, 212, 0.35);
 
-  --vision-accent: #2DD4BF; /* Vibrant Jade Cyan */
-  --vision-accent-soft: rgba(45, 212, 191, 0.22);
-  --vision-pastel-yellow: #E6FAF6; /* Creamy Jade Vanilla Frost */
-  --vision-pastel-mint: #5EEAD4; /* Pastel Cyan Light */
-  --vision-pastel-sage: #99F6E4; /* Bright Pastel Cyan */
-  --vision-pastel-rose: #FDA4AF;
+  /* Pill Buttons & Interactive Elements */
+  --vision-pill-btn: rgba(255, 255, 255, 0.9);
+  --vision-pill-btn-hover: rgba(240, 249, 255, 1);
+  --vision-pill-active: rgba(224, 242, 254, 0.95);
 
-  --vision-text-primary: #F0FDFA;
-  --vision-text-secondary: #CCFBF1;
-  --vision-text-muted: #7ECEC5;
+  /* Cyan & Cream Accent Palette */
+  --vision-accent: #0891B2;           /* Deep Vibrant Cyan */
+  --vision-accent-soft: #CFFAFE;      /* Creamy Cyan Wash */
+  --vision-accent-gradient: linear-gradient(135deg, #06B6D4 0%, #0284C7 100%);
+  --vision-cream: #FEF3C7;             /* Warm Vanilla Cream */
+  --vision-cream-soft: #FFFBEB;
+  
+  /* Text Contrast Hierarchy (Crisp Slate) */
+  --vision-text-primary: #0F172A;      /* Slate 900 */
+  --vision-text-secondary: #334155;    /* Slate 700 */
+  --vision-text-muted: #64748B;        /* Slate 500 */
+  --vision-text-cyan: #0E7490;         /* Cyan 700 */
 
-  --vision-shadow: 0 20px 50px rgba(3, 15, 14, 0.5);
-  --vision-panel-shadow: 0 24px 60px rgba(2, 12, 11, 0.58);
+  /* Spatial Shadows */
+  --vision-shadow: 0 12px 36px -6px rgba(15, 23, 42, 0.06), 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+  --vision-panel-shadow: 0 20px 48px -8px rgba(15, 23, 42, 0.08), 0 6px 20px -3px rgba(15, 23, 42, 0.04);
 }
 
 @theme inline {
@@ -104,11 +78,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(215, 240, 222, 0.22);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(215, 240, 222, 0.38);
+  background: rgba(148, 163, 184, 0.55);
 }
 
 /* Crisp Focus State */
@@ -119,10 +93,10 @@ input:focus, button:focus-visible, select:focus, textarea:focus {
 /* Apple VisionOS Spatial Glass Material Classes */
 .vision-glass {
   background: var(--vision-glass);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--vision-border);
-  box-shadow: var(--vision-shadow), inset 0 1px 0 var(--vision-border-light);
+  box-shadow: var(--vision-shadow), inset 0 1px 1px rgba(255, 255, 255, 0.95);
 }
 
 .vision-glass-panel {
@@ -130,13 +104,13 @@ input:focus, button:focus-visible, select:focus, textarea:focus {
   backdrop-filter: blur(32px) saturate(190%);
   -webkit-backdrop-filter: blur(32px) saturate(190%);
   border: 1px solid var(--vision-border);
-  box-shadow: var(--vision-panel-shadow), inset 0 1px 0 var(--vision-border-light);
+  box-shadow: var(--vision-panel-shadow), inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 .vision-glass-subtle {
   background: var(--vision-glass-subtle);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--vision-border);
 }
 
@@ -146,20 +120,22 @@ input:focus, button:focus-visible, select:focus, textarea:focus {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--vision-border);
   color: var(--vision-text-primary);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .vision-pill-btn:hover {
   background: var(--vision-pill-btn-hover);
-  border-color: var(--vision-border-light);
+  border-color: var(--vision-border-cyan);
+  color: var(--vision-text-cyan);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .vision-pill-active {
-  background: var(--vision-pill-active);
-  border: 1px solid var(--vision-border-light);
-  color: var(--vision-text-primary);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 var(--vision-border-light);
+  background: #E0F2FE;
+  border: 1px solid #7DD3FC;
+  color: #0369A1;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .vision-card-hover {
@@ -168,42 +144,43 @@ input:focus, button:focus-visible, select:focus, textarea:focus {
 .vision-card-hover:hover {
   transform: translateY(-3px);
   background: var(--vision-glass-hover);
-  border-color: var(--vision-border-light);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--vision-border-light);
+  border-color: var(--vision-border-cyan);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
-/* Creamy & Pastel Accent Utility Classes */
-.pastel-badge-green {
-  background: rgba(126, 200, 149, 0.2);
-  color: #C6EAD1;
-  border: 1px solid rgba(126, 200, 149, 0.35);
+/* Creamy & Cyan Pastel Accent Badges */
+.pastel-badge-cyan {
+  background: #E0F7FA;
+  color: #0E7490;
+  border: 1px solid #A5F3FC;
 }
 
 .pastel-badge-cream {
-  background: rgba(235, 221, 182, 0.2);
-  color: #F5EEDB;
-  border: 1px solid rgba(235, 221, 182, 0.35);
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
 }
 
-.pastel-badge-mint {
-  background: rgba(166, 220, 184, 0.2);
-  color: #D7F2E2;
-  border: 1px solid rgba(166, 220, 184, 0.35);
+.pastel-badge-green {
+  background: #DCFCE7;
+  color: #166534;
+  border: 1px solid #BBF7D0;
 }
 
 .pastel-badge-rose {
-  background: rgba(235, 194, 194, 0.2);
-  color: #F6DFDF;
-  border: 1px solid rgba(235, 194, 194, 0.35);
+  background: #FFE4E6;
+  color: #9F1239;
+  border: 1px solid #FECDD3;
 }
 
 .pastel-pill {
-  background: rgba(220, 245, 230, 0.14);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(220, 245, 230, 0.22);
-  color: #F8FAF7;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  color: #1E293B;
 }
 .pastel-pill:hover {
-  background: rgba(220, 245, 230, 0.25);
-  border-color: rgba(220, 245, 230, 0.36);
+  background: #F0F9FF;
+  border-color: #BAE6FD;
+  color: #0369A1;
 }
