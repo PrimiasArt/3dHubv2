@@ -160,6 +160,12 @@ export class TagAnalytics {
       printables: { count: 0, totalDownloads: 0, totalPrints: 0 },
       thingiverse: { count: 0, totalDownloads: 0, totalPrints: 0 },
       github: { count: 0, totalDownloads: 0, totalPrints: 0 },
+      thangs: { count: 0, totalDownloads: 0, totalPrints: 0 },
+      cults3d: { count: 0, totalDownloads: 0, totalPrints: 0 },
+      reddit: { count: 0, totalDownloads: 0, totalPrints: 0 },
+      'community-forum': { count: 0, totalDownloads: 0, totalPrints: 0 },
+      manual: { count: 0, totalDownloads: 0, totalPrints: 0 },
+      'custom-url': { count: 0, totalDownloads: 0, totalPrints: 0 },
       'ai-generated': { count: 0, totalDownloads: 0, totalPrints: 0 },
     };
 
@@ -179,6 +185,12 @@ export class TagAnalytics {
       printables: 'Printables (Prusa)',
       thingiverse: 'Thingiverse',
       github: 'GitHub 3D Repos',
+      thangs: 'Thangs 3D',
+      cults3d: 'Cults3D',
+      reddit: 'Reddit 3D Community',
+      'community-forum': 'Diễn Đàn Cộng Đồng',
+      manual: 'Nạp Thủ Công',
+      'custom-url': 'Cào Link URL',
       'ai-generated': 'AI 3D Generated',
     };
 
@@ -187,6 +199,12 @@ export class TagAnalytics {
       printables: '#f97316',
       thingiverse: '#3b82f6',
       github: '#a855f7',
+      thangs: '#0284c7',
+      cults3d: '#e11d48',
+      reddit: '#ea580c',
+      'community-forum': '#6366f1',
+      manual: '#8b5cf6',
+      'custom-url': '#14b8a6',
       'ai-generated': '#ec4899',
     };
 

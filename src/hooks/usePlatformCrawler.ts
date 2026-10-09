@@ -166,6 +166,52 @@ export function usePlatformCrawler() {
     crawlDepth,
     setCrawlDepth,
     triggerCrawl,
+    crawlCustomUrl: async (url: string, category?: string) => {
+      try {
+        const res = await fetch('/api/crawl', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'crawl_url', url, category }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetchModels(selectedPlatform);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('3dhub-crawled-models-updated', {
+                detail: { timestamp: Date.now() },
+              })
+            );
+          }
+        }
+        return data;
+      } catch (err: any) {
+        return { success: false, error: err.message };
+      }
+    },
+    manualIngestModel: async (payload: any) => {
+      try {
+        const res = await fetch('/api/crawl', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'manual_ingest', ...payload }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetchModels(selectedPlatform);
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('3dhub-crawled-models-updated', {
+                detail: { timestamp: Date.now() },
+              })
+            );
+          }
+        }
+        return data;
+      } catch (err: any) {
+        return { success: false, error: err.message };
+      }
+    },
     deduplicateDatabase,
     refetchModels: () => fetchModels(selectedPlatform),
   };

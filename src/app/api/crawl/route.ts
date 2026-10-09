@@ -29,6 +29,74 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (action === 'crawl_url') {
+      const { url, category } = body;
+      if (!url) {
+        return NextResponse.json({ error: 'Thiếu đường dẫn URL mục tiêu' }, { status: 400 });
+      }
+      const scrapeResult = await crawlerEngine.crawlUrl(url, category);
+      return NextResponse.json({ success: scrapeResult.success, result: scrapeResult });
+    }
+
+    if (action === 'manual_ingest') {
+      const {
+        title,
+        author,
+        sourceUrl,
+        platform: manualPlatform = 'manual',
+        category,
+        filamentType,
+        filamentWeightGrams,
+        printTimeMinutes,
+        thumbnailUrl,
+        tags,
+        layerHeightMm,
+        wallLoops,
+        infillPercent,
+        speedMmS,
+        nozzleTempC,
+        bedTempC,
+        proTips,
+        problemSolved,
+        slicerNotes,
+        saveToObsidian = true,
+      } = body;
+
+      if (!title) {
+        return NextResponse.json({ error: 'Thiếu tiêu đề mô hình hoặc mẹo in' }, { status: 400 });
+      }
+
+      const { model, obsidianNotePath } = crawlerEngine.manualIngest({
+        title,
+        author,
+        sourceUrl,
+        platform: manualPlatform,
+        category,
+        filamentType,
+        filamentWeightGrams,
+        printTimeMinutes,
+        thumbnailUrl,
+        tags,
+        layerHeightMm,
+        wallLoops,
+        infillPercent,
+        speedMmS,
+        nozzleTempC,
+        bedTempC,
+        proTips,
+        problemSolved,
+        slicerNotes,
+        saveToObsidian,
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'Đã nạp thành công mô hình & tri thức vào hệ thống',
+        model,
+        obsidianNotePath,
+      });
+    }
+
     const result = await crawlerEngine.executeCrawl(platform as PlatformType | 'all', keyword, depth);
     return NextResponse.json({ success: true, result });
   } catch (err: any) {

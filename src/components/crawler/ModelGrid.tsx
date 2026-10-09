@@ -51,6 +51,18 @@ export function ModelGrid({ models, isLoading }: ModelGridProps) {
               return { label: 'Printables', style: 'bg-amber-500/20 text-amber-200 border-amber-400/30' };
             case 'github':
               return { label: 'GitHub 3D', style: 'bg-white/20 text-white border-white/25' };
+            case 'thangs':
+              return { label: 'Thangs 3D', style: 'bg-blue-500/20 text-blue-200 border-blue-400/30' };
+            case 'cults3d':
+              return { label: 'Cults3D', style: 'bg-rose-500/20 text-rose-200 border-rose-400/30' };
+            case 'reddit':
+              return { label: 'Reddit 3D', style: 'bg-orange-500/20 text-orange-200 border-orange-400/30' };
+            case 'community-forum':
+              return { label: 'Diễn Đàn', style: 'bg-indigo-500/20 text-indigo-200 border-indigo-400/30' };
+            case 'manual':
+              return { label: 'Thủ Công', style: 'bg-violet-500/20 text-violet-200 border-violet-400/30' };
+            case 'custom-url':
+              return { label: 'Link Web', style: 'bg-teal-500/20 text-teal-200 border-teal-400/30' };
             default:
               return { label: 'Thingiverse', style: 'bg-cyan-500/20 text-cyan-200 border-cyan-400/30' };
           }

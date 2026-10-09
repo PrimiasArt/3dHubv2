@@ -1,6 +1,17 @@
 import { ISlicerProfilePreset } from './slicing';
 
-export type PlatformType = 'makerworld' | 'printables' | 'thingiverse' | 'github' | 'ai-generated';
+export type PlatformType =
+  | 'makerworld'
+  | 'printables'
+  | 'thingiverse'
+  | 'github'
+  | 'thangs'
+  | 'cults3d'
+  | 'reddit'
+  | 'community-forum'
+  | 'manual'
+  | 'custom-url'
+  | 'ai-generated';
 
 export type AIProviderType = 'fal-trellis' | 'meshy' | 'tripo' | 'simulation';
 
