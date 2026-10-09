@@ -48,6 +48,17 @@ export interface IExpertPrintProfileVariant extends IExpertPrintProfile {
   likesCount: number; // e.g. 420
   compatiblePrinters: string[]; // e.g. ['P1S', 'X1 Carbon', 'A1', 'K1 Max', 'Prusa MK4']
   targetStyle: 'speed' | 'quality' | 'strength' | 'multi_color';
+  recommendedSettingsList?: {
+    layerHeight: string; // e.g. "0.2 mm"
+    walls: number; // e.g. 2
+    infill: string; // e.g. "8%"
+    supports: string; // e.g. "Activated" | "Enabled" | "Disabled"
+    material: string; // e.g. "PLA recommended"
+  };
+  forBestResultsList?: string[]; // e.g. ["Use good part cooling", "Enable slow outer walls", "Carefully remove supports", "Use high-quality PLA filaments"]
+  outcomeStatement?: string; // e.g. "With these settings, you will get a stable and detailed owl whose exceptional wood look will delight every observer"
+  releaseDate?: string; // e.g. "2026-06-16"
+  galleryImages?: string[]; // 3 preview pictures for the profile
 }
 
 export interface IWalletTransaction {

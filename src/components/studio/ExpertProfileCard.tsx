@@ -380,11 +380,25 @@ export function ExpertProfileCard({
         <div className={`space-y-4 ${!isUnlocked ? 'filter blur-sm select-none opacity-40 pointer-events-none' : ''}`}>
           {/* Section: Profile Inspector Box */}
           <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-white/15 space-y-4">
+            {/* Top Preview Gallery (MakerWorld style: 3 preview pictures of the print) */}
+            {activeProfile.galleryImages && activeProfile.galleryImages.length > 0 && (
+              <div className="flex items-center gap-2.5 pb-2">
+                {activeProfile.galleryImages.map((img, i) => (
+                  <div
+                    key={i}
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-black/60 border border-white/15 flex items-center justify-center p-1.5 shadow-md hover:border-emerald-400/50 transition-colors"
+                  >
+                    <img src={img} alt={`Print preview ${i + 1}`} className="w-full h-full object-contain" />
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Header of Inspector */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-white/10 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm sm:text-base font-bold text-white">
+                  <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
                     {activeProfile.variantTitle}
                   </h4>
                 </div>
@@ -394,11 +408,11 @@ export function ExpertProfileCard({
                     <span>{activeProfile.creatorName}</span>
                   </span>
                   <span>•</span>
-                  <span>{activeProfile.downloadsCount || 786} downloads</span>
+                  <span>{activeProfile.downloadsCount?.toLocaleString('vi-VN') || '10,500'} downloads</span>
                   <span>•</span>
                   <span className="flex items-center gap-1 text-white/80">
                     <ThumbsUp className="w-3 h-3 text-cyan-300" />
-                    <span>{activeProfile.likesCount || 420}</span>
+                    <span>{activeProfile.likesCount?.toLocaleString('vi-VN') || '6,300'}</span>
                   </span>
                 </div>
               </div>
@@ -407,7 +421,7 @@ export function ExpertProfileCard({
               <button
                 type="button"
                 onClick={handleExportProfile}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer shrink-0"
+                className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer shrink-0"
               >
                 <Download className="w-4 h-4" />
                 <span>Download 3MF</span>
@@ -420,7 +434,7 @@ export function ExpertProfileCard({
                 Máy in tương thích đã được kiểm chứng (Verified Printers):
               </span>
               <div className="flex items-center gap-1.5 flex-wrap">
-                {(activeProfile.compatiblePrinters || ['P1S', 'X1 Carbon', 'A1', 'A1 mini', 'K1 Max', 'Prusa MK4']).map(
+                {(activeProfile.compatiblePrinters || ['P1S', 'X2D', 'H2S', 'P1P', 'H2D Pro', 'X1 Carbon', 'X1', 'A1 mini', 'X1E', 'A1', 'H2C', 'A2L', 'H2D', 'P2S']).map(
                   (p: string) => (
                     <span
                       key={p}
@@ -433,14 +447,80 @@ export function ExpertProfileCard({
               </div>
             </div>
 
-            {/* Maker's Note / Rationale (Authentic creator description) */}
-            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5 text-xs text-white/85">
-              <span className="text-[11px] font-bold text-cyan-300 uppercase tracking-wide flex items-center gap-1">
-                <Sliders className="w-3.5 h-3.5" /> Ghi Chú Cân Chỉnh Từ Kỹ Sư In (Maker&apos;s Tuning Rationale):
-              </span>
-              <p className="leading-relaxed text-white/90 whitespace-pre-line italic">
-                &ldquo;{activeProfile.creatorNotes}&rdquo;
-              </p>
+            {/* RECOMMENDED PRINT SETTINGS BLOCK (EXACT MAKERWORLD BULLET LIST) */}
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+              <div>
+                <h5 className="text-sm font-bold text-white tracking-wide mb-2 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                  <span>Recommended Print Settings</span>
+                </h5>
+                <ul className="space-y-1.5 text-xs text-white/85 font-mono">
+                  <li className="flex items-center gap-2">
+                    <span className="text-white/40 font-bold">•</span>
+                    <span>
+                      Layer height: <strong className="text-white">{activeProfile.recommendedSettingsList?.layerHeight || `${activeProfile.layerHeightMm} mm`}</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-white/40 font-bold">•</span>
+                    <span>
+                      Walls: <strong className="text-white">{activeProfile.recommendedSettingsList?.walls ?? activeProfile.wallLoops}</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-white/40 font-bold">•</span>
+                    <span>
+                      Infill: <strong className="text-white">{activeProfile.recommendedSettingsList?.infill || `${activeProfile.infillDensityPercent}%`}</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-white/40 font-bold">•</span>
+                    <span>
+                      Support structures: <strong className="text-white">{activeProfile.recommendedSettingsList?.supports || (activeProfile.treeSupportParams.branchDiameterMm > 0 ? 'Activated' : 'Disabled')}</strong>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-white/40 font-bold">•</span>
+                    <span>
+                      Material: <strong className="text-white">{activeProfile.recommendedSettingsList?.material || `${activeProfile.filamentType.split(' ')[0]} recommended`}</strong>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Maker's Custom Tuning Description */}
+              <div className="pt-2 border-t border-white/10 text-xs text-white/85 leading-relaxed">
+                <p>{activeProfile.creatorNotes}</p>
+              </div>
+
+              {/* For best results checklist */}
+              <div className="space-y-1.5 pt-2 border-t border-white/10">
+                <h6 className="text-xs font-bold text-white">For best results:</h6>
+                <ul className="space-y-1 text-xs text-white/80">
+                  {(activeProfile.forBestResultsList || [
+                    'Use good part cooling',
+                    'Enable slow outer walls',
+                    'Carefully remove supports',
+                    'Use high-quality PLA filaments for maximum detail',
+                  ]).map((res, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-emerald-400 font-bold">•</span>
+                      <span>{res}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Outcome sentence & release date */}
+              <div className="pt-2 border-t border-white/10 space-y-2">
+                <p className="text-xs text-white/75 italic">
+                  &ldquo;{activeProfile.outcomeStatement || `With these settings, you will get a stable and detailed ${modelTitle} whose exceptional wood look will delight every observer.`}&rdquo;
+                </p>
+                <div className="flex items-center justify-between text-[11px] text-white/50 pt-1">
+                  <span>Released {activeProfile.releaseDate || '2026-06-16'}</span>
+                  <span className="text-emerald-300 font-semibold cursor-pointer hover:underline">Collapse</span>
+                </div>
+              </div>
             </div>
 
             {/* Print Metric Badges Bar */}
