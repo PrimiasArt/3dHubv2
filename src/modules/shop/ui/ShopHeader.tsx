@@ -2,17 +2,12 @@
 
 import React from 'react';
 import {
-  ShoppingBag,
   Package,
   Layers,
   Sparkles,
   Search,
   ShoppingCart,
-  SlidersHorizontal,
-  Flame,
   CheckCircle2,
-  Wallet,
-  FlaskConical,
   ShieldCheck,
 } from 'lucide-react';
 import { ShopCategoryTab } from '@/backend/domain/shop';
@@ -41,7 +36,7 @@ export function ShopHeader({
   servicesCount,
   modelsCount,
 }: ShopHeaderProps) {
-  const { isOfficial, isStaging, commercial } = useSystemEnvironment();
+  const { commercial } = useSystemEnvironment();
 
   const tabs = [
     {
@@ -68,53 +63,36 @@ export function ShopHeader({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-800">
       {/* Top Banner - VisionOS Spatial Glass */}
-      <div className="relative rounded-[32px] overflow-hidden border border-white/20 vision-glass-panel p-7 sm:p-10 shadow-[0_24px_60px_rgba(0,0,0,0.45)] text-white">
+      <div className="relative rounded-[32px] overflow-hidden border border-slate-200/90 vision-glass-panel p-6 sm:p-9 shadow-xs bg-white/85 backdrop-blur-2xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <div
-              className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-xs font-semibold backdrop-blur-md transition-all ${
-                isOfficial
-                  ? 'bg-emerald-500/20 border-emerald-400/30 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
-                  : 'bg-amber-500/20 border-amber-400/30 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
-              }`}
-            >
-              {isOfficial ? (
-                <>
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                  <span>3D Hub Official Store • Vật Tư &amp; Dịch Vụ Thương Mại Chính Thức</span>
-                </>
-              ) : (
-                <>
-                  <FlaskConical className="w-3.5 h-3.5 text-amber-300" />
-                  <span>3D Hub Sandbox • Môi Trường Thử Nghiệm Nội Bộ (Giá Vốn 0%)</span>
-                </>
-              )}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-xs font-bold backdrop-blur-md transition-all bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>3D Hub Official Store • Vật Tư &amp; Dịch Vụ Thương Mại Chính Thức</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white">
-              {isOfficial ? 'Cửa Hàng 3D Hub Official.' : 'Cửa Hàng 3D Hub (Staging).'}
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
+              Cửa Hàng 3D Hub Official.
             </h1>
 
-            <p className="text-xs sm:text-base text-white/70 leading-relaxed">
-              {isOfficial
-                ? `Cung cấp cuộn nhựa in FDM chính hãng, linh kiện Bambu Lab, dịch vụ in 3D gia công công nghiệp và xuất hóa đơn VAT điện tử bởi ${commercial?.companyName || '3D Hub'}.`
-                : 'Môi trường Sandbox thử nghiệm: cuộn nhựa in FDM, phụ kiện máy in, đặt in thử nghiệm với giá vốn gốc 0% phụ thu.'}
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Cung cấp cuộn nhựa in FDM chính hãng, linh kiện Bambu Lab, dịch vụ in 3D gia công công nghiệp và xuất hóa đơn VAT điện tử bởi {commercial?.companyName || 'Công ty Cổ phần Công nghệ In 3D Hub'}.
             </p>
 
-            <div className="flex flex-wrap items-center gap-5 pt-1 text-xs text-white/80">
-              <div className="flex items-center gap-1.5 font-medium text-white">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>{isOfficial ? '100% Chính hãng (Bảo hành 1 đổi 1)' : 'Thử nghiệm giá vốn 0%'}</span>
+            <div className="flex flex-wrap items-center gap-5 pt-1 text-xs text-slate-700">
+              <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>100% Chính hãng (Bảo hành 1 đổi 1)</span>
               </div>
-              <div className="flex items-center gap-1.5 font-medium text-white">
-                <CheckCircle2 className="w-4 h-4 text-cyan-300" />
-                <span>{isOfficial ? 'Báo giá tự động & Xuất hóa đơn VAT' : 'Báo giá mô phỏng Sandbox'}</span>
+              <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                <CheckCircle2 className="w-4 h-4 text-cyan-600" />
+                <span>Báo giá tự động &amp; Xuất hóa đơn VAT</span>
               </div>
-              <div className="flex items-center gap-1.5 font-medium text-white">
-                <CheckCircle2 className="w-4 h-4 text-purple-300" />
-                <span>{isOfficial ? `VietQR ${commercial?.bankAccount?.bankName || 'MBBank'} & Ví` : 'Ví thử nghiệm Sandbox'}</span>
+              <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                <CheckCircle2 className="w-4 h-4 text-purple-600" />
+                <span>VietQR {commercial?.bankAccount?.bankName || 'MBBank'} &amp; Ví</span>
               </div>
             </div>
           </div>
@@ -123,16 +101,16 @@ export function ShopHeader({
           <div className="flex items-center gap-3 self-start md:self-center shrink-0">
             <button
               onClick={onOpenCart}
-              className="relative flex items-center gap-2.5 px-6 py-3 rounded-full vision-pill-btn text-white font-medium text-sm shadow-md transition-all hover:scale-102 active:scale-98 group"
+              className="relative flex items-center gap-2.5 px-6 py-3 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold text-sm shadow-xs transition-all hover:scale-102 active:scale-98 group cursor-pointer"
             >
-              <ShoppingCart className="w-4 h-4" />
+              <ShoppingCart className="w-4 h-4 text-cyan-600" />
               <span>Giỏ Hàng</span>
               {cartCount > 0 ? (
-                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-white text-emerald-900 text-[11px] font-bold shadow-xs">
+                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-cyan-600 text-white text-[11px] font-bold shadow-xs">
                   {cartCount}
                 </span>
               ) : (
-                <span className="text-xs text-white/70">(0)</span>
+                <span className="text-xs text-slate-400">(0)</span>
               )}
             </button>
           </div>
@@ -148,37 +126,37 @@ export function ShopHeader({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center justify-between p-4 rounded-[24px] border transition-all text-left group ${
+              className={`relative flex items-center justify-between p-4 rounded-[24px] border transition-all text-left cursor-pointer group ${
                 isActive
-                  ? 'vision-glass border-white/35 shadow-[0_8px_32px_rgba(0,0,0,0.35)] ring-1 ring-white/30 text-white'
-                  : 'vision-glass border-white/12 hover:border-white/25 text-white/70 hover:text-white'
+                  ? 'bg-cyan-50/90 border-cyan-400 ring-2 ring-cyan-400/40 shadow-sm text-slate-900'
+                  : 'bg-white/80 hover:bg-white border-slate-200 text-slate-700 hover:border-cyan-300 shadow-2xs'
               }`}
             >
               <div className="flex items-center gap-3.5">
                 <div
                   className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all ${
                     isActive
-                      ? 'bg-white/25 border border-white/30 text-white shadow-sm'
-                      : 'bg-white/10 border border-white/10 text-white/80 group-hover:scale-105 group-hover:text-white'
+                      ? 'bg-cyan-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 border border-slate-200 group-hover:scale-105'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold tracking-tight text-white">
+                  <div className="text-sm font-bold tracking-tight text-slate-900">
                     {tab.label}
                   </div>
-                  <div className="text-[11px] text-white/60 mt-0.5">
+                  <div className="text-[11px] text-slate-500 mt-0.5">
                     {tab.count} sản phẩm
                   </div>
                 </div>
               </div>
 
               <span
-                className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full border transition-all ${
+                className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border transition-all ${
                   isActive
-                    ? 'bg-white/25 text-white border-white/30'
-                    : 'bg-white/10 text-white/60 border-white/10'
+                    ? 'bg-cyan-100 text-cyan-900 border-cyan-300'
+                    : 'bg-slate-100 text-slate-600 border-slate-200'
                 }`}
               >
                 {tab.badge}
@@ -191,18 +169,18 @@ export function ShopHeader({
       {/* Global VisionOS Pill Search Bar */}
       <div className="relative">
         <div className="relative flex items-center">
-          <Search className="w-4 h-4 text-white/50 absolute left-4 pointer-events-none" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm cuộn nhựa (PLA, PETG), phụ kiện máy in, dịch vụ in SLA hoặc mô hình 3D..."
-            className="w-full pl-11 pr-24 py-3.5 rounded-full bg-black/25 backdrop-blur-xl border border-white/15 text-white placeholder-white/40 text-sm focus:outline-none focus:border-white/35 focus:bg-black/35 transition-all shadow-xs"
+            className="w-full pl-11 pr-24 py-3.5 rounded-full bg-white/90 backdrop-blur-xl border border-slate-300 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-cyan-500 focus:bg-white transition-all shadow-xs"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-4 px-2.5 py-1 text-xs text-white/70 hover:text-white bg-white/15 hover:bg-white/25 rounded-full transition-colors font-medium border border-white/15"
+              className="absolute right-4 px-2.5 py-1 text-xs text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors font-bold border border-slate-300 cursor-pointer"
             >
               Xóa
             </button>

@@ -275,49 +275,49 @@ export function AdminUserManager({
       case 'admin':
         return {
           label: 'ADMIN',
-          bg: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+          bg: 'bg-rose-50 text-rose-800 border-rose-300',
         };
       case 'mod':
         return {
           label: 'MOD',
-          bg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
+          bg: 'bg-indigo-50 text-indigo-800 border-indigo-300',
         };
       case 'seller':
         return {
           label: 'SELLER',
-          bg: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+          bg: 'bg-amber-50 text-amber-800 border-amber-300',
         };
       case 'staff':
         return {
           label: 'STAFF',
-          bg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+          bg: 'bg-cyan-50 text-cyan-800 border-cyan-300',
         };
       default:
         return {
           label: 'USER',
-          bg: 'bg-white/10 text-white/80 border-white/20',
+          bg: 'bg-slate-100 text-slate-700 border-slate-300',
         };
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-800">
       {/* Top Header & Actions */}
-      <div className="vision-glass rounded-[32px] p-6 shadow-2xl backdrop-blur-2xl border border-white/15">
+      <div className="vision-glass rounded-[32px] p-6 shadow-sm border border-slate-200/80 bg-white/90">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-[#2DD4BF]/20 border border-[#2DD4BF]/30 flex items-center justify-center text-[#5EEAD4]">
+              <div className="w-10 h-10 rounded-2xl bg-cyan-100 border border-cyan-300 flex items-center justify-center text-cyan-700">
                 <Users className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                <h2 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
                   <span>Quản Lý Người Dùng &amp; Phân Quyền (RBAC)</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2DD4BF]/20 text-[#5EEAD4] border border-[#2DD4BF]/30">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-300">
                     {users.length} thành viên
                   </span>
                 </h2>
-                <p className="text-xs text-white/60">
+                <p className="text-xs text-slate-600">
                   Toàn quyền quản trị tài khoản, phân định vai trò, điều chỉnh ví và kiểm soát trạng thái hoạt động
                 </p>
               </div>
@@ -327,16 +327,16 @@ export function AdminUserManager({
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={onRefresh}
-              className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white flex items-center gap-1.5 transition-all active:scale-95"
+              className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
               title="Tải lại danh sách"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
               <span>Làm mới</span>
             </button>
 
             <button
               onClick={() => setIsAddUserOpen(true)}
-              className="px-5 py-2 rounded-full bg-[#2DD4BF] hover:bg-[#20b8a5] text-[#051817] text-xs font-bold shadow-[0_0_20px_rgba(45,212,191,0.35)] flex items-center gap-2 transition-all active:scale-95"
+              className="px-5 py-2 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
               <span>Thêm Thành Viên Mới</span>
@@ -346,54 +346,54 @@ export function AdminUserManager({
 
         {/* 4 KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-6">
-          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-1">
-            <div className="flex items-center justify-between text-white/60 text-xs">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1 shadow-2xs">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
               <span>Tổng Thành Viên</span>
-              <Users className="w-4 h-4 text-[#5EEAD4]" />
+              <Users className="w-4 h-4 text-cyan-600" />
             </div>
-            <div className="text-xl sm:text-2xl font-black text-white">
+            <div className="text-xl sm:text-2xl font-black text-slate-900">
               {stats.total}
             </div>
-            <div className="text-[10px] text-emerald-400 font-medium">
+            <div className="text-[10px] text-emerald-700 font-bold">
               ● {stats.activeCount} đang hoạt động
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-1">
-            <div className="flex items-center justify-between text-white/60 text-xs">
+          <div className="p-4 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-1 shadow-2xs">
+            <div className="flex items-center justify-between text-rose-700 text-xs font-semibold">
               <span>Quản Trị &amp; Kiểm Duyệt</span>
-              <Shield className="w-4 h-4 text-rose-400" />
+              <Shield className="w-4 h-4 text-rose-600" />
             </div>
-            <div className="text-xl sm:text-2xl font-black text-rose-300">
+            <div className="text-xl sm:text-2xl font-black text-rose-900">
               {stats.adminMod}
             </div>
-            <div className="text-[10px] text-white/50">
+            <div className="text-[10px] text-rose-700 font-medium">
               Admin &amp; Moderator
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-1">
-            <div className="flex items-center justify-between text-white/60 text-xs">
+          <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-1 shadow-2xs">
+            <div className="flex items-center justify-between text-amber-700 text-xs font-semibold">
               <span>Đối Tác Bán Hàng</span>
-              <Store className="w-4 h-4 text-amber-400" />
+              <Store className="w-4 h-4 text-amber-600" />
             </div>
-            <div className="text-xl sm:text-2xl font-black text-amber-300">
+            <div className="text-xl sm:text-2xl font-black text-amber-900">
               {stats.sellers}
             </div>
-            <div className="text-[10px] text-white/50">
+            <div className="text-[10px] text-amber-700 font-medium">
               Seller phân phối mô hình &amp; sản phẩm
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-1">
-            <div className="flex items-center justify-between text-white/60 text-xs">
+          <div className="p-4 rounded-2xl bg-cyan-50/60 border border-cyan-200 space-y-1 shadow-2xs">
+            <div className="flex items-center justify-between text-cyan-700 text-xs font-semibold">
               <span>Tổng Tiền Ví Hệ Thống</span>
-              <Wallet className="w-4 h-4 text-[#5EEAD4]" />
+              <Wallet className="w-4 h-4 text-cyan-600" />
             </div>
-            <div className="text-xl sm:text-2xl font-black text-[#5EEAD4] font-mono">
+            <div className="text-xl sm:text-2xl font-black text-cyan-900 font-mono">
               {stats.totalBalance.toLocaleString('vi-VN')} đ
             </div>
-            <div className="text-[10px] text-white/50">
+            <div className="text-[10px] text-cyan-700 font-medium">
               Số dư ví người dùng khả dụng
             </div>
           </div>
@@ -401,7 +401,7 @@ export function AdminUserManager({
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="vision-glass rounded-[28px] p-4 sm:p-5 backdrop-blur-2xl border border-white/15 space-y-3">
+      <div className="vision-glass rounded-[28px] p-4 sm:p-5 border border-slate-200/80 bg-white/90 shadow-sm space-y-3">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
@@ -410,17 +410,17 @@ export function AdminUserManager({
               placeholder="Tìm theo họ tên, email, SĐT hoặc ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-black/30 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#2DD4BF]/50"
+              className="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white shadow-2xs"
             />
-            <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           </div>
 
           {/* Quick Filters */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
             {/* Role Filter */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-black/30 border border-white/10 shrink-0">
+            <div className="flex items-center gap-1 p-1 rounded-full bg-slate-100 border border-slate-200 shrink-0">
               {[
-                { id: 'all', label: 'Tất cả vai trò' },
+                { id: 'all', label: 'Tất cả' },
                 { id: 'admin', label: 'Admin' },
                 { id: 'mod', label: 'Mod' },
                 { id: 'seller', label: 'Seller' },
@@ -430,10 +430,10 @@ export function AdminUserManager({
                 <button
                   key={r.id}
                   onClick={() => setSelectedRole(r.id)}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     selectedRole === r.id
-                      ? 'bg-[#2DD4BF] text-[#051817] shadow-xs'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-cyan-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {r.label}
@@ -445,33 +445,33 @@ export function AdminUserManager({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-1.5 rounded-full bg-black/30 border border-white/15 text-xs text-white/80 focus:outline-none cursor-pointer shrink-0"
+              className="px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-none focus:border-cyan-500 focus:bg-white cursor-pointer shrink-0 font-medium"
             >
-              <option value="all" className="bg-[#0A2724]">Tất cả trạng thái</option>
-              <option value="active" className="bg-[#0A2724]">Đang hoạt động</option>
-              <option value="suspended" className="bg-[#0A2724]">Đã tạm khóa</option>
+              <option value="all">Tất cả trạng thái</option>
+              <option value="active">Đang hoạt động</option>
+              <option value="suspended">Đã tạm khóa</option>
             </select>
 
             {/* Sort Filter */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-1.5 rounded-full bg-black/30 border border-white/15 text-xs text-white/80 focus:outline-none cursor-pointer shrink-0"
+              className="px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-none focus:border-cyan-500 focus:bg-white cursor-pointer shrink-0 font-medium"
             >
-              <option value="newest" className="bg-[#0A2724]">Mới nhất</option>
-              <option value="balance_desc" className="bg-[#0A2724]">Số dư ví: Cao &rarr; Thấp</option>
-              <option value="name_asc" className="bg-[#0A2724]">Họ tên: A &rarr; Z</option>
+              <option value="newest">Mới nhất</option>
+              <option value="balance_desc">Số dư ví: Cao &rarr; Thấp</option>
+              <option value="name_asc">Họ tên: A &rarr; Z</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="vision-glass rounded-[32px] p-5 sm:p-6 backdrop-blur-2xl border border-white/15 shadow-2xl overflow-hidden">
+      <div className="vision-glass rounded-[32px] p-5 sm:p-6 border border-slate-200/80 bg-white/90 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/10 text-white/50 uppercase text-[10px] tracking-wider font-semibold">
+              <tr className="border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider font-bold">
                 <th className="pb-3 px-3">Thành Viên</th>
                 <th className="pb-3 px-3">Email &amp; SĐT</th>
                 <th className="pb-3 px-3">Vai Trò Hệ Thống</th>
@@ -480,10 +480,10 @@ export function AdminUserManager({
                 <th className="pb-3 px-3 text-right">Thao Tác Quản Trị</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/8">
+            <tbody className="divide-y divide-slate-100">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-white/50 text-xs">
+                  <td colSpan={6} className="py-10 text-center text-slate-400 text-xs">
                     Không tìm thấy thành viên nào phù hợp với bộ lọc hiện tại.
                   </td>
                 </tr>
@@ -495,11 +495,11 @@ export function AdminUserManager({
                   const isSuspended = u.status === 'suspended';
 
                   return (
-                    <tr key={u.id} className="hover:bg-white/5 transition-colors group">
+                    <tr key={u.id} className="hover:bg-slate-50/80 transition-colors group">
                       {/* Column 1: Member */}
                       <td className="py-3.5 px-3">
                         <div className="flex items-center gap-3">
-                          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-black/40 border border-white/20 shrink-0">
+                          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
                             {u.avatar ? (
                               <Image
                                 src={u.avatar}
@@ -509,24 +509,24 @@ export function AdminUserManager({
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center font-bold text-white/80">
+                              <div className="w-full h-full flex items-center justify-center font-bold text-slate-700">
                                 {u.name?.charAt(0) || 'U'}
                               </div>
                             )}
                           </div>
                           <div>
-                            <div className="font-bold text-white flex items-center gap-1.5">
+                            <div className="font-bold text-slate-900 flex items-center gap-1.5">
                               <span>{u.name}</span>
                               {isSelf && (
-                                <span className="text-[9px] bg-[#2DD4BF]/20 text-[#5EEAD4] px-2 py-0.5 rounded-full font-black border border-[#2DD4BF]/40">
+                                <span className="text-[9px] bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded-full font-black border border-cyan-300">
                                   Bạn
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[10px] text-white/40 font-mono">{u.id}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">{u.id}</span>
                               {u.googleId && (
-                                <span className="text-[9px] text-[#5EEAD4] font-medium flex items-center gap-0.5">
+                                <span className="text-[9px] text-cyan-700 font-semibold flex items-center gap-0.5">
                                   <span>G</span> Google
                                 </span>
                               )}
@@ -537,9 +537,9 @@ export function AdminUserManager({
 
                       {/* Column 2: Contact */}
                       <td className="py-3.5 px-3">
-                        <div className="text-white font-medium">{u.email}</div>
-                        <div className="text-[11px] text-white/50 flex items-center gap-1 mt-0.5">
-                          <Phone className="w-3 h-3 text-white/40" />
+                        <div className="text-slate-800 font-medium">{u.email}</div>
+                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                          <Phone className="w-3 h-3 text-slate-400" />
                           <span>{u.phone || 'Chưa cập nhật'}</span>
                         </div>
                       </td>
@@ -552,11 +552,11 @@ export function AdminUserManager({
                           onChange={(e) => handleRoleChange(u.id, e.target.value as UserRole)}
                           className={`px-3 py-1.5 rounded-full border text-xs font-bold cursor-pointer transition-all focus:outline-none ${badge.bg}`}
                         >
-                          <option value="admin" className="bg-[#0A2724] text-rose-300">ADMIN (Toàn quyền)</option>
-                          <option value="mod" className="bg-[#0A2724] text-indigo-300">MOD (Kiểm duyệt)</option>
-                          <option value="seller" className="bg-[#0A2724] text-amber-300">SELLER (Người bán đối tác)</option>
-                          <option value="staff" className="bg-[#0A2724] text-cyan-300">STAFF (Kỹ thuật xưởng)</option>
-                          <option value="user" className="bg-[#0A2724] text-white">USER (Khách hàng)</option>
+                          <option value="admin" className="bg-white text-rose-800">ADMIN (Toàn quyền)</option>
+                          <option value="mod" className="bg-white text-indigo-800">MOD (Kiểm duyệt)</option>
+                          <option value="seller" className="bg-white text-amber-800">SELLER (Người bán đối tác)</option>
+                          <option value="staff" className="bg-white text-cyan-800">STAFF (Kỹ thuật xưởng)</option>
+                          <option value="user" className="bg-white text-slate-800">USER (Khách hàng)</option>
                         </select>
                       </td>
 
@@ -565,21 +565,21 @@ export function AdminUserManager({
                         <button
                           onClick={() => handleToggleStatus(u.id)}
                           disabled={isMainAdmin}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
                             isSuspended
-                              ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
+                              ? 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
                           }`}
                           title={isSuspended ? 'Bấm để mở khóa' : 'Bấm để tạm khóa tài khoản'}
                         >
                           {isSuspended ? (
                             <>
-                              <Lock className="w-3 h-3 text-rose-400" />
+                              <Lock className="w-3 h-3 text-rose-600" />
                               <span>Đã tạm khóa</span>
                             </>
                           ) : (
                             <>
-                              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                               <span>Hoạt động</span>
                             </>
                           )}
@@ -588,20 +588,20 @@ export function AdminUserManager({
 
                       {/* Column 5: Wallet Balance & Quick Topup */}
                       <td className="py-3.5 px-3">
-                        <div className="font-black text-[#5EEAD4] text-sm font-mono">
+                        <div className="font-black text-cyan-800 text-sm font-mono">
                           {(u.walletBalanceVnd || 0).toLocaleString('vi-VN')} đ
                         </div>
                         <div className="flex items-center gap-1 mt-1">
                           <button
                             onClick={() => handleQuickAdd(u.id, 50000)}
-                            className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/15 text-[9px] font-bold text-white transition-all"
+                            className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[9px] font-bold text-slate-700 transition-all cursor-pointer"
                             title="Nạp nhanh 50k"
                           >
                             +50k
                           </button>
                           <button
                             onClick={() => handleQuickAdd(u.id, 200000)}
-                            className="px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/15 text-[9px] font-bold text-white transition-all"
+                            className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[9px] font-bold text-slate-700 transition-all cursor-pointer"
                             title="Nạp nhanh 200k"
                           >
                             +200k
@@ -611,7 +611,7 @@ export function AdminUserManager({
                               setSelectedUser(u);
                               setIsAdjustBalanceOpen(true);
                             }}
-                            className="px-2 py-0.5 rounded-md bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 border border-[#2DD4BF]/40 text-[9px] font-bold text-[#5EEAD4] transition-all"
+                            className="px-2 py-0.5 rounded-md bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-[9px] font-bold text-cyan-800 transition-all cursor-pointer"
                             title="Điều chỉnh số dư ví chi tiết"
                           >
                             Tùy chỉnh
@@ -627,7 +627,7 @@ export function AdminUserManager({
                               setSelectedUser(u);
                               setIsDetailModalOpen(true);
                             }}
-                            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all"
+                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer border border-slate-200"
                             title="Xem chi tiết hồ sơ"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -638,7 +638,7 @@ export function AdminUserManager({
                               setSelectedUser(u);
                               setIsAdjustBalanceOpen(true);
                             }}
-                            className="p-1.5 rounded-lg bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 text-[#5EEAD4] border border-[#2DD4BF]/30 transition-all"
+                            className="p-1.5 rounded-lg bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-300 transition-all cursor-pointer"
                             title="Nạp hoặc trừ tiền ví"
                           >
                             <Coins className="w-3.5 h-3.5" />
@@ -647,7 +647,7 @@ export function AdminUserManager({
                           {!isMainAdmin && !isSelf && (
                             <button
                               onClick={() => handleDeleteUser(u.id, u.name)}
-                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 border border-rose-500/20 transition-all"
+                              className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all cursor-pointer"
                               title="Xóa tài khoản"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -666,18 +666,18 @@ export function AdminUserManager({
 
       {/* Modal 1: Add New User */}
       {isAddUserOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-md vision-glass-panel rounded-[32px] border border-white/20 p-6 shadow-2xl space-y-5 text-white">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-md bg-white rounded-[32px] border border-slate-200 p-6 shadow-2xl space-y-5 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#2DD4BF]/20 border border-[#2DD4BF]/40 flex items-center justify-center text-[#5EEAD4]">
+                <div className="w-8 h-8 rounded-full bg-cyan-100 border border-cyan-300 flex items-center justify-center text-cyan-700">
                   <UserPlus className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Tạo Thành Viên Mới</h3>
+                <h3 className="text-sm font-bold text-slate-900">Tạo Thành Viên Mới</h3>
               </div>
               <button
                 onClick={() => setIsAddUserOpen(false)}
-                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -685,8 +685,8 @@ export function AdminUserManager({
 
             <form onSubmit={handleCreateUser} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-white/70 mb-1">
-                  Họ và tên <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Họ và tên <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -694,13 +694,13 @@ export function AdminUserManager({
                   placeholder="Ví dụ: Nguyễn Văn A"
                   value={newUserName}
                   onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#2DD4BF]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/70 mb-1">
-                  Địa chỉ Email <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Địa chỉ Email <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -708,12 +708,12 @@ export function AdminUserManager({
                   placeholder="nguyenvana@gmail.com"
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#2DD4BF]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/70 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Số điện thoại
                 </label>
                 <input
@@ -721,30 +721,30 @@ export function AdminUserManager({
                   placeholder="0912 345 678"
                   value={newUserPhone}
                   onChange={(e) => setNewUserPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#2DD4BF]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-white/70 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Vai trò (RBAC)
                   </label>
                   <select
                     value={newUserRole}
                     onChange={(e) => setNewUserRole(e.target.value as UserRole)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-500 focus:bg-white cursor-pointer"
                   >
-                    <option value="user" className="bg-[#0A2724]">Khách hàng (User)</option>
-                    <option value="seller" className="bg-[#0A2724]">Người bán (Seller)</option>
-                    <option value="staff" className="bg-[#0A2724]">Xưởng in (Staff)</option>
-                    <option value="mod" className="bg-[#0A2724]">Kiểm duyệt (Mod)</option>
-                    <option value="admin" className="bg-[#0A2724]">Quản trị (Admin)</option>
+                    <option value="user">Khách hàng (User)</option>
+                    <option value="seller">Người bán (Seller)</option>
+                    <option value="staff">Xưởng in (Staff)</option>
+                    <option value="mod">Kiểm duyệt (Mod)</option>
+                    <option value="admin">Quản trị (Admin)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-white/70 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Số dư khởi tạo
                   </label>
                   <input
@@ -752,23 +752,23 @@ export function AdminUserManager({
                     step="10000"
                     value={newUserBalance}
                     onChange={(e) => setNewUserBalance(Number(e.target.value))}
-                    className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white focus:outline-none"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-cyan-500 focus:bg-white font-mono"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+              <div className="flex items-center gap-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsAddUserOpen(false)}
-                  className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white transition-all"
+                  className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-all cursor-pointer"
                 >
                   Hủy Bỏ
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-2 rounded-xl bg-[#2DD4BF] hover:bg-[#20b8a5] text-xs font-bold text-[#051817] shadow-md transition-all disabled:opacity-50"
+                  className="flex-1 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-xs font-bold text-white shadow-sm transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? 'Đang tạo...' : 'Xác Nhận Tạo'}
                 </button>
@@ -780,43 +780,43 @@ export function AdminUserManager({
 
       {/* Modal 2: Adjust Balance */}
       {isAdjustBalanceOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-md vision-glass-panel rounded-[32px] border border-white/20 p-6 shadow-2xl space-y-5 text-white">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-md bg-white rounded-[32px] border border-slate-200 p-6 shadow-2xl space-y-5 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#2DD4BF]/20 border border-[#2DD4BF]/40 flex items-center justify-center text-[#5EEAD4]">
+                <div className="w-8 h-8 rounded-full bg-cyan-100 border border-cyan-300 flex items-center justify-center text-cyan-700">
                   <Coins className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Điều Chỉnh Số Dư Ví</h3>
-                  <p className="text-[11px] text-white/60">Tài khoản: {selectedUser.name}</p>
+                  <h3 className="text-sm font-bold text-slate-900">Điều Chỉnh Số Dư Ví</h3>
+                  <p className="text-[11px] text-slate-500">Tài khoản: {selectedUser.name}</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsAdjustBalanceOpen(false)}
-                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-4">
-              <div className="p-3 rounded-2xl bg-black/30 border border-white/10 flex items-center justify-between">
-                <span className="text-xs text-white/70">Số dư hiện tại:</span>
-                <span className="text-base font-black text-[#5EEAD4] font-mono">
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <span className="text-xs text-slate-600 font-medium">Số dư hiện tại:</span>
+                <span className="text-base font-black text-cyan-800 font-mono">
                   {(selectedUser.walletBalanceVnd || 0).toLocaleString('vi-VN')} đ
                 </span>
               </div>
 
               {/* Mode Switcher: Add or Deduct */}
-              <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-black/40 border border-white/10">
+              <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 border border-slate-200">
                 <button
                   type="button"
                   onClick={() => setBalanceMode('add')}
-                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     balanceMode === 'add'
-                      ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 shadow-xs'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -825,10 +825,10 @@ export function AdminUserManager({
                 <button
                   type="button"
                   onClick={() => setBalanceMode('deduct')}
-                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all ${
+                  className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     balanceMode === 'deduct'
-                      ? 'bg-rose-500/30 text-rose-300 border border-rose-400/40 shadow-xs'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-rose-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Minus className="w-3.5 h-3.5" />
@@ -838,17 +838,17 @@ export function AdminUserManager({
 
               {/* Amount Presets */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-white/70">Mức tiền thay đổi (VND):</label>
+                <label className="text-xs font-semibold text-slate-700">Mức tiền thay đổi (VND):</label>
                 <div className="grid grid-cols-4 gap-1.5">
                   {[50000, 100000, 200000, 500000].map((amt) => (
                     <button
                       key={amt}
                       type="button"
                       onClick={() => setBalanceDelta(amt)}
-                      className={`py-1.5 rounded-lg text-[11px] font-bold border transition-all ${
+                      className={`py-1.5 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
                         balanceDelta === amt
-                          ? 'bg-[#2DD4BF] text-[#051817] border-[#2DD4BF]'
-                          : 'bg-white/10 hover:bg-white/15 text-white/80 border-white/10'
+                          ? 'bg-cyan-600 text-white border-cyan-600 shadow-xs'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                       }`}
                     >
                       {(amt / 1000).toLocaleString()}k
@@ -860,13 +860,13 @@ export function AdminUserManager({
                   step="10000"
                   value={balanceDelta}
                   onChange={(e) => setBalanceDelta(Math.max(0, Number(e.target.value)))}
-                  className="w-full mt-2 px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white font-mono focus:outline-none focus:border-[#2DD4BF]"
+                  className="w-full mt-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono focus:outline-none focus:border-cyan-500 focus:bg-white"
                 />
               </div>
 
               {/* Note / Reason */}
               <div>
-                <label className="block text-xs font-semibold text-white/70 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Lý do / Ghi chú kiểm toán:
                 </label>
                 <input
@@ -874,25 +874,25 @@ export function AdminUserManager({
                   placeholder="Ví dụ: Thưởng thành viên xuất sắc, bồi thường đơn in..."
                   value={balanceNote}
                   onChange={(e) => setBalanceNote(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#2DD4BF]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+              <div className="flex items-center gap-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsAdjustBalanceOpen(false)}
-                  className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white transition-all"
+                  className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-all cursor-pointer"
                 >
                   Hủy Bỏ
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmAdjustBalance}
-                  className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${
+                  className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
                     balanceMode === 'add'
-                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                      : 'bg-rose-500 hover:bg-rose-600 text-white'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      : 'bg-rose-600 hover:bg-rose-700 text-white'
                   }`}
                 >
                   Xác Nhận {balanceMode === 'add' ? 'Cộng' : 'Trừ'} Tiền
@@ -905,37 +905,37 @@ export function AdminUserManager({
 
       {/* Modal 3: User Detail */}
       {isDetailModalOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-lg vision-glass-panel rounded-[32px] border border-white/20 p-6 shadow-2xl space-y-5 text-white">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-lg bg-white rounded-[32px] border border-slate-200 p-6 shadow-2xl space-y-5 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#5EEAD4]" />
-                <h3 className="text-sm font-bold text-white">Hồ Sơ Thành Viên Chi Tiết</h3>
+                <Eye className="w-4 h-4 text-cyan-600" />
+                <h3 className="text-sm font-bold text-slate-900">Hồ Sơ Thành Viên Chi Tiết</h3>
               </div>
               <button
                 onClick={() => setIsDetailModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-black/30 border border-white/10">
-                <div className="relative w-14 h-14 rounded-full overflow-hidden bg-black/50 border border-white/20 shrink-0">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="relative w-14 h-14 rounded-full overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
                   {selectedUser.avatar ? (
                     <Image src={selectedUser.avatar} alt={selectedUser.name} fill unoptimized className="object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center font-black text-xl text-white">
+                    <div className="w-full h-full flex items-center justify-center font-black text-xl text-slate-700">
                       {selectedUser.name?.charAt(0)}
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-base font-bold text-white truncate">{selectedUser.name}</h4>
-                  <p className="text-xs text-white/60 truncate">{selectedUser.email}</p>
+                  <h4 className="text-base font-bold text-slate-900 truncate">{selectedUser.name}</h4>
+                  <p className="text-xs text-slate-500 truncate">{selectedUser.email}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-mono text-white/50">{selectedUser.id}</span>
+                    <span className="text-[10px] font-mono text-slate-400">{selectedUser.id}</span>
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${getRoleBadge(selectedUser.role).bg}`}>
                       {getRoleBadge(selectedUser.role).label}
                     </span>
@@ -944,56 +944,56 @@ export function AdminUserManager({
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <span className="text-white/60 text-[11px]">Số dư ví khả dụng:</span>
-                  <div className="text-base font-black text-[#5EEAD4] font-mono">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-slate-500 text-[11px] font-medium">Số dư ví khả dụng:</span>
+                  <div className="text-base font-black text-cyan-800 font-mono">
                     {(selectedUser.walletBalanceVnd || 0).toLocaleString('vi-VN')} đ
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <span className="text-white/60 text-[11px]">Trạng thái tài khoản:</span>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-slate-500 text-[11px] font-medium">Trạng thái tài khoản:</span>
                   <div className="font-bold flex items-center gap-1.5 mt-0.5">
                     {selectedUser.status === 'suspended' ? (
-                      <span className="text-rose-400 flex items-center gap-1">
+                      <span className="text-rose-700 flex items-center gap-1 font-bold">
                         <Lock className="w-3.5 h-3.5" /> Đã tạm khóa
                       </span>
                     ) : (
-                      <span className="text-emerald-400 flex items-center gap-1">
+                      <span className="text-emerald-700 flex items-center gap-1 font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Đang hoạt động
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <span className="text-white/60 text-[11px]">Số điện thoại:</span>
-                  <div className="font-medium text-white">{selectedUser.phone || 'Chưa cập nhật'}</div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-slate-500 text-[11px] font-medium">Số điện thoại:</span>
+                  <div className="font-semibold text-slate-800">{selectedUser.phone || 'Chưa cập nhật'}</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
-                  <span className="text-white/60 text-[11px]">Ngày tham gia:</span>
-                  <div className="font-medium text-white">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-slate-500 text-[11px] font-medium">Ngày tham gia:</span>
+                  <div className="font-semibold text-slate-800">
                     {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString('vi-VN') : 'Mới tham gia'}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => {
                     setIsDetailModalOpen(false);
                     setIsAdjustBalanceOpen(true);
                   }}
-                  className="flex-1 py-2 rounded-xl bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 border border-[#2DD4BF]/40 text-[#5EEAD4] text-xs font-bold transition-all text-center"
+                  className="flex-1 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold transition-all text-center shadow-sm cursor-pointer"
                 >
                   Nạp / Trừ Tiền Ví
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsDetailModalOpen(false)}
-                  className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white transition-all"
+                  className="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-all cursor-pointer"
                 >
                   Đóng
                 </button>

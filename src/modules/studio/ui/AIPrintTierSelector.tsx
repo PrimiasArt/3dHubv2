@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Zap, Rocket, Crown, Check } from 'lucide-react';
+import { Sparkles, Zap, Rocket, Crown, Check, ShieldCheck } from 'lucide-react';
 import { AITierId, AI_PRINT_TIERS } from '@/backend/domain/ai-tiers';
 
 interface AIPrintTierSelectorProps {
@@ -29,14 +29,14 @@ export function AIPrintTierSelector({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 text-slate-800">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+        <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-cyan-600" />
           <span>Chọn Cấp Độ Dựng &amp; In 3D AI</span>
         </label>
-        <span className="text-[11px] text-slate-500 font-medium">
-          Số dư ví: <strong className="text-cyan-900 font-mono font-bold">{userBalanceVnd.toLocaleString('vi-VN')} đ</strong>
+        <span className="text-[11px] text-slate-500">
+          Số dư ví: <strong className="text-cyan-800 font-mono font-bold">{userBalanceVnd.toLocaleString('vi-VN')} đ</strong>
         </span>
       </div>
 
@@ -48,18 +48,18 @@ export function AIPrintTierSelector({
             <div
               key={t.id}
               onClick={() => onSelectTier(t.id)}
-              className={`relative rounded-2xl p-4 cursor-pointer transition-all border flex flex-col justify-between ${
+              className={`relative rounded-2xl p-4 cursor-pointer transition-all border flex flex-col justify-between shadow-2xs ${
                 isSelected
-                  ? 'bg-cyan-50/90 border-cyan-500 shadow-md ring-2 ring-cyan-500/20 -translate-y-0.5'
-                  : 'bg-white hover:bg-slate-50 border-slate-200 shadow-xs'
+                  ? 'bg-cyan-50/90 border-cyan-400 shadow-sm ring-2 ring-cyan-400/30 -translate-y-0.5'
+                  : 'bg-white/80 border-slate-200 hover:border-slate-300 hover:bg-white'
               }`}
             >
               {/* Badge */}
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold border bg-cyan-100/70 text-cyan-900 border-cyan-300">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${t.badgeColor}`}>
                   {t.badge}
                 </span>
-                <span className="text-[11px] font-mono text-slate-500">{t.speedEstimate}</span>
+                <span className="text-[11px] font-mono text-slate-500 font-semibold">{t.speedEstimate}</span>
               </div>
 
               {/* Title & Engine */}
@@ -93,7 +93,7 @@ export function AIPrintTierSelector({
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between mt-auto">
                 <div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-base font-extrabold font-mono text-cyan-950">
+                    <span className="text-base font-extrabold font-mono text-slate-900">
                       {t.priceVnd.toLocaleString('vi-VN')} đ
                     </span>
                   </div>
@@ -105,8 +105,8 @@ export function AIPrintTierSelector({
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all ${
                     isSelected
-                      ? 'bg-cyan-600 border-cyan-600 text-white'
-                      : 'border-slate-300 bg-white text-transparent'
+                      ? 'bg-cyan-600 border-cyan-600 text-white shadow-2xs'
+                      : 'border-slate-300 bg-slate-100 text-transparent'
                   }`}
                 >
                   <Check className="w-3.5 h-3.5 stroke-[3]" />

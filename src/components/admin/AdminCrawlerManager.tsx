@@ -36,18 +36,18 @@ export function AdminCrawlerManager() {
   } = usePlatformCrawler();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-slate-800">
       {/* Page Header */}
-      <div className="vision-glass-panel rounded-[32px] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="vision-glass-panel rounded-[32px] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-200/80 bg-white/90 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shrink-0 shadow-sm">
-            <Compass className="w-6 h-6 text-[#2DD4BF]" />
+          <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-700 shrink-0 shadow-sm">
+            <Compass className="w-6 h-6 text-cyan-700" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               MakerWorld &amp; 3D Repositories Crawler v3.0
             </h2>
-            <p className="text-xs sm:text-sm text-white/70 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Hệ thống bóc tách dữ liệu đa nền tảng thời gian thực: Printables, GitHub 3D, MakerWorld và Thingiverse
             </p>
           </div>
@@ -56,36 +56,36 @@ export function AdminCrawlerManager() {
         <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
           <button
             onClick={() => setIsCrawlUrlModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-200 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-teal-50 hover:bg-teal-100 border border-teal-300 text-teal-800 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
             title="Dán đường dẫn URL hoặc YouTube bất kỳ để bóc tách tự động"
           >
-            <Link2 className="w-3.5 h-3.5 text-teal-300" />
-            <span>Cào Link URL & YouTube</span>
+            <Link2 className="w-3.5 h-3.5 text-teal-600" />
+            <span>Cào Link URL &amp; YouTube</span>
           </button>
 
           <button
             onClick={() => setIsManualIngestModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-violet-200 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-violet-50 hover:bg-violet-100 border border-violet-300 text-violet-800 text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
             title="Nạp mô hình hoặc mẹo in thủ công vào kho"
           >
-            <PlusCircle className="w-3.5 h-3.5 text-violet-300" />
+            <PlusCircle className="w-3.5 h-3.5 text-violet-600" />
             <span>Nạp Thủ Công</span>
           </button>
 
           <button
             onClick={deduplicateDatabase}
             disabled={isLoadingModels}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white/90 text-xs font-semibold transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold transition-all active:scale-95 shadow-sm"
             title="Tự động quét và loại bỏ toàn bộ dữ liệu trùng lặp"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-white" />
+            <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
             <span>Lọc sạch trùng lặp</span>
           </button>
 
           <button
             onClick={refetchModels}
             disabled={isLoadingModels}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-semibold transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoadingModels ? 'animate-spin' : ''}`} />
             <span>Làm mới ({models.length})</span>
@@ -110,18 +110,18 @@ export function AdminCrawlerManager() {
 
       {/* Model Repository Grid with Filter & Sort Toolbar */}
       <div className="space-y-4 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 vision-glass p-3 rounded-full backdrop-blur-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 vision-glass p-3 rounded-full border border-slate-200/80 bg-white/90 shadow-sm">
           {/* Filament Type Filter */}
           <div className="flex items-center gap-1.5 flex-wrap pl-2">
-            <span className="text-xs font-semibold text-white/70 mr-1">Chất liệu:</span>
+            <span className="text-xs font-semibold text-slate-600 mr-1">Chất liệu:</span>
             {['all', 'PLA', 'PETG', 'TPU', 'ABS'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilamentFilter(f)}
                 className={`px-3.5 py-1 rounded-full text-xs font-semibold transition-all border ${
                   filamentFilter === f
-                    ? 'bg-white/30 text-white border-white/40 shadow-xs'
-                    : 'bg-black/20 text-white/70 border-white/10 hover:text-white hover:border-white/20'
+                    ? 'bg-cyan-600 text-white border-cyan-600 shadow-sm font-bold'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
                 }`}
               >
                 {f === 'all' ? 'Tất cả' : f}
@@ -131,29 +131,29 @@ export function AdminCrawlerManager() {
 
           {/* Sort By Dropdown */}
           <div className="flex items-center gap-2 pr-3">
-            <span className="text-xs font-semibold text-white/70">Sắp xếp:</span>
+            <span className="text-xs font-semibold text-slate-600">Sắp xếp:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3.5 py-1.5 rounded-full bg-black/30 border border-white/15 text-xs text-white font-semibold focus:outline-none focus:border-white/40 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-800 font-semibold focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm"
             >
-              <option value="downloads" className="bg-[#18231B] text-white">Lượt tải nhiều nhất</option>
-              <option value="prints" className="bg-[#18231B] text-white">Lượt in thực tế cao nhất</option>
-              <option value="recent" className="bg-[#18231B] text-white">Mới cào gần đây</option>
+              <option value="downloads">Lượt tải nhiều nhất</option>
+              <option value="prints">Lượt in thực tế cao nhất</option>
+              <option value="recent">Mới cào gần đây</option>
             </select>
 
-            <span className="text-xs text-white/50 ml-1 hidden md:inline">
+            <span className="text-xs text-slate-400 ml-1 hidden md:inline">
               ({models.length} / {rawModels.length} models)
             </span>
           </div>
         </div>
 
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Layers className="w-4 h-4 text-white/90" />
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-cyan-600" />
             <span>Kho Dữ Liệu Model Đã Crawl ({models.length})</span>
           </h3>
-          <span className="text-xs text-white/60">
+          <span className="text-xs text-slate-500">
             Click &quot;Nạp Vào Studio&quot; để nạp trực tiếp mô hình lên bàn in 3D
           </span>
         </div>

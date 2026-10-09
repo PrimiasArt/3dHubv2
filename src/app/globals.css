@@ -5,7 +5,6 @@
    Creamy White & Milk Frosted Glass • Soft Creamy Cyan & Mint Accents
    ========================================================================== */
 :root,
-[data-env="staging"],
 [data-env="official"] {
   /* Canvas Background: Warm Cream & Milk White */
   --background: #F8F9FA;

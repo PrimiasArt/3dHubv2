@@ -154,3 +154,20 @@ File trực quan tương tác đặt tại:
 * Đường dẫn vật lý: `overview.html` (gốc dự án) và `public/overview.html`
 * Truy cập trên trình duyệt nội bộ: `http://localhost:3000/overview.html`
 * Cung cấp sơ đồ đồ họa động, chuyển đổi trực quan giữa 3 lớp (UI - Hook - Backend), cấu trúc Neon Postgres và bộ lọc tương tác 6 Function Modules theo chuẩn Apple VisionOS Glassmorphism.
+
+---
+
+## 📌 8. Nhật Ký Cập Nhật Mới Nhất (Changelog v2.2.0 - 10/2026)
+
+1. **Loại bỏ hoàn toàn phiên bản Staging**:
+   - Thống nhất một môi trường Production / Official duy nhất.
+   - Xóa bỏ Staging Switcher và Staging Sandbox Dock.
+   - Loại bỏ route `/staging`, toàn bộ ứng dụng chỉ duy trì 35 routes chính thức.
+2. **Chuẩn hóa toàn diện Apple VisionOS Light Theme (Trắng Kem + Xanh Cyan Kem)**:
+   - Sửa triệt để 100% lỗi màu tương phản (xóa sạch toàn bộ chữ trắng `text-white` trên nền kính trắng sữa).
+   - Thiết lập bảng màu chuẩn mực: `text-slate-900` cho tiêu đề, `text-slate-800` cho nội dung, `text-slate-600` cho mô tả.
+   - Chuyển toàn bộ thẻ Card, Bảng Admin, Inputs, Modals (AdminUserManager, AdminProductsManager, ProductDetailModal, OrderServiceModal, CartDrawer) sang phong cách Apple Vision Pro kính trắng kem (`bg-white/90 border-slate-200/80 shadow-sm`).
+   - Active controls sử dụng `bg-cyan-600 text-white font-bold`, badge phân quyền RBAC pastel độ tương phản cao.
+3. **Build & Typecheck**:
+   - Chạy `npm.cmd run build` hoàn thành 35/35 routes static & dynamic không phát sinh bất kỳ lỗi TypeScript nào.
+

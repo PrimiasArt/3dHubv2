@@ -4,8 +4,7 @@ import './globals.css';
 import { Navbar } from '@/components/common/Navbar';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['vietnamese', 'latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin', 'vietnamese'],
   variable: '--font-sans',
   display: 'swap',
 });

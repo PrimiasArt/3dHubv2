@@ -4,18 +4,13 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Sparkles,
   Download,
   ShoppingCart,
   Eye,
   Star,
-  Heart,
   Clock,
-  Weight,
   Layers,
-  CheckCircle2,
   Box,
-  Coins,
   ArrowUpRight,
 } from 'lucide-react';
 import { IShopModelItem, ModelMarketplaceCategory } from '@/backend/domain/shop';
@@ -80,41 +75,41 @@ export function ModelMarketplaceView({
     a.download = `${model.id}_package.json`;
     a.click();
     URL.revokeObjectURL(url);
-    onShowToast(`🎉 Đang tải gói tệp ${model.formats.join('/')} của "${model.title}"!`);
+    onShowToast(`🎉 Đã tải tệp mô hình: ${model.title}`);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Filters Bar - VisionOS Segmented Pill Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 vision-glass p-4 rounded-[28px] border border-white/15 shadow-sm text-white">
-        {/* Free vs Paid Toggle */}
-        <div className="flex items-center gap-1 p-1 bg-black/25 rounded-full border border-white/10 backdrop-blur-xl">
+    <div className="space-y-6 text-slate-800">
+      {/* Filters Bar - VisionOS Segmented Control */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 vision-glass p-4 rounded-[28px] border border-slate-200/90 shadow-xs bg-white/85">
+        {/* Type Filter */}
+        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-full border border-slate-200/80 backdrop-blur-xl">
           <button
             onClick={() => setModelTypeFilter('all')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               modelTypeFilter === 'all'
-                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
-                : 'text-white/70 hover:text-white'
+                ? 'bg-white text-cyan-950 font-bold shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 font-medium'
             }`}
           >
             Tất cả ({models.length})
           </button>
           <button
             onClick={() => setModelTypeFilter('free')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               modelTypeFilter === 'free'
-                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
-                : 'text-white/70 hover:text-white'
+                ? 'bg-white text-cyan-950 font-bold shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 font-medium'
             }`}
           >
             Miễn Phí (Free 100%)
           </button>
           <button
             onClick={() => setModelTypeFilter('paid')}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               modelTypeFilter === 'paid'
-                ? 'bg-white/25 backdrop-blur-md text-white font-semibold border border-white/20 shadow-xs'
-                : 'text-white/70 hover:text-white'
+                ? 'bg-white text-cyan-950 font-bold shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 font-medium'
             }`}
           >
             Mô Hình Trả Phí (Premium)
@@ -127,10 +122,10 @@ export function ModelMarketplaceView({
             <button
               key={c.id}
               onClick={() => setSelectedCategory(c.id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 selectedCategory === c.id
-                  ? 'bg-white/30 text-white font-semibold border border-white/25 shadow-xs'
-                  : 'bg-white/10 text-white/70 hover:text-white border border-white/10'
+                  ? 'bg-cyan-600 text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs'
               }`}
             >
               {c.label}
@@ -139,7 +134,7 @@ export function ModelMarketplaceView({
         </div>
       </div>
 
-      {/* Models Grid - VisionOS Spatial Glass Cards */}
+      {/* Models Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {models.map((model) => {
           const isFree = model.isFree;
@@ -148,11 +143,11 @@ export function ModelMarketplaceView({
           return (
             <div
               key={model.id}
-              className="group relative flex flex-col justify-between rounded-[32px] vision-glass hover:bg-[#344637]/65 hover:-translate-y-1 p-5 transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.3)] border border-white/15 text-white"
+              className="group relative flex flex-col justify-between rounded-[32px] vision-glass hover:border-cyan-400 hover:shadow-lg hover:-translate-y-1 p-5 transition-all duration-300 shadow-xs border border-slate-200/90 text-slate-900 bg-white/90"
             >
               <div className="space-y-3.5">
                 {/* Visual Header */}
-                <div className="relative aspect-video rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center p-4 overflow-hidden group-hover:border-white/25 transition-colors">
+                <div className="relative aspect-video rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center p-4 overflow-hidden group-hover:border-cyan-300 transition-colors shadow-2xs">
                   <Image
                     src={model.thumbnailUrl}
                     alt={model.title}
@@ -165,7 +160,7 @@ export function ModelMarketplaceView({
                   {/* Badges on preview */}
                   <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
                     {model.badge && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white border border-white/20 backdrop-blur-md">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-cyan-900 border border-cyan-200 shadow-2xs">
                         {model.badge}
                       </span>
                     )}
@@ -173,10 +168,10 @@ export function ModelMarketplaceView({
 
                   <div className="absolute top-2.5 right-2.5">
                     <span
-                      className={`px-3 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border ${
+                      className={`px-3 py-0.5 rounded-full text-[11px] font-bold tracking-wide border shadow-2xs ${
                         isFree
-                          ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/30'
-                          : 'bg-amber-500/25 text-amber-300 border-amber-500/30'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : 'bg-amber-50 text-amber-900 border-amber-300 font-mono'
                       }`}
                     >
                       {isFree ? 'FREE' : `${model.priceVnd.toLocaleString('vi-VN')} đ`}
@@ -188,7 +183,7 @@ export function ModelMarketplaceView({
                     {model.formats.map((fmt, i) => (
                       <span
                         key={i}
-                        className="px-1.5 py-0.5 text-[9px] font-mono font-semibold bg-black/50 text-white/80 rounded border border-white/10"
+                        className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-white/90 text-slate-700 rounded border border-slate-200 shadow-2xs"
                       >
                         {fmt}
                       </span>
@@ -199,7 +194,7 @@ export function ModelMarketplaceView({
                   {model.sampleModelId && (
                     <Link
                       href={`/studio?model=${model.sampleModelId}`}
-                      className="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/20 hover:bg-white/30 text-white text-[10px] font-medium backdrop-blur-md border border-white/20 transition-all hover:scale-105"
+                      className="absolute bottom-2.5 right-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white text-[10px] font-bold border border-cyan-500 transition-all hover:scale-105 shadow-2xs"
                       title="Mở trong 3D Studio"
                     >
                       <Box className="w-3 h-3" />
@@ -211,48 +206,48 @@ export function ModelMarketplaceView({
 
                 {/* Info */}
                 <div>
-                  <div className="flex items-center justify-between text-[11px] text-white/60 mb-1">
-                    <span>Tác giả: <strong className="text-white font-medium">{model.author}</strong></span>
-                    <div className="flex items-center gap-1 text-amber-300">
-                      <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
-                      <span className="font-semibold">{model.rating}</span>
-                      <span className="text-white/50">({model.reviewsCount})</span>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+                    <span>Tác giả: <strong className="text-slate-800 font-semibold">{model.author}</strong></span>
+                    <div className="flex items-center gap-1 text-amber-700 font-bold">
+                      <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                      <span>{model.rating}</span>
+                      <span className="text-slate-400 font-normal">({model.reviewsCount})</span>
                     </div>
                   </div>
 
                   <h3
                     onClick={() => onViewDetail(model)}
-                    className="text-sm font-bold text-white hover:text-emerald-300 cursor-pointer transition-colors line-clamp-2"
+                    className="text-sm font-bold text-slate-900 hover:text-cyan-700 cursor-pointer transition-colors line-clamp-2 leading-snug"
                   >
                     {model.title}
                   </h3>
 
-                  <p className="text-xs text-white/70 line-clamp-2 mt-1.5 leading-relaxed">{model.description}</p>
+                  <p className="text-xs text-slate-600 line-clamp-2 mt-1.5 leading-relaxed">{model.description}</p>
                 </div>
 
                 {/* Specs: Print Time & Filament Weight */}
-                <div className="grid grid-cols-2 gap-2 text-[11px] bg-white/10 p-2.5 rounded-xl border border-white/10">
-                  <div className="flex items-center gap-1.5 text-white/90">
-                    <Clock className="w-3.5 h-3.5 text-cyan-300 flex-shrink-0" />
-                    <span>In mất: <strong>{model.printTimeEstimate}</strong></span>
+                <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <div className="flex items-center gap-1.5 text-slate-700">
+                    <Clock className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                    <span>In: <strong className="text-slate-900">{model.printTimeEstimate}</strong></span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-white/90">
-                    <Layers className="w-3.5 h-3.5 text-rose-300 flex-shrink-0" />
-                    <span>Tốn: <strong>{model.filamentWeightEstimate}</strong></span>
+                  <div className="flex items-center gap-1.5 text-slate-700">
+                    <Layers className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Tốn: <strong className="text-slate-900">{model.filamentWeightEstimate}</strong></span>
                   </div>
                 </div>
               </div>
 
               {/* Footer Actions */}
-              <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between gap-2">
-                <div className="text-xs text-white/60">
+              <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div className="text-xs text-slate-500 font-semibold">
                   {model.downloads.toLocaleString('vi-VN')} lượt tải
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onViewDetail(model)}
-                    className="p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white transition-all border border-white/10"
+                    className="p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 shadow-2xs cursor-pointer"
                     title="Xem chi tiết"
                   >
                     <Eye className="w-4 h-4" />
@@ -261,7 +256,7 @@ export function ModelMarketplaceView({
                   {isFree ? (
                     <button
                       onClick={() => handleFreeDownload(model)}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/25 hover:bg-white/35 backdrop-blur-md text-white font-medium text-xs border border-white/20 shadow-xs active:scale-98 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-xs active:scale-98 transition-all cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>{isDownloaded ? 'Tải lại' : 'Tải File'}</span>
@@ -278,7 +273,7 @@ export function ModelMarketplaceView({
                           subText: `Bản quyền: ${model.author}`,
                         })
                       }
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/25 hover:bg-white/35 backdrop-blur-md text-white font-medium text-xs border border-white/20 shadow-xs active:scale-98 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-xs active:scale-98 transition-all cursor-pointer"
                     >
                       <ShoppingCart className="w-3.5 h-3.5" />
                       <span>Mua Bản Quyền</span>

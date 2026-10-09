@@ -3,22 +3,16 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import {
-  Layers,
   FileCode,
   Sparkles,
   Calculator,
   Download,
   ShieldCheck,
-  Zap,
   CheckCircle2,
   Clock,
   Truck,
-  Sliders,
   Printer,
-  ChevronRight,
   Send,
-  Lock,
-  Unlock,
   Coins,
 } from 'lucide-react';
 import {
@@ -131,30 +125,30 @@ export function PrintingServicesProfilesView({
   };
 
   return (
-    <div className="space-y-8 text-white">
+    <div className="space-y-8 text-slate-800">
       {/* Sub Tab Switcher - VisionOS Segmented Pill Control */}
       <div className="flex items-center justify-center">
-        <div className="flex items-center p-1 bg-black/25 backdrop-blur-xl border border-white/10 rounded-full shadow-sm">
+        <div className="flex items-center p-1 bg-slate-100 backdrop-blur-xl border border-slate-200 rounded-full shadow-xs">
           <button
             onClick={() => setSubTab('services')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               subTab === 'services'
-                ? 'bg-white/30 backdrop-blur-md text-white border border-white/20 shadow-xs'
-                : 'text-white/70 hover:text-white'
+                ? 'bg-white text-cyan-950 border border-slate-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Printer className="w-4 h-4 text-emerald-300" />
+            <Printer className="w-4 h-4 text-cyan-600" />
             <span>Đặt In Dịch Vụ 3D &amp; Báo Giá Nhanh</span>
           </button>
           <button
             onClick={() => setSubTab('profiles')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               subTab === 'profiles'
-                ? 'bg-white/30 backdrop-blur-md text-white border border-white/20 shadow-xs'
-                : 'text-white/70 hover:text-white'
+                ? 'bg-white text-cyan-950 border border-slate-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <FileCode className="w-4 h-4 text-cyan-300" />
+            <FileCode className="w-4 h-4 text-cyan-600" />
             <span>Thư Viện Profile Slicer ({profiles.length})</span>
           </button>
         </div>
@@ -163,25 +157,25 @@ export function PrintingServicesProfilesView({
       {/* SUB-TAB 1: DỊCH VỤ IN 3D & BÁO GIÁ TỰ ĐỘNG */}
       {subTab === 'services' && (
         <div className="space-y-8">
-          {/* INTERACTIVE INSTANT QUOTE CALCULATOR (VisionOS Glass Panel) */}
-          <div className="rounded-[36px] vision-glass-panel border border-white/20 p-6 sm:p-8 shadow-[0_24px_60px_rgba(0,0,0,0.5)] relative overflow-hidden text-white">
+          {/* INTERACTIVE INSTANT QUOTE CALCULATOR */}
+          <div className="rounded-[36px] vision-glass-panel border border-slate-200/90 p-6 sm:p-8 shadow-xs relative overflow-hidden bg-white/90">
             <div className="relative z-10 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-white text-xs font-semibold mb-2">
-                    <Calculator className="w-3.5 h-3.5 text-emerald-300" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-900 text-xs font-bold mb-2">
+                    <Calculator className="w-3.5 h-3.5 text-cyan-600" />
                     <span>Công Cụ Báo Giá In 3D Trực Tuyến</span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                     Tính Báo Giá Đơn Hàng In 3D Tức Thì
                   </h2>
-                  <p className="text-xs text-white/70">
+                  <p className="text-xs text-slate-600 mt-0.5">
                     Chọn công nghệ, khối lượng mô hình để nhận chi phí tạm tính và thời gian hoàn thiện dự kiến.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs bg-white/15 px-3.5 py-1.5 rounded-full border border-white/20 text-emerald-300 font-semibold">
-                  <Clock className="w-4 h-4 text-emerald-300" />
+                <div className="flex items-center gap-2 text-xs bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 text-emerald-800 font-bold shadow-2xs">
+                  <Clock className="w-4 h-4 text-emerald-600" />
                   <span>Xử lý &amp; giao hàng trong 24h</span>
                 </div>
               </div>
@@ -192,7 +186,7 @@ export function PrintingServicesProfilesView({
                 <div className="lg:col-span-7 space-y-5">
                   {/* Step 1: Select Technology */}
                   <div>
-                    <label className="text-[11px] font-semibold text-white/60 uppercase tracking-wider mb-2.5 block">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2.5 block">
                       1. Chọn Công Nghệ In
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -202,14 +196,14 @@ export function PrintingServicesProfilesView({
                           <button
                             key={t.id}
                             onClick={() => handleTechChange(t.id)}
-                            className={`p-3.5 rounded-2xl border text-left transition-all ${
+                            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
                               isSelected
-                                ? 'bg-white/25 border-white/40 text-white shadow-xs'
-                                : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10'
+                                ? 'bg-cyan-50/90 border-cyan-400 ring-2 ring-cyan-400/40 text-slate-900 shadow-xs'
+                                : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-2xs'
                             }`}
                           >
-                            <div className="text-xs font-bold text-white">{t.label}</div>
-                            <div className="text-[11px] text-white/60 mt-0.5">{t.desc}</div>
+                            <div className="text-xs font-bold text-slate-900">{t.label}</div>
+                            <div className="text-[11px] text-slate-500 mt-0.5">{t.desc}</div>
                           </button>
                         );
                       })}
@@ -217,14 +211,14 @@ export function PrintingServicesProfilesView({
                   </div>
 
                   {/* Step 2: Weight Slider (Grams) */}
-                  <div className="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-3">
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-semibold text-white/60 uppercase tracking-wider">
+                      <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                         2. Khối Lượng Mô Hình Dự Kiến (Gram)
                       </label>
-                      <div className="flex items-center gap-1 bg-white/20 border border-white/20 px-3 py-1 rounded-full">
-                        <span className="text-sm font-bold text-emerald-300">{quoteParams.weightGrams}</span>
-                        <span className="text-xs text-white/80">g</span>
+                      <div className="flex items-center gap-1 bg-white border border-slate-300 px-3 py-1 rounded-full shadow-2xs">
+                        <span className="text-sm font-extrabold text-cyan-800 font-mono">{quoteParams.weightGrams}</span>
+                        <span className="text-xs text-slate-600 font-semibold">g</span>
                       </div>
                     </div>
 
@@ -235,10 +229,10 @@ export function PrintingServicesProfilesView({
                       step={10}
                       value={quoteParams.weightGrams}
                       onChange={(e) => handleWeightChange(Number(e.target.value))}
-                      className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer accent-emerald-400"
+                      className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-cyan-600"
                     />
 
-                    <div className="flex items-center justify-between text-[11px] text-white/60">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
                       <span>10g (Phụ kiện nhỏ)</span>
                       <span>100g (Mẫu chuẩn)</span>
                       <span>300g (Chi tiết cơ khí)</span>
@@ -249,7 +243,7 @@ export function PrintingServicesProfilesView({
                   {/* Step 3: Material & Post Processing */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-semibold text-white block mb-2">
+                      <label className="text-xs font-bold text-slate-800 block mb-2">
                         Loại Vật Liệu
                       </label>
                       <select
@@ -259,19 +253,19 @@ export function PrintingServicesProfilesView({
                           setQuoteParams(newParams);
                           onCalculateQuote(newParams);
                         }}
-                        className="w-full px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-white focus:outline-none focus:border-white/30"
+                        className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-cyan-500 shadow-2xs font-semibold"
                       >
-                        <option value="PLA Basic" className="bg-[#1C261E] text-white">PLA Basic (Phổ thông sắc nét)</option>
-                        <option value="PLA Tough" className="bg-[#1C261E] text-white">PLA Tough (Chịu va đập)</option>
-                        <option value="PETG Chịu nhiệt" className="bg-[#1C261E] text-white">PETG (Bền nhiệt 70°C)</option>
-                        <option value="Nylon PA-CF" className="bg-[#1C261E] text-white">Nylon PA-CF (Sợi Carbon siêu cứng)</option>
-                        <option value="Resin 8K Tiêu chuẩn" className="bg-[#1C261E] text-white">Resin 8K Tiêu chuẩn (Figure)</option>
-                        <option value="Resin ABS-Like" className="bg-[#1C261E] text-white">Resin ABS-Like (Cơ khí chính xác)</option>
+                        <option value="PLA Basic">PLA Basic (Phổ thông sắc nét)</option>
+                        <option value="PLA Tough">PLA Tough (Chịu va đập)</option>
+                        <option value="PETG Chịu nhiệt">PETG (Bền nhiệt 70°C)</option>
+                        <option value="Nylon PA-CF">Nylon PA-CF (Sợi Carbon siêu cứng)</option>
+                        <option value="Resin 8K Tiêu chuẩn">Resin 8K Tiêu chuẩn (Figure)</option>
+                        <option value="Resin ABS-Like">Resin ABS-Like (Cơ khí chính xác)</option>
                       </select>
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-white block mb-2">
+                      <label className="text-xs font-bold text-slate-800 block mb-2">
                         Gói Hậu Kỳ Hoàn Thiện
                       </label>
                       <select
@@ -284,11 +278,11 @@ export function PrintingServicesProfilesView({
                           setQuoteParams(newParams);
                           onCalculateQuote(newParams);
                         }}
-                        className="w-full px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-white focus:outline-none focus:border-white/30"
+                        className="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-cyan-500 shadow-2xs font-semibold"
                       >
-                        <option value="none" className="bg-[#1C261E] text-white">Nguyên bản sau in (Tự bóc support)</option>
-                        <option value="support_removal" className="bg-[#1C261E] text-white">Thợ làm sạch &amp; bóc Support (+30k)</option>
-                        <option value="sanding_primer" className="bg-[#1C261E] text-white">Mài nhẵn + Phun lót Primer (+90k)</option>
+                        <option value="none">Nguyên bản sau in (Tự bóc support)</option>
+                        <option value="support_removal">Thợ làm sạch &amp; bóc Support (+30k)</option>
+                        <option value="sanding_primer">Mài nhẵn + Phun lót Primer (+90k)</option>
                       </select>
                     </div>
                   </div>
@@ -296,8 +290,8 @@ export function PrintingServicesProfilesView({
                   {/* Step 4: Optional AI 3D Model Generation Tier */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs font-semibold text-white flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+                      <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
                         <span>3. Kèm Tạo Mô Hình 3D AI Từ Ảnh (Tùy Chọn):</span>
                       </label>
                     </div>
@@ -316,15 +310,15 @@ export function PrintingServicesProfilesView({
                             setQuoteParams(newParams);
                             onCalculateQuote(newParams);
                           }}
-                          className={`p-3 rounded-2xl border text-left transition-all ${
+                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                             (quoteParams.aiTier || 'none') === tier.id
-                              ? 'bg-white/25 border-white/40 text-white shadow-xs'
-                              : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                              ? 'bg-cyan-50/90 border-cyan-400 ring-2 ring-cyan-400/40 text-slate-900 shadow-xs'
+                              : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-2xs'
                           }`}
                         >
-                          <div className="text-[11px] font-bold text-white">{tier.label}</div>
-                          <div className="text-[10px] text-emerald-300 font-mono">{tier.price}</div>
-                          <div className="text-[9px] text-white/50">{tier.sub}</div>
+                          <div className="text-[11px] font-bold text-slate-900">{tier.label}</div>
+                          <div className="text-[10px] text-emerald-700 font-mono font-bold">{tier.price}</div>
+                          <div className="text-[9px] text-slate-500">{tier.sub}</div>
                         </button>
                       ))}
                     </div>
@@ -332,22 +326,22 @@ export function PrintingServicesProfilesView({
                 </div>
 
                 {/* Right Result Card */}
-                <div className="lg:col-span-5 flex flex-col justify-between rounded-[28px] border border-white/15 bg-white/10 p-6 shadow-sm">
+                <div className="lg:col-span-5 flex flex-col justify-between rounded-[28px] border border-slate-200 bg-slate-50 p-6 shadow-xs">
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                         Bảng Chi Phí Dự Kiến
                       </span>
-                      <span className="text-[11px] font-semibold text-emerald-300 bg-white/15 px-2.5 py-0.5 rounded-full border border-white/15">
+                      <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                         {isCalculatingQuote ? 'Đang tính...' : 'Tự Động Tính'}
                       </span>
                     </div>
 
                     {quoteResult && (
-                      <div className="space-y-2.5 text-xs text-white/80">
+                      <div className="space-y-2.5 text-xs text-slate-700">
                         <div className="flex items-center justify-between">
                           <span>Chi phí in ({quoteParams.weightGrams}g):</span>
-                          <span className="font-semibold text-white">
+                          <span className="font-bold text-slate-900 font-mono">
                             {quoteResult.materialCostVnd.toLocaleString('vi-VN')} đ
                           </span>
                         </div>
@@ -355,7 +349,7 @@ export function PrintingServicesProfilesView({
                         {quoteResult.postProcessingCostVnd > 0 && (
                           <div className="flex items-center justify-between">
                             <span>Phí xử lý hậu kỳ:</span>
-                            <span className="font-semibold text-white">
+                            <span className="font-bold text-slate-900 font-mono">
                               +{quoteResult.postProcessingCostVnd.toLocaleString('vi-VN')} đ
                             </span>
                           </div>
@@ -364,7 +358,7 @@ export function PrintingServicesProfilesView({
                         {quoteResult.aiFeeVnd > 0 && (
                           <div className="flex items-center justify-between">
                             <span>Phí tạo mô hình 3D AI:</span>
-                            <span className="font-semibold text-amber-300">
+                            <span className="font-bold text-amber-700 font-mono">
                               +{quoteResult.aiFeeVnd.toLocaleString('vi-VN')} đ
                             </span>
                           </div>
@@ -372,7 +366,7 @@ export function PrintingServicesProfilesView({
 
                         <div className="flex items-center justify-between">
                           <span>Thời gian in ước tính:</span>
-                          <span className="font-semibold text-cyan-300 flex items-center gap-1">
+                          <span className="font-bold text-cyan-800 flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5" />
                             ~{quoteResult.estimatedPrintHours} giờ
                           </span>
@@ -380,19 +374,19 @@ export function PrintingServicesProfilesView({
 
                         <div className="flex items-center justify-between">
                           <span>Thời gian giao hàng:</span>
-                          <span className="font-semibold text-emerald-300 flex items-center gap-1">
+                          <span className="font-bold text-emerald-700 flex items-center gap-1">
                             <Truck className="w-3.5 h-3.5" />
                             {quoteResult.estimatedDeliveryDays === 1 ? 'Trong 24 giờ' : '48 giờ'}
                           </span>
                         </div>
 
-                        <div className="pt-3 border-t border-white/10 flex items-baseline justify-between">
-                          <span className="text-sm font-bold text-white">Tổng chi phí:</span>
+                        <div className="pt-3 border-t border-slate-200 flex items-baseline justify-between">
+                          <span className="text-sm font-black text-slate-900">Tổng chi phí:</span>
                           <div className="text-right">
-                            <div className="text-2xl font-bold tracking-tight text-white">
+                            <div className="text-2xl font-black tracking-tight text-slate-900 font-mono">
                               {quoteResult.totalVnd.toLocaleString('vi-VN')} đ
                             </div>
-                            <span className="text-[10px] text-white/50">Đã bao gồm VAT &amp; vật liệu</span>
+                            <span className="text-[10px] text-slate-500">Đã bao gồm VAT &amp; vật liệu</span>
                           </div>
                         </div>
                       </div>
@@ -400,16 +394,16 @@ export function PrintingServicesProfilesView({
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-4 mt-4 border-t border-white/10 space-y-2">
+                  <div className="pt-4 mt-4 border-t border-slate-200 space-y-2">
                     <button
                       onClick={() => onOpenOrderModal(undefined, quoteResult || undefined)}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/25 hover:bg-white/35 backdrop-blur-md border border-white/20 text-white font-semibold text-xs shadow-sm active:scale-98 transition-all"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-md shadow-cyan-600/20 active:scale-98 transition-all cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
                       <span>Đặt In Theo Báo Giá Này</span>
                     </button>
 
-                    <p className="text-[10px] text-center text-white/50">
+                    <p className="text-[10px] text-center text-slate-500">
                       Hỗ trợ kiểm tra file 3D (.STL, .3MF, .STEP) miễn phí trước khi bấm máy in.
                     </p>
                   </div>
@@ -418,39 +412,39 @@ export function PrintingServicesProfilesView({
             </div>
           </div>
 
-          {/* 4 CORE PRINTING PACKAGES CARDS (VisionOS Glass Cards) */}
+          {/* 4 CORE PRINTING PACKAGES CARDS */}
           <div className="space-y-4">
             <div className="flex items-center justify-between px-2">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Printer className="w-5 h-5 text-emerald-300" />
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Printer className="w-5 h-5 text-cyan-600" />
                 <span>Các Gói Dịch Vụ In 3D Chuyên Nghiệp</span>
               </h2>
-              <span className="text-xs text-white/60">{services.length} công nghệ sẵn sàng</span>
+              <span className="text-xs text-slate-500 font-semibold">{services.length} công nghệ sẵn sàng</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {services.map((srv) => (
                 <div
                   key={srv.id}
-                  className="rounded-[32px] vision-glass hover:bg-[#344637]/65 p-6 transition-all duration-300 flex flex-col justify-between border border-white/15 text-white shadow-sm"
+                  className="rounded-[32px] vision-glass hover:border-cyan-400 p-6 transition-all duration-300 flex flex-col justify-between border border-slate-200/90 text-slate-900 shadow-xs bg-white/90"
                 >
                   <div className="space-y-3.5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold text-white">{srv.name}</h3>
+                          <h3 className="text-sm font-bold text-slate-900">{srv.name}</h3>
                           {srv.badge && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white border border-white/20">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-900 border border-cyan-200">
                               {srv.badge}
                             </span>
                           )}
                         </div>
-                        <div className="text-xs text-emerald-300 font-semibold mt-1">
+                        <div className="text-xs text-emerald-700 font-bold font-mono mt-1">
                           Đơn giá: {srv.pricePerGramVnd.toLocaleString('vi-VN')} đ / gram
                         </div>
                       </div>
 
-                      <div className="w-12 h-12 rounded-2xl bg-black/40 border border-white/15 flex items-center justify-center p-2 flex-shrink-0 overflow-hidden relative shadow-xs">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center p-2 shrink-0 overflow-hidden relative shadow-2xs">
                         <Image
                           src={srv.thumbnailUrl}
                           alt={srv.name}
@@ -462,41 +456,41 @@ export function PrintingServicesProfilesView({
                       </div>
                     </div>
 
-                    <p className="text-xs text-white/70 leading-relaxed">{srv.description}</p>
+                    <p className="text-xs text-slate-600 leading-relaxed">{srv.description}</p>
 
                     {/* Specs Table */}
-                    <div className="grid grid-cols-2 gap-2 text-[11px] bg-white/10 p-3 rounded-2xl border border-white/10">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-3 rounded-2xl border border-slate-200">
                       <div>
-                        <span className="text-white/50">Độ chính xác:</span>{' '}
-                        <span className="text-white font-medium">{srv.precision}</span>
+                        <span className="text-slate-500">Độ chính xác:</span>{' '}
+                        <span className="text-slate-900 font-semibold">{srv.precision}</span>
                       </div>
                       <div>
-                        <span className="text-white/50">Thời gian trả:</span>{' '}
-                        <span className="text-white font-medium">{srv.turnaroundTime}</span>
+                        <span className="text-slate-500">Thời gian trả:</span>{' '}
+                        <span className="text-slate-900 font-semibold">{srv.turnaroundTime}</span>
                       </div>
                       <div>
-                        <span className="text-white/50">Khổ in tối đa:</span>{' '}
-                        <span className="text-white font-medium">
-                          {srv.maxVolumeMm.x}x{srv.maxVolumeMm.y}x{srv.maxVolumeMm.z} mm
+                        <span className="text-slate-500">Khổ in tối đa:</span>{' '}
+                        <span className="text-slate-900 font-semibold">
+                          {srv.maxVolumeMm.x}×{srv.maxVolumeMm.y}×{srv.maxVolumeMm.z} mm
                         </span>
                       </div>
                       <div>
-                        <span className="text-white/50">Đơn tối thiểu:</span>{' '}
-                        <span className="text-white font-medium">
+                        <span className="text-slate-500">Đơn tối thiểu:</span>{' '}
+                        <span className="text-slate-900 font-semibold font-mono">
                           {srv.minOrderVnd.toLocaleString('vi-VN')} đ
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between">
-                    <span className="text-xs text-white/60">
-                      Vật liệu: <span className="text-white font-medium">{srv.materialsAvailable.join(', ')}</span>
+                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-xs text-slate-600">
+                      Vật liệu: <span className="text-slate-900 font-semibold">{srv.materialsAvailable.join(', ')}</span>
                     </span>
 
                     <button
                       onClick={() => onOpenOrderModal(srv)}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium border border-white/15 transition-all active:scale-95"
+                      className="px-4 py-2 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all active:scale-95 shadow-xs cursor-pointer"
                     >
                       Đặt in gói này
                     </button>
@@ -512,18 +506,18 @@ export function PrintingServicesProfilesView({
       {subTab === 'profiles' && (
         <div className="space-y-6">
           {/* Slicer filter chips */}
-          <div className="flex flex-wrap items-center justify-between gap-3 vision-glass p-4 rounded-[28px] border border-white/15 shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 vision-glass p-4 rounded-[28px] border border-slate-200/90 shadow-xs bg-white/85">
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-white/60 font-medium">Phần mềm Slicer:</span>
+              <span className="text-slate-500 font-bold">Phần mềm Slicer:</span>
               <div className="flex flex-wrap gap-1">
                 {slicers.map((sl) => (
                   <button
                     key={sl}
                     onClick={() => setSelectedSlicer(sl)}
-                    className={`px-3.5 py-1.5 rounded-full transition-all text-xs font-semibold ${
+                    className={`px-3.5 py-1.5 rounded-full transition-all text-xs font-bold cursor-pointer ${
                       selectedSlicer === sl
-                        ? 'bg-white/30 text-white border border-white/30 shadow-xs'
-                        : 'bg-white/10 text-white/70 hover:text-white border border-white/10'
+                        ? 'bg-cyan-600 text-white shadow-xs'
+                        : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                   >
                     {sl === 'all' ? 'Tất cả Slicer' : sl}
@@ -532,8 +526,8 @@ export function PrintingServicesProfilesView({
               </div>
             </div>
 
-            <div className="text-xs text-emerald-300 flex items-center gap-1.5 font-medium">
-              <ShieldCheck className="w-4 h-4 text-emerald-300" />
+            <div className="text-xs text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5 font-bold">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Được test thực tế trên máy in trước khi chia sẻ</span>
             </div>
           </div>
@@ -547,44 +541,44 @@ export function PrintingServicesProfilesView({
               return (
                 <div
                   key={prof.id}
-                  className="rounded-[32px] vision-glass hover:bg-[#344637]/65 p-6 transition-all duration-300 flex flex-col justify-between border border-white/15 text-white shadow-sm"
+                  className="rounded-[32px] vision-glass hover:border-cyan-400 p-6 transition-all duration-300 flex flex-col justify-between border border-slate-200/90 text-slate-900 shadow-xs bg-white/90"
                 >
                   <div className="space-y-3.5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold text-white">{prof.title}</h3>
+                          <h3 className="text-sm font-bold text-slate-900">{prof.title}</h3>
                           {prof.badge && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white border border-white/20">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">
                               {prof.badge}
                             </span>
                           )}
                         </div>
-                        <div className="text-xs text-cyan-300 font-semibold mt-1">
+                        <div className="text-xs text-cyan-800 font-bold mt-1">
                           Máy in: {prof.printerModel}
                         </div>
                       </div>
 
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-white border border-white/15">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200 font-mono">
                         {prof.slicer}
                       </span>
                     </div>
 
-                    <p className="text-xs text-white/70 leading-relaxed">{prof.description}</p>
+                    <p className="text-xs text-slate-600 leading-relaxed">{prof.description}</p>
 
                     {/* Quick Specs */}
-                    <div className="grid grid-cols-3 gap-2 text-[11px] bg-white/10 p-3 rounded-2xl border border-white/10 text-center">
+                    <div className="grid grid-cols-3 gap-2 text-[11px] bg-slate-50 p-3 rounded-2xl border border-slate-200 text-center">
                       <div>
-                        <div className="text-white/50">Độ dày layer</div>
-                        <div className="font-bold text-white mt-0.5">{prof.layerHeightMm}</div>
+                        <div className="text-slate-500">Độ dày layer</div>
+                        <div className="font-bold text-slate-900 mt-0.5">{prof.layerHeightMm}</div>
                       </div>
                       <div>
-                        <div className="text-white/50">Đầu phun</div>
-                        <div className="font-bold text-white mt-0.5">{prof.nozzleSizeMm}</div>
+                        <div className="text-slate-500">Đầu phun</div>
+                        <div className="font-bold text-slate-900 mt-0.5">{prof.nozzleSizeMm}</div>
                       </div>
                       <div>
-                        <div className="text-white/50">Tốc độ thành</div>
-                        <div className="font-bold text-emerald-300 mt-0.5">
+                        <div className="text-slate-500">Tốc độ thành</div>
+                        <div className="font-bold text-emerald-700 mt-0.5">
                           {prof.estimatedSpeedMmS > 0 ? `${prof.estimatedSpeedMmS} mm/s` : 'SLA Fine'}
                         </div>
                       </div>
@@ -593,8 +587,8 @@ export function PrintingServicesProfilesView({
                     {/* Highlights */}
                     <div className="space-y-1">
                       {prof.highlights.map((h, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-xs text-white/80">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300 flex-shrink-0" />
+                        <div key={i} className="flex items-center gap-1.5 text-xs text-slate-700">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                           <span>{h}</span>
                         </div>
                       ))}
@@ -602,25 +596,25 @@ export function PrintingServicesProfilesView({
                   </div>
 
                   {/* Footer Action */}
-                  <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between">
+                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
                     <div>
                       {isFree ? (
-                        <span className="text-xs font-semibold text-emerald-300 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
+                        <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
                           Miễn phí 100%
                         </span>
                       ) : (
-                        <div className="text-sm font-bold text-white">
+                        <div className="text-sm font-bold text-slate-900 font-mono">
                           {prof.priceVnd.toLocaleString('vi-VN')} đ
                         </div>
                       )}
-                      <span className="text-[11px] text-white/50 ml-2">
+                      <span className="text-[11px] text-slate-500 ml-2">
                         {prof.downloads} lượt tải
                       </span>
                     </div>
 
                     <button
                       onClick={() => handleDownloadProfile(prof)}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all active:scale-95 bg-white/25 hover:bg-white/35 backdrop-blur-md text-white border border-white/20 shadow-xs"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 bg-cyan-600 hover:bg-cyan-500 text-white shadow-xs cursor-pointer"
                     >
                       {isFree ? (
                         <>
