@@ -116,12 +116,31 @@ export function usePrintSlicer() {
       return loaded;
     } catch (err: any) {
       console.error('Lỗi khi nạp file 3D:', err);
-      setFileError(err.message || 'Không thể đọc file 3D');
+      let userMsg = err.message || 'Không thể đọc file 3D';
+      if (userMsg.includes('ThreeMFLoader') || userMsg.includes('relationship') || userMsg.includes('rels') || userMsg.includes('3MF')) {
+        userMsg = 'File 3MF không đúng cấu trúc chuẩn hoặc bị lỗi giải nén. Hãy thử xuất lại file dưới dạng .STL tiêu chuẩn hoặc .3MF từ Bambu Studio / OrcaSlicer.';
+      } else if (userMsg.includes('STLLoader') || userMsg.includes('STL')) {
+        userMsg = 'File STL bị lỗi cấu trúc dữ liệu lưới in. Vui lòng kiểm tra lại file thiết kế.';
+      }
+      setFileError(userMsg);
       return null;
     } finally {
       setIsLoadingFile(false);
     }
   }, []);
+
+  const clearFileError = useCallback(() => {
+    setFileError(null);
+  }, []);
+
+  // Tự động ẩn thông báo lỗi sau 8 giây
+  useEffect(() => {
+    if (!fileError) return;
+    const timer = setTimeout(() => {
+      setFileError(null);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [fileError]);
 
   const clearCustomModel = useCallback(() => {
     setCustomModel(null);
@@ -189,6 +208,7 @@ export function usePrintSlicer() {
     customModel,
     isLoadingFile,
     fileError,
+    clearFileError,
     loadCustomFile,
     clearCustomModel,
     dimensionsMm,
