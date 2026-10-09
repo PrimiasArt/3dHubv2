@@ -7,31 +7,20 @@ import { usePathname } from 'next/navigation';
 import {
   Box,
   Sparkles,
-  TrendingUp,
-  Compass,
-  Layers,
   Wallet,
   Plus,
   ShoppingBag,
-  ShieldAlert,
   ChevronDown,
-  UserCheck,
   Building2,
-  CheckCircle,
-  ExternalLink,
-  FlaskConical,
-  ShieldCheck,
   ChevronRight,
   Store,
   User,
   Users,
   Menu,
   X,
-  Coins,
 } from 'lucide-react';
 import { useUserWallet } from '@/hooks/useUserWallet';
 import { useUserSession } from '@/hooks/useUserSession';
-import { useSystemEnvironment } from '@/hooks/useSystemEnvironment';
 import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { TopUpModal } from '@/components/wallet/TopUpModal';
 import { GoogleAuthModal } from '@/components/common/GoogleAuthModal';
@@ -40,17 +29,8 @@ import { UserRole } from '@/backend/domain/user';
 export function Navbar() {
   const pathname = usePathname();
   const { balanceVnd, isTopUpModalOpen, setIsTopUpModalOpen, topUpBalance } = useUserWallet();
-  const { currentUser, permissions, allUsers, switchUser, switchRole, toastMessage } = useUserSession();
+  const { currentUser, permissions, allUsers, switchUser } = useUserSession();
   const { isModuleVisible } = useModulePermissions();
-  const {
-    environment,
-    isOfficial,
-    isStaging,
-    commercial,
-    toggleEnvironment,
-    isSwitching,
-    toastMessage: envToastMessage,
-  } = useSystemEnvironment();
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -73,7 +53,7 @@ export function Navbar() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Clean 3-Pillar Customer Navigation (Always strictly 3 items to avoid blowing up navbar width)
+  // Clean 3-Pillar Customer Navigation
   const navItems = [
     { label: 'Trang Chủ', href: '/', icon: Box },
   ];
@@ -110,27 +90,27 @@ export function Navbar() {
       case 'admin':
         return {
           text: 'ADMIN',
-          bg: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+          bg: 'bg-rose-50 text-rose-700 border-rose-200',
         };
       case 'mod':
         return {
           text: 'MOD',
-          bg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+          bg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
         };
       case 'seller':
         return {
           text: 'SELLER',
-          bg: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+          bg: 'bg-amber-50 text-amber-700 border-amber-200',
         };
       case 'staff':
         return {
           text: 'STAFF',
-          bg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+          bg: 'bg-cyan-50 text-cyan-700 border-cyan-200',
         };
       default:
         return {
           text: 'USER',
-          bg: 'bg-white/10 text-white/70 border-white/10',
+          bg: 'bg-slate-100 text-slate-700 border-slate-200',
         };
     }
   };
@@ -141,55 +121,23 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+      <header className="sticky top-0 z-50 w-full px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4">
         {/* Apple VisionOS Floating Frosted Glass Capsule Bar */}
-        <div className="max-w-7xl mx-auto h-16 rounded-full px-4 sm:px-6 lg:px-7 flex items-center justify-between vision-glass shadow-[0_12px_36px_rgba(15,23,42,0.06)] border border-slate-200/80 bg-white/80 backdrop-blur-2xl relative">
+        <div className="max-w-7xl mx-auto h-16 rounded-full px-3.5 sm:px-6 lg:px-7 flex items-center justify-between vision-glass shadow-[0_12px_36px_rgba(15,23,42,0.06)] border border-slate-200/90 bg-white/85 backdrop-blur-2xl relative">
           {/* Brand Logo with VisionOS Circular Glass Icon */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 backdrop-blur-md border border-cyan-500/20 flex items-center justify-center text-cyan-600 transition-all shadow-xs group-hover:scale-105">
-              <Box className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-600" />
+          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 backdrop-blur-md border border-cyan-500/25 flex items-center justify-center text-cyan-700 transition-all shadow-xs group-hover:scale-105">
+              <Box className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-cyan-600" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-bold text-sm sm:text-base lg:text-lg tracking-tight text-slate-900">
-                  3D HUB
-                </span>
-                {/* Badge Staging / Official: Admin có thể click để chuyển đổi giữa / và /staging */}
-                {isAdmin ? (
-                  <Link
-                    href={isOfficial ? '/staging' : '/'}
-                    onClick={(e) => e.stopPropagation()}
-                    className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded-full border transition-all hover:scale-105 active:scale-95 ${
-                      isOfficial
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30 shadow-[0_0_8px_rgba(16,185,129,0.2)] hover:bg-emerald-500/30'
-                        : 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40 shadow-[0_0_8px_rgba(45,212,191,0.25)] hover:bg-[#2DD4BF]/30'
-                    }`}
-                    title={
-                      isOfficial
-                        ? 'Admin: Click để chuyển sang bản Staging Sandbox (/staging)'
-                        : 'Admin: Click để chuyển về bản Official thương mại (/)'
-                    }
-                  >
-                    {isOfficial ? 'OFFICIAL' : 'STAGING'}
-                  </Link>
-                ) : (
-                  <span
-                    className={`px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider rounded-full border ${
-                      isStaging
-                        ? 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40'
-                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                    }`}
-                    title={isStaging ? 'Bản Thử Nghiệm Staging 3D Hub' : '3D Hub Official'}
-                  >
-                    {isStaging ? 'STAGING' : 'OFFICIAL'}
-                  </span>
-                )}
-              </div>
+              <span className="font-extrabold text-sm sm:text-base tracking-tight text-slate-900">
+                3D HUB
+              </span>
             </div>
           </Link>
 
-          {/* Center Customer Navigation - VisionOS Segmented Pill Control (Strictly 3 Items) */}
-          <nav className="hidden md:flex items-center p-1 rounded-full bg-slate-100/70 backdrop-blur-xl border border-slate-200/80 shrink-0">
+          {/* Center Customer Navigation - VisionOS Segmented Pill Control */}
+          <nav className="hidden md:flex items-center p-1 rounded-full bg-slate-100/80 backdrop-blur-xl border border-slate-200/80 shrink-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -199,7 +147,7 @@ export function Navbar() {
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all whitespace-nowrap shrink-0 ${
                     isActive
-                      ? 'bg-cyan-500 text-white font-bold shadow-sm'
+                      ? 'bg-gradient-to-r from-cyan-600 to-sky-600 text-white font-bold shadow-sm'
                       : 'text-slate-600 hover:text-slate-900 font-medium hover:bg-white/80'
                   }`}
                 >
@@ -220,57 +168,28 @@ export function Navbar() {
             {hasAdminAccess && (
               <Link
                 href="/admin"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 ${
                   pathname === '/admin'
                     ? 'bg-cyan-100 text-cyan-800 border-cyan-300 shadow-xs'
-                    : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 border-slate-200'
+                    : 'bg-slate-100/90 hover:bg-slate-200/90 text-slate-700 border-slate-200'
                 }`}
                 title="Trung tâm Quản trị hệ thống & Xưởng in"
               >
                 <Building2 className="w-3.5 h-3.5 text-cyan-600" />
-                <span className="hidden xl:inline">Quản Trị</span>
+                <span className="hidden lg:inline">Quản Trị</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
               </Link>
-            )}
-
-            {/* Quick Admin Environment Switcher Button */}
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => toggleEnvironment()}
-                disabled={isSwitching}
-                className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs border backdrop-blur-md active:scale-95 group ${
-                  isOfficial
-                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
-                    : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border-cyan-200'
-                }`}
-                title={`Admin Switcher: Đang ở bản ${isOfficial ? 'Official (Thương Mại)' : 'Staging'}. Click để chuyển đổi tức thì!`}
-              >
-                {isOfficial ? (
-                  <>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 group-hover:scale-110 transition-transform" />
-                    <span className="tracking-tight">OFFICIAL</span>
-                    <span className="hidden 2xl:inline text-[10px] text-emerald-600/70 font-normal">| Live</span>
-                  </>
-                ) : (
-                  <>
-                    <FlaskConical className="w-3.5 h-3.5 text-cyan-600 group-hover:scale-110 transition-transform" />
-                    <span className="tracking-tight text-cyan-900">STAGING</span>
-                    <span className="hidden 2xl:inline text-[10px] text-cyan-700 font-medium">| Sandbox</span>
-                  </>
-                )}
-              </button>
             )}
 
             {/* VisionOS Glass Wallet Pill Button */}
             {isModuleVisible('wallet') && (
               <button
                 onClick={() => setIsTopUpModalOpen(true)}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-slate-100/90 hover:bg-slate-200/90 border border-slate-200 text-slate-800 text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-cyan-50/80 hover:bg-cyan-100/80 border border-cyan-200 text-slate-800 text-xs font-medium transition-all shadow-xs backdrop-blur-md active:scale-95 group"
                 title="Nạp tiền vào ví qua VietQR hoặc MoMo"
               >
                 <Wallet className="w-3.5 h-3.5 text-cyan-600 group-hover:scale-110 transition-transform" />
-                <span suppressHydrationWarning className="font-bold text-xs tracking-tight text-slate-900 font-mono">
+                <span suppressHydrationWarning className="font-bold text-xs tracking-tight text-cyan-900 font-mono">
                   {new Intl.NumberFormat('en-US').format(currentUser?.walletBalanceVnd ?? balanceVnd)} đ
                 </span>
                 <span className="w-4 h-4 rounded-full bg-cyan-600 text-white flex items-center justify-center text-[10px] hidden sm:flex">
@@ -285,7 +204,7 @@ export function Navbar() {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pr-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200 transition-all text-left shadow-xs backdrop-blur-md"
               >
-                <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-black/30 border border-white/20 shrink-0">
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-slate-200 border border-slate-300 shrink-0">
                   {currentUser?.avatar ? (
                     <Image
                       src={currentUser.avatar}
@@ -295,7 +214,7 @@ export function Navbar() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/80 text-xs font-semibold">
+                    <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-semibold">
                       {currentUser?.name?.charAt(0) || 'U'}
                     </div>
                   )}
@@ -376,13 +295,13 @@ export function Navbar() {
                       <Link
                         href="/admin?tab=users"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-[#2DD4BF]/20 hover:bg-[#2DD4BF]/30 text-[#CCFBF1] text-xs font-bold transition-all border border-[#2DD4BF]/40 shadow-xs"
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-900 text-xs font-bold transition-all border border-cyan-200 shadow-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <Users className="w-3.5 h-3.5 text-[#5EEAD4]" />
+                          <Users className="w-3.5 h-3.5 text-cyan-600" />
                           <span>Quản Lý Người Dùng</span>
                         </div>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#2DD4BF] text-[#051817] font-black">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-cyan-600 text-white font-bold">
                           Admin
                         </span>
                       </Link>
@@ -393,13 +312,13 @@ export function Navbar() {
                       <Link
                         href="/admin?tab=products"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 text-xs font-bold transition-all border border-emerald-400/30 shadow-xs"
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-bold transition-all border border-emerald-200 shadow-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <ShoppingBag className="w-3.5 h-3.5 text-emerald-300" />
+                          <ShoppingBag className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Quản Lý Sản Phẩm &amp; Kho</span>
                         </div>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 font-semibold">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-600 text-white font-semibold">
                           Kho
                         </span>
                       </Link>
@@ -410,13 +329,13 @@ export function Navbar() {
                       <Link
                         href="/seller"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold transition-all border border-amber-400/30 shadow-xs"
+                        className="mt-1.5 w-full flex items-center justify-between py-2 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all border border-amber-200 shadow-xs"
                       >
                         <div className="flex items-center gap-2">
-                          <Store className="w-3.5 h-3.5 text-amber-300" />
+                          <Store className="w-3.5 h-3.5 text-amber-600" />
                           <span>Kênh Gian Hàng (Seller Hub)</span>
                         </div>
-                        <ChevronRight className="w-3.5 h-3.5 text-amber-300/60" />
+                        <ChevronRight className="w-3.5 h-3.5 text-amber-600" />
                       </Link>
                     )}
 
@@ -425,9 +344,9 @@ export function Navbar() {
                       <Link
                         href="/admin"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="mt-1.5 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-medium transition-all shadow-xs border border-white/15"
+                        className="mt-1.5 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium transition-all shadow-xs border border-slate-200"
                       >
-                        <Building2 className="w-3.5 h-3.5 text-white/80" />
+                        <Building2 className="w-3.5 h-3.5 text-slate-600" />
                         <span>Mở Trang Quản Trị Hệ Thống</span>
                       </Link>
                     )}
@@ -441,7 +360,7 @@ export function Navbar() {
                         setIsUserMenuOpen(false);
                         setIsGoogleAuthModalOpen(true);
                       }}
-                      className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold transition-all shadow-md active:scale-95"
+                      className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-900 text-xs font-bold transition-all shadow-xs border border-slate-200 active:scale-95"
                     >
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
                         <path
@@ -464,114 +383,6 @@ export function Navbar() {
                       <span>Đăng nhập với Google</span>
                     </button>
                   </div>
-
-                  {/* Admin Environment Switcher Section (CHỈ HIỂN THỊ CHO ADMIN) */}
-                  {isAdmin && (
-                    <div className="p-3 rounded-2xl bg-black/30 border border-white/15 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-white">
-                          <Sparkles className="w-3.5 h-3.5 text-[#5EEAD4]" />
-                          <span>Môi Trường Vận Hành</span>
-                        </div>
-                        <span
-                          className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
-                            isOfficial
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                              : 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40 shadow-[0_0_10px_rgba(45,212,191,0.25)]'
-                          }`}
-                        >
-                          {isOfficial ? 'OFFICIAL' : 'STAGING (NGỌC BÍCH & CYAN)'}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-black/40 border border-white/10">
-                        <button
-                          type="button"
-                          onClick={() => toggleEnvironment('staging')}
-                          disabled={isSwitching}
-                          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                            isStaging
-                              ? 'bg-[#2DD4BF]/30 text-[#F0FDFA] border border-[#2DD4BF]/50 shadow-xs'
-                              : 'text-white/60 hover:text-white'
-                          }`}
-                        >
-                          <FlaskConical className="w-3.5 h-3.5 text-[#5EEAD4]" />
-                          <span>Staging</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => toggleEnvironment('official')}
-                          disabled={isSwitching}
-                          className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                            isOfficial
-                              ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 shadow-xs'
-                              : 'text-white/60 hover:text-white'
-                          }`}
-                        >
-                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                          <span>Official</span>
-                        </button>
-                      </div>
-
-                      <p className="text-[10px] text-white/60 leading-tight">
-                        {isOfficial
-                          ? '🌟 Bản Thương Mại: Bảng giá niêm yết thương mại (+25%), VietQR & bảo hành 1 đổi 1.'
-                          : '🧪 Bản Staging Sandbox: Giao diện Xanh Ngọc Bích & Cyan Pastel, dữ liệu thử nghiệm, giá gốc 0% phụ thu.'}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Switch Demo User Section - Collapsible for Admin in Staging */}
-                  {isAdmin && isStaging && (
-                    <details className="p-2.5 rounded-2xl bg-white/5 border border-white/10 group">
-                      <summary className="text-[11px] font-semibold text-[#7ECEC5] cursor-pointer flex items-center justify-between list-none select-none">
-                        <span className="flex items-center gap-1.5">
-                          <FlaskConical className="w-3.5 h-3.5 text-[#5EEAD4]" />
-                          <span>Mở Rộng Sandbox RBAC Test</span>
-                        </span>
-                        <ChevronDown className="w-3.5 h-3.5 transition-transform group-open:rotate-180 text-white/50" />
-                      </summary>
-
-                      <div className="pt-2.5 space-y-2">
-                        <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
-                          {allUsers.map((u) => {
-                            const isCurrent = u.id === currentUser?.id;
-                            const badge = getRoleBadge(u.role);
-                            return (
-                              <button
-                                key={u.id}
-                                onClick={() => {
-                                  switchUser(u.id);
-                                  setIsUserMenuOpen(false);
-                                }}
-                                className={`w-full flex items-center justify-between p-1.5 rounded-xl text-left text-xs transition-colors ${
-                                  isCurrent
-                                    ? 'bg-white/20 border border-white/20 text-white font-semibold'
-                                    : 'hover:bg-white/10 text-white/80'
-                                }`}
-                              >
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <div className="relative w-5 h-5 rounded-full overflow-hidden shrink-0 border border-white/20">
-                                    {u.avatar ? (
-                                      <Image src={u.avatar} alt={u.name} fill unoptimized className="object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center text-[9px] font-bold text-white">
-                                        {u.name?.charAt(0) || 'U'}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <span className="font-medium text-[11px] truncate">{u.name}</span>
-                                </div>
-                                <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded-full border ${badge.bg}`}>
-                                  {badge.text}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </details>
-                  )}
                 </div>
               )}
             </div>
@@ -580,21 +391,21 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 flex items-center justify-center text-white transition-all active:scale-95 ml-0.5"
+              className="md:hidden w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition-all active:scale-95 ml-0.5"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? (
-                <X className="w-4 h-4 text-[#5EEAD4]" />
+                <X className="w-4 h-4 text-cyan-600" />
               ) : (
-                <Menu className="w-4 h-4 text-white" />
+                <Menu className="w-4 h-4 text-slate-700" />
               )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer Sheet (Renders smoothly on phones/tablets) */}
+        {/* Mobile Navigation Drawer Sheet */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-[#2DD4BF]/30 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-3xl space-y-3 animate-fadeIn text-white">
+          <div className="md:hidden mt-2 max-w-7xl mx-auto rounded-[28px] vision-glass-panel border border-slate-200/90 p-4 shadow-xl backdrop-blur-3xl space-y-3 animate-fadeIn text-slate-800 bg-white/95">
             {/* Mobile Navigation Links */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {mobileNavItems.map((item) => {
@@ -607,11 +418,11 @@ export function Navbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl text-xs font-bold transition-all border ${
                       isActive
-                        ? 'bg-[#2DD4BF]/25 text-[#5EEAD4] border-[#2DD4BF]/40 shadow-xs'
-                        : 'bg-black/25 text-white/80 border-white/10 hover:bg-white/10 hover:text-white'
+                        ? 'bg-cyan-50 text-cyan-800 border-cyan-200 shadow-xs'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    <Icon className="w-4 h-4 text-[#5EEAD4]" />
+                    <Icon className="w-4 h-4 text-cyan-600" />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -625,49 +436,19 @@ export function Navbar() {
                   setIsMobileMenuOpen(false);
                   setIsTopUpModalOpen(true);
                 }}
-                className="w-full flex items-center justify-between p-3 rounded-2xl bg-black/35 border border-white/15 text-xs text-white transition-all hover:bg-black/45"
+                className="w-full flex items-center justify-between p-3 rounded-2xl bg-cyan-50/70 border border-cyan-200 text-xs text-slate-800 transition-all hover:bg-cyan-100/70"
               >
                 <div className="flex items-center gap-2">
-                  <Wallet className="w-4 h-4 text-[#5EEAD4]" />
-                  <span className="font-semibold">Ví 3D Hub:</span>
-                  <span className="font-mono font-bold text-[#5EEAD4]">
+                  <Wallet className="w-4 h-4 text-cyan-600" />
+                  <span className="font-semibold text-slate-700">Ví 3D Hub:</span>
+                  <span className="font-mono font-bold text-cyan-900">
                     {(currentUser?.walletBalanceVnd ?? balanceVnd).toLocaleString('vi-VN')} đ
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#2DD4BF] text-[#051817] font-bold text-[11px] shadow-xs">
+                <span className="px-3 py-1 rounded-full bg-cyan-600 text-white font-bold text-[11px] shadow-xs">
                   + Nạp Ví
                 </span>
               </button>
-            )}
-
-            {/* Admin Switcher in Mobile Drawer */}
-            {isAdmin && (
-              <div className="p-3 rounded-2xl bg-black/35 border border-white/15 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold">
-                  <FlaskConical className="w-4 h-4 text-[#5EEAD4]" />
-                  <span>Môi Trường:</span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                      isOfficial
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                        : 'bg-[#2DD4BF]/20 text-[#CCFBF1] border-[#2DD4BF]/40'
-                    }`}
-                  >
-                    {isOfficial ? 'OFFICIAL' : 'STAGING (NGỌC BÍCH & CYAN)'}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleEnvironment();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  disabled={isSwitching}
-                  className="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-bold border border-white/20 active:scale-95"
-                >
-                  Đổi sang {isOfficial ? 'Staging' : 'Official'}
-                </button>
-              </div>
             )}
 
             {/* Fast Google Login in Mobile Drawer */}
@@ -677,7 +458,7 @@ export function Navbar() {
                 setIsMobileMenuOpen(false);
                 setIsGoogleAuthModalOpen(true);
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold transition-all shadow-md active:scale-95"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 text-xs font-bold transition-all shadow-xs border border-slate-200 active:scale-95"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -697,19 +478,11 @@ export function Navbar() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Đăng nhập nhanh với Google</span>
+              <span>Đăng nhập với Google</span>
             </button>
           </div>
         )}
       </header>
-
-      {/* VisionOS Floating Notification Capsule */}
-      {(envToastMessage || toastMessage) && (
-        <div className="fixed bottom-6 right-6 z-50 vision-glass text-white px-5 py-2.5 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#2DD4BF]/30 flex items-center gap-2.5 text-xs font-medium animate-in slide-in-from-bottom-3 duration-300">
-          <UserCheck className="w-4 h-4 text-[#5EEAD4] shrink-0" />
-          <span>{envToastMessage || toastMessage}</span>
-        </div>
-      )}
 
       {/* TopUp Modal with VietQR & MoMo */}
       <TopUpModal

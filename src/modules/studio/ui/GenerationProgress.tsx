@@ -17,37 +17,37 @@ export function GenerationProgress({ progress, currentStep }: GenerationProgress
   ];
 
   return (
-    <div className="p-4 rounded-xl border border-indigo-500/30 bg-indigo-950/20 backdrop-blur-md space-y-3">
+    <div className="p-4 rounded-2xl border border-cyan-300/80 bg-cyan-50/80 backdrop-blur-md space-y-3 shadow-xs">
       <div className="flex items-center justify-between text-xs">
-        <span className="flex items-center gap-2 font-semibold text-indigo-300">
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+        <span className="flex items-center gap-2 font-bold text-cyan-950">
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-700" />
           {currentStep}
         </span>
-        <span className="font-bold text-indigo-400 text-sm">{progress}%</span>
+        <span className="font-extrabold text-cyan-800 text-sm font-mono">{progress}%</span>
       </div>
 
       {/* Progress Bar Track */}
-      <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5">
+      <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden p-0.5">
         <div
-          className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300 shadow-lg shadow-indigo-500/50"
+          className="h-full bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 rounded-full transition-all duration-300 shadow-sm"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* 4 Steps Indicator */}
-      <div className="grid grid-cols-4 gap-1 text-[10px] text-center pt-1 text-slate-400">
-        {steps.map((st, i) => {
+      <div className="grid grid-cols-4 gap-1 text-[10px] text-center pt-1 text-slate-500">
+        {steps.map((st) => {
           const isDone = progress >= st.minProgress;
           return (
             <div
               key={st.label}
               className={`flex flex-col items-center gap-1 transition-colors ${
-                isDone ? 'text-indigo-300 font-semibold' : 'text-slate-600'
+                isDone ? 'text-cyan-900 font-bold' : 'text-slate-400'
               }`}
             >
               <div
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  isDone ? 'bg-indigo-400' : 'bg-slate-700'
+                  isDone ? 'bg-cyan-600' : 'bg-slate-300'
                 }`}
               />
               <span className="truncate w-full">{st.label}</span>

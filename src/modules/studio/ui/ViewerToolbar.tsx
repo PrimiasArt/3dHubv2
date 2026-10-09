@@ -39,7 +39,7 @@ export function ViewerToolbar({
   onColorChange,
 }: ViewerToolbarProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 vision-glass rounded-2xl text-white">
+    <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 vision-glass rounded-2xl text-slate-800 border border-slate-200/90 shadow-sm">
       {/* Toggles & View Mode */}
       <div className="flex flex-wrap items-center gap-1.5">
         {/* Slicer Toolpath Mode Toggle */}
@@ -49,12 +49,12 @@ export function ViewerToolbar({
             onClick={onToggleViewMode}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
               options.viewMode === 'toolpath'
-                ? 'bg-white/30 text-white border-white/40 shadow-sm'
-                : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+                ? 'bg-cyan-500 text-white border-cyan-400 shadow-sm'
+                : 'bg-white/80 hover:bg-white text-slate-700 border-slate-200 shadow-xs'
             }`}
             title="Chuyển đổi: Màu Vật Liệu ⟷ Màu Đường In Slicer (Outer, Inner, Support)"
           >
-            <Layers className="w-3.5 h-3.5 text-white/90" />
+            <Layers className="w-3.5 h-3.5" />
             <span>{options.viewMode === 'toolpath' ? 'Đường In Slicer: BẬT' : 'Màu Đường In Slicer'}</span>
           </button>
         )}
@@ -62,10 +62,10 @@ export function ViewerToolbar({
         <button
           type="button"
           onClick={onToggleWireframe}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
             options.wireframe
-              ? 'bg-white/30 text-white border-white/40 shadow-sm'
-              : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+              ? 'bg-cyan-500 text-white border-cyan-400 shadow-sm'
+              : 'bg-white/80 hover:bg-white text-slate-700 border-slate-200 shadow-xs'
           }`}
           title="Bật/Tắt chế độ khung lưới Wireframe"
         >
@@ -76,10 +76,10 @@ export function ViewerToolbar({
         <button
           type="button"
           onClick={onToggleAutoRotate}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
             options.autoRotate
-              ? 'bg-white/30 text-white border-white/40 shadow-sm'
-              : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+              ? 'bg-cyan-500 text-white border-cyan-400 shadow-sm'
+              : 'bg-white/80 hover:bg-white text-slate-700 border-slate-200 shadow-xs'
           }`}
           title="Bật/Tắt tự động xoay mô hình"
         >
@@ -90,10 +90,10 @@ export function ViewerToolbar({
         <button
           type="button"
           onClick={onToggleGrid}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
             options.showGrid
-              ? 'bg-white/30 text-white border-white/40 shadow-sm'
-              : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+              ? 'bg-cyan-500 text-white border-cyan-400 shadow-sm'
+              : 'bg-white/80 hover:bg-white text-slate-700 border-slate-200 shadow-xs'
           }`}
           title="Bật/Tắt lưới bàn in 3D"
         >
@@ -105,10 +105,10 @@ export function ViewerToolbar({
           <button
             type="button"
             onClick={onToggleDimensions}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
               options.showDimensions
-                ? 'bg-white/30 text-white border-white/40 shadow-sm'
-                : 'bg-white/10 hover:bg-white/20 text-white/80 border-white/15'
+                ? 'bg-cyan-500 text-white border-cyan-400 shadow-sm'
+                : 'bg-white/80 hover:bg-white text-slate-700 border-slate-200 shadow-xs'
             }`}
             title="Bật/Tắt thước đo kích thước 3D (X, Y, Z mm)"
           >
@@ -120,17 +120,17 @@ export function ViewerToolbar({
 
       {/* Auto-Orientation Options */}
       {onSetOrientation && (
-        <div className="flex items-center gap-1 bg-black/25 p-1 rounded-full border border-white/10 text-[11px]">
-          <span className="text-white/60 px-2 font-medium flex items-center gap-1">
-            <Compass className="w-3 h-3 text-white/80" /> Góc đặt:
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200 text-[11px]">
+          <span className="text-slate-600 px-2 font-semibold flex items-center gap-1">
+            <Compass className="w-3 h-3 text-cyan-700" /> Góc đặt:
           </span>
           <button
             type="button"
             onClick={() => onSetOrientation(0)}
-            className={`px-2.5 py-0.5 rounded-full transition-all font-medium ${
+            className={`px-2.5 py-0.5 rounded-full transition-all font-semibold ${
               options.orientationDeg === 0
-                ? 'bg-white/30 text-white font-bold shadow-xs'
-                : 'text-white/60 hover:text-white'
+                ? 'bg-cyan-500 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
             title="Đặt nằm phẳng trên bàn in (0°)"
           >
@@ -139,10 +139,10 @@ export function ViewerToolbar({
           <button
             type="button"
             onClick={() => onSetOrientation(45)}
-            className={`px-2.5 py-0.5 rounded-full transition-all font-medium ${
+            className={`px-2.5 py-0.5 rounded-full transition-all font-semibold ${
               options.orientationDeg === 45
-                ? 'bg-white/30 text-white font-bold shadow-xs'
-                : 'text-white/60 hover:text-white'
+                ? 'bg-cyan-500 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
             title="Nghiêng 45° tối ưu giảm diện tích bám support"
           >
@@ -151,10 +151,10 @@ export function ViewerToolbar({
           <button
             type="button"
             onClick={() => onSetOrientation(90)}
-            className={`px-2.5 py-0.5 rounded-full transition-all font-medium ${
+            className={`px-2.5 py-0.5 rounded-full transition-all font-semibold ${
               options.orientationDeg === 90
-                ? 'bg-white/30 text-white font-bold shadow-xs'
-                : 'text-white/60 hover:text-white'
+                ? 'bg-cyan-500 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
             title="Dựng đứng thẳng (90°)"
           >
@@ -164,10 +164,10 @@ export function ViewerToolbar({
             <button
               type="button"
               onClick={onRotateStep}
-              className="px-2 py-0.5 rounded-full text-white/80 hover:text-white bg-white/10 hover:bg-white/20 transition-colors font-medium flex items-center gap-1 ml-0.5"
+              className="px-2 py-0.5 rounded-full text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-200 border border-slate-200 transition-colors font-semibold flex items-center gap-1 ml-0.5 shadow-2xs"
               title="Xoay thêm +90° quanh trục X"
             >
-              <RotateCw className="w-2.5 h-2.5 text-white/80" />
+              <RotateCw className="w-2.5 h-2.5" />
               <span>+90°</span>
             </button>
           )}
@@ -176,8 +176,8 @@ export function ViewerToolbar({
 
       {/* Color Presets */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-white/60 hidden sm:inline flex items-center gap-1">
-          <Palette className="w-3 h-3" /> Màu:
+        <span className="text-xs text-slate-600 hidden sm:inline flex items-center gap-1 font-semibold">
+          <Palette className="w-3 h-3 text-cyan-700" /> Màu:
         </span>
         <div className="flex items-center gap-1.5">
           {COLOR_PRESETS.map((p) => (
@@ -187,7 +187,7 @@ export function ViewerToolbar({
               onClick={() => onColorChange(p.color)}
               title={p.name}
               className={`w-5 h-5 rounded-full transition-all border ${
-                options.materialColor === p.color ? 'scale-125 border-white ring-2 ring-white/50' : 'border-white/20 hover:scale-110'
+                options.materialColor === p.color ? 'scale-125 border-cyan-500 ring-2 ring-cyan-400/50 shadow-xs' : 'border-slate-300 hover:scale-110'
               }`}
               style={{ backgroundColor: p.color }}
             />

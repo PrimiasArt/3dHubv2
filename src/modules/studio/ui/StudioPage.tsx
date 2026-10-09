@@ -240,16 +240,16 @@ function StudioInner() {
   return (
     <div className="space-y-6">
       {/* Studio Header Bar */}
-      <div className="vision-glass-panel rounded-[32px] p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="vision-glass-panel rounded-[32px] p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-200/90 bg-white/85 shadow-xs">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shrink-0 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600 shrink-0 shadow-xs">
             <Box className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               3D Studio &amp; Slicer Intelligence
             </h1>
-            <p className="text-xs sm:text-sm text-white/70 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
               Trung tâm chuẩn bị bản in: Căn chỉnh khổ máy, mô phỏng cắt lớp in FDM và cấu hình Tree Support
             </p>
           </div>
@@ -257,8 +257,8 @@ function StudioInner() {
 
         <div className="flex items-center gap-3">
           {/* Quick Engine Indicator */}
-          <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-white/15 text-white/90 border border-white/20 flex items-center gap-1.5 backdrop-blur-xl">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
+          <span className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200 flex items-center gap-1.5 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
             <span>AI: Fal.ai Trellis Engine</span>
           </span>
         </div>
@@ -275,13 +275,13 @@ function StudioInner() {
         {/* Left Column: Tabbed Controls (AI Creation vs Slicer & Support Prefs) */}
         <div className="lg:col-span-5 space-y-4">
           {/* Navigation Tabs between Slicer Settings and AI Studio */}
-          <div className="flex rounded-full bg-black/30 p-1.5 border border-white/10 backdrop-blur-xl">
+          <div className="flex rounded-full bg-slate-100 p-1.5 border border-slate-200 backdrop-blur-xl">
             <button
               onClick={() => setActiveTab('slicer')}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold transition-all ${
                 activeTab === 'slicer'
-                  ? 'bg-white/28 text-white shadow-xs'
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-white text-cyan-900 shadow-sm border border-slate-200/80 font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
@@ -292,8 +292,8 @@ function StudioInner() {
               onClick={() => setActiveTab('ai')}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold transition-all ${
                 activeTab === 'ai'
-                  ? 'bg-white/28 text-white shadow-xs'
-                  : 'text-white/60 hover:text-white'
+                  ? 'bg-white text-cyan-900 shadow-sm border border-slate-200/80 font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -344,10 +344,10 @@ function StudioInner() {
 
           {/* TAB 2: AI GENERATION */}
           {activeTab === 'ai' && (
-            <div className="space-y-4 vision-glass rounded-[32px] p-5 sm:p-6 shadow-2xl">
+            <div className="space-y-4 vision-glass rounded-[32px] p-5 sm:p-6 shadow-xs border border-slate-200/90 bg-white/85">
               {/* Step 1: Upload */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-white/70 px-0.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-800 px-0.5">
                   Tải Lên Ảnh 2D Cần Dựng 3D:
                 </label>
                 <ImageUploadZone
@@ -358,9 +358,9 @@ function StudioInner() {
 
               {/* Step 2: Prompt Assistance */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-white/70 flex items-center justify-between px-0.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center justify-between px-0.5">
                   <span>Ghi Chú Mô Tả Chi Tiết:</span>
-                  <span className="text-[11px] font-normal text-white/80 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-cyan-700 flex items-center gap-1">
                     <Wand2 className="w-3 h-3" /> Tự động Watertight
                   </span>
                 </label>
@@ -370,7 +370,7 @@ function StudioInner() {
                   onChange={(e) => setPromptText(e.target.value)}
                   disabled={isGenerating}
                   placeholder="VD: Cấu trúc cơ khí, độ dày thành 2mm, không cần support..."
-                  className="w-full px-4 py-3 rounded-2xl bg-black/25 border border-white/15 text-xs text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-black/35 transition-all"
+                  className="w-full px-4 py-3 rounded-2xl bg-white border border-slate-300 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all shadow-xs"
                 />
               </div>
 
@@ -386,10 +386,10 @@ function StudioInner() {
                 <button
                   onClick={handleStartGeneration}
                   disabled={!selectedImage || isGenerating}
-                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white transition-all shadow-lg active:scale-[0.98] ${
+                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl font-bold text-sm transition-all shadow-sm active:scale-[0.98] ${
                     !selectedImage || isGenerating
-                      ? 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed shadow-none'
-                      : 'vision-pill-btn'
+                      ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
+                      : 'bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white shadow-md'
                   }`}
                 >
                   <Sparkles className="w-4 h-4 text-white" />
@@ -475,23 +475,23 @@ function StudioInner() {
           />
 
           {/* FAST CONVERSION & 3D ASSET LIFECYCLE ACTION BAR */}
-          <div className="p-4 sm:p-5 rounded-[28px] vision-glass flex flex-col gap-4 shadow-xl">
+          <div className="p-4 sm:p-5 rounded-[28px] vision-glass border border-slate-200/90 bg-white/90 shadow-xs flex flex-col gap-4">
             {/* Row 1: Đặt In 3D Trực Tiếp */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-full bg-white/20 border border-white/25 flex items-center justify-center text-white shadow-md flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600 shadow-xs flex-shrink-0">
                   <Printer className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm sm:text-base font-bold text-white">
+                    <h3 className="text-sm sm:text-base font-black text-slate-900">
                       Đặt In Dịch Vụ Mẫu Này Ngay
                     </h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/15 text-white/90 border border-white/20">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 border border-cyan-200">
                       Báo giá tức thì
                     </span>
                   </div>
-                  <p className="text-xs text-white/70 mt-0.5">
+                  <p className="text-xs text-slate-600 mt-0.5">
                     Ước tính: ~{estimation.filamentWeightGrams}g nhựa • Thời gian in: ~{Math.round((estimation.estimatedPrintTimeMinutes / 60) * 10) / 10}h • Giao toàn quốc
                   </p>
                 </div>
@@ -501,7 +501,7 @@ function StudioInner() {
                 <button
                   type="button"
                   onClick={() => setIsOrderServiceModalOpen(true)}
-                  className="vision-pill-btn flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-white font-bold text-xs shadow-lg active:scale-95"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white font-bold text-xs shadow-md active:scale-95 transition-all"
                 >
                   <Sparkles className="w-4 h-4 text-white" />
                   <span>Đặt In (Tạm Tính {Math.max(25000, estimation.filamentWeightGrams * 600 + Math.round(estimation.estimatedPrintTimeMinutes / 60) * 15000).toLocaleString('vi-VN')} đ)</span>
@@ -509,7 +509,7 @@ function StudioInner() {
 
                 <Link
                   href={`/shop?tab=services&modelName=${encodeURIComponent(customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || '3D Benchy'))}&weight=${estimation.filamentWeightGrams}&dimX=${dimensionsMm.x}&dimY=${dimensionsMm.y}&dimZ=${dimensionsMm.z}`}
-                  className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/15 text-xs font-semibold transition-all whitespace-nowrap"
+                  className="px-4 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 text-xs font-bold transition-all whitespace-nowrap"
                   title="Tùy chỉnh cấu hình báo giá chi tiết tại Cửa Hàng 3D Hub"
                 >
                   <span>Xem tại Shop →</span>
@@ -518,13 +518,13 @@ function StudioInner() {
             </div>
 
             {/* Row 2: Khép kín vòng đời tệp 3D: Lưu Vault, Đăng Bán Marketplace, Tải STL */}
-            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+            <div className="pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   type="button"
                   onClick={handleSaveToVault}
                   disabled={isSavingVault}
-                  className="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/30 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-900 border border-cyan-200 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 disabled:opacity-50 shadow-xs"
                 >
                   <Save className={`w-3.5 h-3.5 ${isSavingVault ? 'animate-spin' : ''}`} />
                   <span>{isSavingVault ? 'Đang Lưu...' : 'Lưu Vào 3D Vault'}</span>
@@ -533,9 +533,9 @@ function StudioInner() {
                 <button
                   type="button"
                   onClick={() => setIsMarketplaceModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                  className="px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 shadow-xs"
                 >
-                  <Store className="w-3.5 h-3.5 text-amber-300" />
+                  <Store className="w-3.5 h-3.5 text-amber-600" />
                   <span>Đưa Lên Bán Marketplace</span>
                 </button>
               </div>
@@ -546,7 +546,7 @@ function StudioInner() {
                   PresetGeneratorService.downloadSTL(selectedModelId);
                   showStudioToast('📥 Đang tải tệp STL về thiết bị...');
                 }}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Tải File (.STL)</span>
@@ -558,17 +558,17 @@ function StudioInner() {
 
       {/* MODAL: ĐĂNG BÁN MÔ HÌNH LÊN MARKETPLACE 1-CLICK */}
       {isMarketplaceModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-          <div className="vision-glass-panel rounded-[32px] p-6 sm:p-7 max-w-md w-full shadow-2xl border border-white/20 text-white space-y-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2 text-amber-300 font-bold text-sm sm:text-base">
-                <Store className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="vision-glass-panel rounded-[32px] p-6 sm:p-7 max-w-md w-full shadow-2xl border border-slate-200 bg-white text-slate-800 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-2 text-amber-800 font-bold text-sm sm:text-base">
+                <Store className="w-5 h-5 text-amber-600" />
                 <span>Đăng Bán Lên Marketplace 3D</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMarketplaceModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -576,17 +576,17 @@ function StudioInner() {
 
             <form onSubmit={handlePublishToMarketplace} className="space-y-3.5 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-white block">Tên Mô Hình 3D</label>
+                <label className="font-bold text-slate-800 block">Tên Mô Hình 3D</label>
                 <input
                   type="text"
                   disabled
                   value={customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || 'Mô hình AI 3D')}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-white/80 font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-medium"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-white block">Giá Bán Niêm Yết (VNĐ)</label>
+                <label className="font-bold text-slate-800 block">Giá Bán Niêm Yết (VNĐ)</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -596,24 +596,24 @@ function StudioInner() {
                     value={marketplacePriceVnd}
                     onChange={(e) => setMarketplacePriceVnd(parseInt(e.target.value) || 0)}
                     placeholder="0 = Miễn phí"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/30 border border-white/15 text-amber-300 font-bold focus:outline-none focus:border-amber-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-cyan-900 font-bold focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 text-[11px]">
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
                     {marketplacePriceVnd === 0 ? 'Miễn Phí' : 'VNĐ'}
                   </span>
                 </div>
-                <p className="text-[10px] text-white/50">
+                <p className="text-[10px] text-slate-500">
                   Khi khách mua: Sàn giữ 8% hoa hồng, 92% doanh thu chuyển vào ví của bạn.
                 </p>
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-white block">Mô Tả Sản Phẩm</label>
+                <label className="font-bold text-slate-800 block">Mô Tả Sản Phẩm</label>
                 <textarea
                   rows={2}
                   value={marketplaceDescription}
                   onChange={(e) => setMarketplaceDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/30 border border-white/15 text-white focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-800 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                 />
               </div>
 
@@ -621,14 +621,14 @@ function StudioInner() {
                 <button
                   type="button"
                   onClick={() => setIsMarketplaceModalOpen(false)}
-                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                  className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingMarketplace}
-                  className="vision-pill-btn px-5 py-2.5 rounded-full text-white font-bold shadow-md"
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white font-bold shadow-sm"
                 >
                   {isSubmittingMarketplace ? 'Đang Gửi...' : 'Gửi Phê Duyệt'}
                 </button>

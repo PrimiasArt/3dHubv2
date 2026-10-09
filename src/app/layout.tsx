@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/common/Navbar';
-import { StagingSandboxDock } from '@/components/common/StagingSandboxDock';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['vietnamese', 'latin'],
@@ -22,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" data-env="official" className={`${plusJakartaSans.variable} h-full bg-[var(--background)] text-[var(--vision-text-primary)] antialiased transition-colors duration-500`}>
+    <html lang="vi" className={`${plusJakartaSans.variable} h-full bg-[var(--background)] text-[var(--vision-text-primary)] antialiased transition-colors duration-500`}>
       <body className={`${plusJakartaSans.className} min-h-full flex flex-col bg-[var(--background)] [background-image:var(--page-radial)] text-[var(--vision-text-primary)] relative selection:bg-cyan-100 selection:text-cyan-900 transition-colors duration-500`}>
         {/* Subtle Ambient Spatial Glow Behind Everything */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -51,7 +50,6 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
-          <StagingSandboxDock />
         </div>
       </body>
     </html>
