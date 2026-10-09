@@ -9,6 +9,7 @@ export type PlatformType =
   | 'cults3d'
   | 'reddit'
   | 'community-forum'
+  | 'youtube'
   | 'manual'
   | 'custom-url'
   | 'ai-generated';

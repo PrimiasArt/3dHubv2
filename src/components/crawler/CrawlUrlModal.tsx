@@ -41,6 +41,7 @@ export function CrawlUrlModal({ isOpen, onClose, onCrawlUrl }: CrawlUrlModalProp
   };
 
   const sampleUrls = [
+    { label: 'YouTube Video', url: 'https://www.youtube.com/watch?v=0kF_3v-eJ0Q' },
     { label: 'MakerWorld', url: 'https://makerworld.com/en/models/42190' },
     { label: 'Printables', url: 'https://www.printables.com/model/3161-3d-benchy' },
     { label: 'Thingiverse', url: 'https://www.thingiverse.com/thing:763622' },
@@ -58,13 +59,13 @@ export function CrawlUrlModal({ isOpen, onClose, onCrawlUrl }: CrawlUrlModalProp
             </span>
             <div>
               <h4 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
-                <span>Cào Dữ Liệu Theo Link URL Bất Kỳ</span>
+                <span>Cào Dữ Liệu Theo Link URL &amp; YouTube AI</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-400/30 font-mono">
                   Universal Scraper
                 </span>
               </h4>
               <p className="text-[11px] text-white/50">
-                Bóc tách tự động tiêu đề, ảnh, tác giả &amp; thông số in lưu vào Obsidian Vault
+                Tự động bóc tách link web hoặc phân tích video YouTube bằng Gemini AI lưu vào Obsidian Vault
               </p>
             </div>
           </div>

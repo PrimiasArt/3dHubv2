@@ -1,5 +1,6 @@
 import { IModel3D, PlatformType } from '../../domain/models';
 import { obsidianVaultService } from '../knowledge/ObsidianVaultService';
+import { youtube3DAnalyzer } from './YouTube3DAnalyzer';
 
 export interface IUniversalScrapeResult {
   success: boolean;
@@ -17,6 +18,18 @@ export class UniversalUrlScraper {
     try {
       const parsedUrl = new URL(url);
       const hostname = parsedUrl.hostname.toLowerCase();
+
+      // Nếu là link YouTube, kích hoạt bộ phân tích AI chuyên sâu YouTube3DAnalyzer
+      if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+        const ytResult = await youtube3DAnalyzer.analyzeYouTubeUrl(url, categoryOverride);
+        return {
+          success: ytResult.success,
+          model: ytResult.model,
+          obsidianNotePath: ytResult.obsidianNotePath,
+          error: ytResult.error,
+          sourceUrl: url,
+        };
+      }
 
       // Xác định nền tảng tương ứng
       let platform: PlatformType = 'custom-url';

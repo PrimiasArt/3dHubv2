@@ -59,6 +59,8 @@ export function ModelGrid({ models, isLoading }: ModelGridProps) {
               return { label: 'Reddit 3D', style: 'bg-orange-500/20 text-orange-200 border-orange-400/30' };
             case 'community-forum':
               return { label: 'Diễn Đàn', style: 'bg-indigo-500/20 text-indigo-200 border-indigo-400/30' };
+            case 'youtube':
+              return { label: 'YouTube Video', style: 'bg-red-500/20 text-red-200 border-red-500/40' };
             case 'manual':
               return { label: 'Thủ Công', style: 'bg-violet-500/20 text-violet-200 border-violet-400/30' };
             case 'custom-url':
