@@ -31,6 +31,25 @@ export interface IExpertPrintProfile {
   proTips: string[];
 }
 
+export interface IExpertPrintProfileVariant extends IExpertPrintProfile {
+  variantId: string;
+  variantTitle: string; // ví dụ: "0.2mm layer, 2 walls, 8% infill" hoặc "No ironing | Changed supports | Settings for speed"
+  creatorName: string; // ví dụ: "ModelWorks3D", "MakerWorld Designer", "3D Hub AI Slicer"
+  creatorBadge: 'Designer' | 'AI Tuner' | 'Community Master' | 'Verified Maker';
+  creatorNotes: string; // Ghi chú giải thích lý do cấu hình như vậy cho mẫu này
+  wallLoops: number;
+  wallGenerator?: 'Arachne' | 'Classic';
+  estimatedHours: number; // e.g. 1.6
+  estimatedFilamentGrams: number; // e.g. 35
+  platesCount: number; // e.g. 1
+  rating: number; // e.g. 4.9
+  ratingCount: number; // e.g. 371
+  downloadsCount: number; // e.g. 786
+  likesCount: number; // e.g. 420
+  compatiblePrinters: string[]; // e.g. ['P1S', 'X1 Carbon', 'A1', 'K1 Max', 'Prusa MK4']
+  targetStyle: 'speed' | 'quality' | 'strength' | 'multi_color';
+}
+
 export interface IWalletTransaction {
   id: string;
   type: 'deposit' | 'unlock_profile';

@@ -651,6 +651,9 @@ function StudioInner() {
           printer={selectedPrinter}
           dimensionsMm={dimensionsMm}
           supportConfig={supportConfig}
+          customModelName={customModel ? customModel.fileName : (SAMPLE_PRINT_MODELS.find(m => m.id === selectedModelId)?.name || '3D Model')}
+          volumeCm3={customModel?.volumeCm3}
+          triangleCount={customModel?.triangleCount}
         />
       </section>
 
