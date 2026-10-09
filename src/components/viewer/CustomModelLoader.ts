@@ -4,6 +4,8 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { ThreeMFLoader } from 'three/examples/jsm/loaders/3MFLoader.js';
 import { unzipSync, zipSync, strToU8 } from 'three/examples/jsm/libs/fflate.module.js';
+import { ModelBuilder } from './ModelBuilder';
+import { SampleModelId } from '@/backend/domain/sample-models';
 
 export interface ILoadedCustomModel {
   group: THREE.Group;
@@ -144,6 +146,7 @@ export class CustomModelLoader {
     extractedStl?: Uint8Array;
     extractedObj?: string;
     nativeModelXml?: string;
+    extractedPresetJson?: string;
   } {
     try {
       const uint8 = new Uint8Array(arrayBuffer);
@@ -159,6 +162,7 @@ export class CustomModelLoader {
       let primaryModelXml: string | null = null;
       let extractedStl: Uint8Array | undefined;
       let extractedObj: string | undefined;
+      let extractedPresetJson: string | undefined;
 
       const decoder = new TextDecoder();
 
@@ -177,6 +181,16 @@ export class CustomModelLoader {
           extractedObj = decoder.decode(data);
         }
 
+        // Kiểm tra xem có file JSON preset không
+        if ((lower.endsWith('config.json') || lower.endsWith('preset.json') || lower.endsWith('.json')) && !extractedPresetJson) {
+          try {
+            const jsonText = decoder.decode(data);
+            if (jsonText.includes('3D Hub') || jsonText.includes('"model"')) {
+              extractedPresetJson = jsonText;
+            }
+          } catch {}
+        }
+
         // Kiểm tra relationship
         if (lower.endsWith('_rels/.rels')) {
           relsFound = true;
@@ -193,7 +207,7 @@ export class CustomModelLoader {
 
       // Nếu có file STL/OBJ trong zip, trả về ngay
       if (extractedStl || extractedObj) {
-        return { extractedStl, extractedObj, nativeModelXml: primaryModelXml || undefined };
+        return { extractedStl, extractedObj, nativeModelXml: primaryModelXml || undefined, extractedPresetJson };
       }
 
       // Nếu tìm thấy file model nhưng thiếu _rels/.rels: TIÊM TỰ ĐỘNG
@@ -221,11 +235,13 @@ export class CustomModelLoader {
         return {
           healedBuffer: healedZip.buffer,
           nativeModelXml: primaryModelXml || undefined,
+          extractedPresetJson,
         };
       }
 
       return {
         nativeModelXml: primaryModelXml || undefined,
+        extractedPresetJson,
       };
     } catch (err) {
       console.warn('Auto-healing 3MF archive failed:', err);
@@ -251,7 +267,10 @@ export class CustomModelLoader {
     const group = new THREE.Group();
     group.add(mesh);
 
-    const triangleCount = geometry.attributes.position.count / 3;
+    const triangleCount = geometry.attributes.position ? geometry.attributes.position.count / 3 : 0;
+    if (triangleCount === 0) {
+      throw new Error('Tệp STL không chứa dữ liệu đỉnh hoặc mặt tam giác hợp lệ.');
+    }
     const volumeCm3 = this.calculateVolume(geometry);
 
     return { group, triangleCount, volumeCm3 };
@@ -276,11 +295,15 @@ export class CustomModelLoader {
         m.receiveShadow = true;
         if (m.geometry) {
           m.geometry.rotateX(-Math.PI / 2);
-          totalTriangles += m.geometry.attributes.position.count / 3;
+          totalTriangles += m.geometry.attributes.position ? m.geometry.attributes.position.count / 3 : 0;
           totalVolume += this.calculateVolume(m.geometry);
         }
       }
     });
+
+    if (totalTriangles === 0 || obj.children.length === 0) {
+      throw new Error('Tệp OBJ không chứa dữ liệu hình học hoặc bề mặt 3D hợp lệ.');
+    }
 
     return { group: obj, triangleCount: totalTriangles, volumeCm3: totalVolume };
   }
@@ -303,11 +326,15 @@ export class CustomModelLoader {
         child.castShadow = true;
         child.receiveShadow = true;
         if (child.geometry) {
-          totalTriangles += child.geometry.attributes.position.count / 3;
+          totalTriangles += child.geometry.attributes.position ? child.geometry.attributes.position.count / 3 : 0;
           totalVolume += this.calculateVolume(child.geometry);
         }
       }
     });
+
+    if (totalTriangles === 0 || gltf.scene.children.length === 0) {
+      throw new Error('Tệp GLTF/GLB không chứa dữ liệu mô hình 3D hợp lệ.');
+    }
 
     return { group: gltf.scene, triangleCount: totalTriangles, volumeCm3: totalVolume };
   }
@@ -322,7 +349,8 @@ export class CustomModelLoader {
     // 1a. Nếu tệp nén chứa sẵn file STL bên trong:
     if (healed.extractedStl) {
       try {
-        return this.parseSTL(healed.extractedStl.buffer as ArrayBuffer, material);
+        const res = this.parseSTL(healed.extractedStl.buffer as ArrayBuffer, material);
+        if (res.triangleCount > 0) return res;
       } catch (e) {
         console.warn('Không thể parse STL nhúng trong 3MF:', e);
       }
@@ -331,7 +359,8 @@ export class CustomModelLoader {
     // 1b. Nếu tệp nén chứa sẵn file OBJ bên trong:
     if (healed.extractedObj) {
       try {
-        return this.parseOBJ(healed.extractedObj, material);
+        const res = this.parseOBJ(healed.extractedObj, material);
+        if (res.triangleCount > 0) return res;
       } catch (e) {
         console.warn('Không thể parse OBJ nhúng trong 3MF:', e);
       }
@@ -355,7 +384,7 @@ export class CustomModelLoader {
           child.castShadow = true;
           child.receiveShadow = true;
           if (child.geometry) {
-            totalTriangles += child.geometry.attributes.position.count / 3;
+            totalTriangles += child.geometry.attributes.position ? child.geometry.attributes.position.count / 3 : 0;
             totalVolume += this.calculateVolume(child.geometry);
           }
         }
@@ -371,12 +400,45 @@ export class CustomModelLoader {
     // 3. Tầng cứu nguy: Native 3MF XML Parser
     if (healed.nativeModelXml) {
       const nativeResult = this.parseNative3MFXml(healed.nativeModelXml, material);
-      if (nativeResult) {
+      if (nativeResult && nativeResult.triangleCount > 0) {
         return nativeResult;
       }
     }
 
-    // 4. Nếu vẫn không được, thử parse như STL (trường hợp người dùng đổi đuôi .stl thành .3mf)
+    // 4. Nếu trong zip có file JSON preset của 3D Hub:
+    if (healed.extractedPresetJson) {
+      try {
+        const cfg = JSON.parse(healed.extractedPresetJson);
+        const rawId = (cfg.model?.id || cfg.model?.name || '').toLowerCase();
+        let sampleId: SampleModelId = 'benchy';
+        const validIds: SampleModelId[] = ['benchy', 'dragon', 'robot', 'gear', 'helmet', 'turbine', 'eiffel'];
+        if (validIds.includes(rawId as SampleModelId)) {
+          sampleId = rawId as SampleModelId;
+        } else {
+          const m = validIds.find((id) => rawId.includes(id));
+          if (m) sampleId = m;
+        }
+        const { group: builtGroup } = ModelBuilder.buildModel(sampleId, material);
+        let totalTriangles = 0;
+        let totalVolume = 0;
+        builtGroup.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const m = child as THREE.Mesh;
+            if (m.geometry) {
+              totalTriangles += m.geometry.attributes.position ? m.geometry.attributes.position.count / 3 : 0;
+              totalVolume += this.calculateVolume(m.geometry);
+            }
+          }
+        });
+        if (totalTriangles > 0) {
+          return { group: builtGroup, triangleCount: totalTriangles, volumeCm3: totalVolume };
+        }
+      } catch (err) {
+        console.warn('Không thể parse preset JSON từ 3MF archive:', err);
+      }
+    }
+
+    // 5. Nếu vẫn không được, thử parse như STL (trường hợp người dùng đổi đuôi .stl thành .3mf)
     try {
       const stlResult = this.parseSTL(arrayBuffer, material);
       if (stlResult.triangleCount > 0) {
@@ -396,6 +458,57 @@ export class CustomModelLoader {
   static async loadFromFile(file: File, material: THREE.Material): Promise<ILoadedCustomModel> {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const arrayBuffer = await file.arrayBuffer();
+
+    // 0. SMART PRESET INGESTION:
+    // Tự động nhận diện nếu tệp nạp vào là cấu hình Preset Slicer của 3D Hub (dạng JSON định dạng .3mf/.json)
+    const previewLength = Math.min(arrayBuffer.byteLength, 2048);
+    const previewText = new TextDecoder().decode(new Uint8Array(arrayBuffer, 0, previewLength)).trim();
+    if (previewText.startsWith('{')) {
+      try {
+        const fullText = new TextDecoder().decode(arrayBuffer);
+        const cfg = JSON.parse(fullText);
+        if (cfg.generator?.includes('3D Hub') || cfg.model?.id || (cfg.targetSlicers && cfg.process)) {
+          console.log('Phát hiện tệp Cấu hình Slicer Preset của 3D Hub. Đang kích hoạt Smart Preset Ingestion...');
+          const rawId = (cfg.model?.id || cfg.model?.name || '').toLowerCase();
+          const validIds: SampleModelId[] = ['benchy', 'dragon', 'robot', 'gear', 'helmet', 'turbine', 'eiffel'];
+          let sampleId: SampleModelId = 'benchy';
+          if (validIds.includes(rawId as SampleModelId)) {
+            sampleId = rawId as SampleModelId;
+          } else {
+            const matched = validIds.find((id) => rawId.includes(id));
+            if (matched) sampleId = matched;
+          }
+
+          const { group: builtGroup, height } = ModelBuilder.buildModel(sampleId, material);
+          let totalTriangles = 0;
+          let totalVolume = 0;
+          builtGroup.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const m = child as THREE.Mesh;
+              if (m.geometry) {
+                totalTriangles += m.geometry.attributes.position ? m.geometry.attributes.position.count / 3 : 0;
+                totalVolume += this.calculateVolume(m.geometry);
+              }
+            }
+          });
+
+          const targetDims = cfg.model?.dimensions || { x: 60, y: 31, z: 48 };
+
+          return {
+            group: builtGroup,
+            dimensionsMm: targetDims,
+            originalDimensionsMm: targetDims,
+            volumeCm3: Math.max(0.1, Math.round(totalVolume * 10) / 10),
+            triangleCount: Math.round(totalTriangles),
+            fileName: file.name,
+            fileSizeBytes: file.size,
+            height: Math.max(0.05, height),
+          };
+        }
+      } catch (err) {
+        console.warn('Không phải JSON preset hợp lệ, tiếp tục chu trình nạp 3D thông thường:', err);
+      }
+    }
 
     let parseResult: IParsedMeshResult | null = null;
     let lastError: Error | null = null;
@@ -460,10 +573,10 @@ export class CustomModelLoader {
       }
     }
 
-    if (!parseResult) {
+    if (!parseResult || parseResult.triangleCount <= 0 || parseResult.group.children.length === 0) {
       throw new Error(
         lastError?.message ||
-        `Không thể nạp file "${file.name}". Định dạng không được hỗ trợ hoặc tệp bị lỗi. Vui lòng chọn tệp .STL, .3MF, .OBJ, hoặc .GLB hợp lệ.`
+        `Không thể nạp file "${file.name}". Định dạng không được hỗ trợ hoặc tệp bị rỗng (0 mặt). Vui lòng chọn tệp .STL, .3MF, .OBJ, hoặc .GLB hợp lệ.`
       );
     }
 
